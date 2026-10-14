@@ -1,0 +1,28 @@
+{
+  "name": "@awesomejm/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "pnpm build && concurrently --kill-others -n types,server \"tsc -p tsconfig.json --watch --preserveWatchOutput\" \"node --watch --env-file-if-exists=.env dist/main.js\"",
+    "start": "node --env-file-if-exists=.env dist/main.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "@awesomejm/contracts": "workspace:*",
+    "@nestjs/common": "catalog:",
+    "@nestjs/core": "catalog:",
+    "@nestjs/platform-express": "catalog:",
+    "reflect-metadata": "catalog:",
+    "rxjs": "catalog:"
+  },
+  "devDependencies": {
+    "@awesomejm/tooling": "workspace:*",
+    "@types/node": "catalog:",
+    "concurrently": "catalog:",
+    "eslint": "catalog:",
+    "typescript": "catalog:"
+  }
+}

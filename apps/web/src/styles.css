@@ -1,0 +1,131 @@
+:root {
+  font-family: system-ui, 'Noto Sans Devanagari', sans-serif;
+  color: #172c25;
+  background: #f8f6f0;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+.workspace {
+  width: min(1040px, 100%);
+  padding: 42px 32px;
+  margin: 0 auto;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 21px;
+  font-weight: 700;
+}
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #172c25;
+  color: #f1dfab;
+}
+.workspace-label {
+  margin-left: auto;
+  border: 1px solid #ddd7c8;
+  border-radius: 30px;
+  padding: 8px 14px;
+  color: #6c736a;
+  font-size: 12px;
+  font-weight: 500;
+}
+.intro {
+  margin: 110px 0 44px;
+  max-width: 700px;
+}
+.eyebrow {
+  color: #84764f;
+  font-size: 12px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+h1 {
+  margin: 18px 0 22px;
+  font-size: clamp(36px, 5vw, 56px);
+  letter-spacing: -0.045em;
+  line-height: 1.13;
+}
+.description {
+  max-width: 610px;
+  color: #6b726b;
+  font-size: 17px;
+  line-height: 1.8;
+}
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.card {
+  padding: 28px;
+  border: 1px solid #e5e0d4;
+  background: #fffefa;
+  border-radius: 18px;
+}
+.card .eyebrow {
+  margin-top: 0;
+}
+.card h2 {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 12px 0;
+}
+.card > p:last-child {
+  color: #747970;
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+.connection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: #bb954c;
+  border-radius: 50%;
+}
+.status-dot.connected {
+  background: #3b8569;
+}
+footer {
+  margin-top: 70px;
+  color: #8b8f82;
+  font-size: 12px;
+}
+
+@media (max-width: 640px) {
+  .workspace {
+    padding: 24px 20px;
+  }
+  .workspace-label {
+    display: none;
+  }
+  .intro {
+    margin-top: 70px;
+  }
+  .cards {
+    grid-template-columns: 1fr;
+  }
+  .card {
+    padding: 24px;
+  }
+}

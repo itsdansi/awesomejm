@@ -1,0 +1,30 @@
+{
+  "name": "@awesomejm/calculations",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch --preserveWatchOutput",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src test",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "decimal.js": "catalog:"
+  },
+  "devDependencies": {
+    "@awesomejm/tooling": "workspace:*",
+    "eslint": "catalog:",
+    "typescript": "catalog:"
+  }
+}
