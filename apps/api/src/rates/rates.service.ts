@@ -1,3 +1,4 @@
+import { rateColumns as columns } from './rate-row.js';
 import { randomUUID } from 'node:crypto';
 import { ConflictException, Injectable } from '@nestjs/common';
 import {
@@ -11,11 +12,6 @@ import {
 import { DEFAULT_GRAMS_PER_TOLA } from '@awesomejm/calculations';
 import { DatabaseService } from '../database/database.service.js';
 import { SHOP_ID } from '../shop/shop.js';
-
-const columns = `id, rate_date::text AS "rateDate", metal, fineness, currency,
-  buy_rate_per_tola AS "buyRatePerTola", sell_rate_per_tola AS "sellRatePerTola",
-  grams_per_tola AS "gramsPerTola", source, reason, revision,
-  to_char(created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') AS "createdAt"`;
 
 @Injectable()
 export class RatesService {

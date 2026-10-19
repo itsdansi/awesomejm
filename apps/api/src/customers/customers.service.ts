@@ -1,3 +1,10 @@
+import {
+  customerColumns,
+  customerFrom,
+  customerSnapshot,
+  loadCustomer,
+} from './accounting.js';
+import { nextShopNumber } from '../shop/counters.js';
 import { createHash, randomUUID } from 'node:crypto';
 import {
   BadRequestException,
@@ -11,7 +18,6 @@ import {
   customerDetailSchema,
   customerListSchema,
   customerProfileSchema,
-  customerSchema,
   customerStatementSchema,
   customerSummarySchema,
   type AccountPayment,
@@ -25,59 +31,11 @@ import {
 import { DatabaseService } from '../database/database.service.js';
 import { SHOP_ID } from '../shop/shop.js';
 
-const customerColumns = `c.id, c.customer_code AS "customerCode", c.name, c.phone, c.address, c.pan, c.notes,
-  c.opened_on::text AS "openedOn", c.version, COALESCE(b.balance_npr,0.00)::text AS "balanceNpr",
-  COALESCE(b.latest_entry_date,c.opened_on)::text AS "latestEntryDate",
-  to_char(c.created_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') AS "createdAt"`;
-const customerFrom = `customers c LEFT JOIN LATERAL (SELECT sum(amount_npr) AS balance_npr, max(entry_date) AS latest_entry_date FROM customer_account_entries WHERE shop_id = c.shop_id AND customer_id = c.id) b ON true`;
 const fingerprint = (value: unknown) =>
   createHash('sha256').update(JSON.stringify(value)).digest('hex');
-const snapshot = (customer: Customer) => ({
-  customerCode: customer.customerCode,
-  name: customer.name,
-  phone: customer.phone,
-  address: customer.address,
-  pan: customer.pan,
-});
-
 @Injectable()
 export class CustomersService {
   constructor(private readonly database: DatabaseService) {}
-
-  private async customer(
-    client: pg.PoolClient,
-    id: string,
-    lock = false,
-  ): Promise<Customer> {
-    if (lock) {
-      const result = await client.query(
-        'SELECT id FROM customers WHERE shop_id=$1 AND id=$2 FOR UPDATE',
-        [SHOP_ID, id],
-      );
-      if (!result.rowCount) throw new NotFoundException('Customer not found.');
-    }
-    const result = await client.query(
-      `SELECT ${customerColumns} FROM ${customerFrom} WHERE c.shop_id=$1 AND c.id=$2`,
-      [SHOP_ID, id],
-    );
-    if (!result.rowCount) throw new NotFoundException('Customer not found.');
-    return customerSchema.parse(result.rows[0]);
-  }
-
-  private async nextNumber(
-    client: pg.PoolClient,
-    scope: 'CUSTOMER' | 'ACCOUNT_ENTRY',
-  ) {
-    const result = await client.query(
-      `INSERT INTO shop_counters(shop_id,scope,last_number) VALUES($1,$2,1) ON CONFLICT(shop_id,scope) DO UPDATE SET last_number=shop_counters.last_number+1 RETURNING last_number::text AS number`,
-      [SHOP_ID, scope],
-    );
-    const number: string = result.rows[0].number;
-    return {
-      number,
-      code: `${scope === 'CUSTOMER' ? 'C' : 'AC'}-${number.padStart(6, '0')}`,
-    };
-  }
 
   async list(query: CustomerQuery) {
     return this.database.run(async (client) => {
@@ -120,7 +78,7 @@ export class CustomersService {
       await client.query(
         'SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY',
       );
-      const customer = await this.customer(client, id);
+      const customer = await loadCustomer(client, id);
       const history = await client.query(
         `SELECT version, profile->>'name' AS name, profile->>'phone' AS phone, profile->>'address' AS address, profile->>'pan' AS pan, profile->>'notes' AS notes, reason, to_char(changed_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') AS "changedAt" FROM customer_profile_history WHERE shop_id=$1 AND customer_id=$2 ORDER BY version DESC LIMIT 20`,
         [SHOP_ID, id],
@@ -148,10 +106,10 @@ export class CustomersService {
           throw new ConflictException(
             'This request was already saved with different customer details. Refresh before creating another customer.',
           );
-        return this.customer(client, existing.rows[0].id);
+        return loadCustomer(client, existing.rows[0].id);
       }
       const id = randomUUID();
-      const code = await this.nextNumber(client, 'CUSTOMER');
+      const code = await nextShopNumber(client, 'CUSTOMER');
       await client.query(
         `INSERT INTO customers(id,shop_id,customer_code,name,phone,address,pan,notes,opened_on,create_request_id,request_fingerprint) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
         [
@@ -178,8 +136,8 @@ export class CustomersService {
         ],
       );
       if (input.openingType !== 'NONE') {
-        const customer = await this.customer(client, id);
-        const entry = await this.nextNumber(client, 'ACCOUNT_ENTRY');
+        const customer = await loadCustomer(client, id);
+        const entry = await nextShopNumber(client, 'ACCOUNT_ENTRY');
         await client.query(
           `INSERT INTO customer_account_entries(id,shop_id,customer_id,entry_number,entry_code,entry_date,kind,amount_npr,reference,notes,customer_snapshot,request_id,request_fingerprint) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
           [
@@ -193,19 +151,19 @@ export class CustomersService {
             `${input.openingType === 'ADVANCE' ? '-' : ''}${input.openingAmountNpr}`,
             input.openingReference,
             'Opening balance brought forward',
-            JSON.stringify(snapshot(customer)),
+            JSON.stringify(customerSnapshot(customer)),
             input.requestId,
             hash,
           ],
         );
       }
-      return this.customer(client, id);
+      return loadCustomer(client, id);
     }, true);
   }
 
   async update(id: string, input: UpdateCustomer) {
     return this.database.run(async (client) => {
-      const customer = await this.customer(client, id, true);
+      const customer = await loadCustomer(client, id, true);
       if (customer.version !== input.expectedVersion)
         throw new ConflictException(
           'The customer profile has changed. Close this form and refresh before editing.',
@@ -233,7 +191,7 @@ export class CustomersService {
           input.reason,
         ],
       );
-      return this.customer(client, id);
+      return loadCustomer(client, id);
     }, true);
   }
 
@@ -263,7 +221,7 @@ export class CustomersService {
 
   async post(id: string, input: AccountPayment) {
     return this.database.run(async (client) => {
-      const customer = await this.customer(client, id, true);
+      const customer = await loadCustomer(client, id, true);
       const hash = fingerprint([id, input]);
       const replay = await this.replay(client, customer, input.requestId, hash);
       if (replay) return replay;
@@ -281,7 +239,7 @@ export class CustomersService {
             'Refund cannot exceed the advance currently held for this customer.',
           );
       }
-      const entry = await this.nextNumber(client, 'ACCOUNT_ENTRY');
+      const entry = await nextShopNumber(client, 'ACCOUNT_ENTRY');
       const entryId = randomUUID();
       await client.query(
         `INSERT INTO customer_account_entries(id,shop_id,customer_id,entry_number,entry_code,entry_date,kind,amount_npr,method,reference,notes,customer_snapshot,request_id,request_fingerprint) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`,
@@ -297,30 +255,34 @@ export class CustomersService {
           input.method,
           input.reference,
           input.notes,
-          JSON.stringify(snapshot(customer)),
+          JSON.stringify(customerSnapshot(customer)),
           input.requestId,
           hash,
         ],
       );
       return accountMutationSchema.parse({
         entryId,
-        customer: await this.customer(client, id),
+        customer: await loadCustomer(client, id),
       });
     }, true);
   }
 
   async reverse(id: string, entryId: string, input: ReverseAccountEntry) {
     return this.database.run(async (client) => {
-      const customer = await this.customer(client, id, true);
+      const customer = await loadCustomer(client, id, true);
       const hash = fingerprint([id, entryId, input]);
       const replay = await this.replay(client, customer, input.requestId, hash);
       if (replay) return replay;
       const result = await client.query(
-        'SELECT kind,amount_npr::text,entry_code FROM customer_account_entries WHERE shop_id=$1 AND customer_id=$2 AND id=$3',
+        'SELECT kind,amount_npr::text,entry_code,sale_id FROM customer_account_entries WHERE shop_id=$1 AND customer_id=$2 AND id=$3',
         [SHOP_ID, id, entryId],
       );
       if (!result.rowCount)
         throw new NotFoundException('Account entry not found.');
+      if (result.rows[0].sale_id)
+        throw new ConflictException(
+          'Correct sale-linked entries from Sales to keep stock and accounts consistent.',
+        );
       if (result.rows[0].kind === 'REVERSAL')
         throw new BadRequestException(
           'A reversal cannot itself be reversed. Record the correct payment as a new entry.',
@@ -335,7 +297,7 @@ export class CustomersService {
       );
       if (reversed.rowCount)
         throw new ConflictException('This entry has already been reversed.');
-      const entry = await this.nextNumber(client, 'ACCOUNT_ENTRY');
+      const entry = await nextShopNumber(client, 'ACCOUNT_ENTRY');
       const reversalId = randomUUID();
       await client.query(
         `INSERT INTO customer_account_entries(id,shop_id,customer_id,entry_number,entry_code,entry_date,kind,amount_npr,reference,notes,reversal_of,customer_snapshot,request_id,request_fingerprint) VALUES($1,$2,$3,$4,$5,$6,'REVERSAL',-$7::numeric,$8,$9,$10,$11,$12,$13)`,
@@ -350,14 +312,14 @@ export class CustomersService {
           result.rows[0].entry_code,
           input.reason,
           entryId,
-          JSON.stringify(snapshot(customer)),
+          JSON.stringify(customerSnapshot(customer)),
           input.requestId,
           hash,
         ],
       );
       return accountMutationSchema.parse({
         entryId: reversalId,
-        customer: await this.customer(client, id),
+        customer: await loadCustomer(client, id),
       });
     }, true);
   }
@@ -367,10 +329,10 @@ export class CustomersService {
       await client.query(
         'SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY',
       );
-      const customer = await this.customer(client, id);
+      const customer = await loadCustomer(client, id);
       const result = await client.query(
         `WITH ledger AS (SELECT *, sum(amount_npr) OVER(ORDER BY entry_date,entry_number ROWS UNBOUNDED PRECEDING) AS running_balance FROM customer_account_entries WHERE shop_id=$1 AND customer_id=$2)
-        SELECT e.id,e.entry_code AS "entryCode",e.entry_date::text AS "entryDate",e.kind,e.amount_npr::text AS "amountNpr",e.method,e.reference,e.notes,e.reversal_of AS "reversalOf",e.customer_snapshot AS "customerSnapshot",e.running_balance::text AS "runningBalanceNpr",
+        SELECT e.id,e.entry_code AS "entryCode",e.entry_date::text AS "entryDate",e.kind,e.amount_npr::text AS "amountNpr",e.method,e.reference,e.notes,e.reversal_of AS "reversalOf",e.sale_id AS "saleId",e.customer_snapshot AS "customerSnapshot",e.running_balance::text AS "runningBalanceNpr",
         EXISTS(SELECT 1 FROM customer_account_entries r WHERE r.shop_id=e.shop_id AND r.reversal_of=e.id) AS reversed,
         to_char(e.created_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') AS "createdAt"
         FROM ledger e WHERE ($3::date IS NULL OR e.entry_date >= $3) AND ($4::date IS NULL OR e.entry_date <= $4) ORDER BY e.entry_date DESC,e.entry_number DESC LIMIT $5 OFFSET $6`,

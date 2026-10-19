@@ -128,7 +128,16 @@ export function EntryDetails({
           Print acknowledgement
         </button>
       )}
-      {!entry.reversed &&
+      {entry.saleId && (
+        <p className="account-scope-note">
+          This entry is linked to a sale.{' '}
+          <a className="text-button" href={`#/sales/${entry.saleId}`}>
+            View sale →
+          </a>
+        </p>
+      )}
+      {!entry.saleId &&
+        !entry.reversed &&
         entry.kind !== 'REVERSAL' &&
         (correcting ? (
           <form

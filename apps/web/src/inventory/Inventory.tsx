@@ -217,6 +217,7 @@ export function Inventory() {
               }}
             >
               <option value="AVAILABLE">Available stock</option>
+              <option value="SOLD">Sold pieces</option>
               <option value="VOIDED">Voided receipts</option>
             </select>
           </label>
@@ -305,12 +306,12 @@ export function Inventory() {
               <Icon name="box" size={32} />
             </span>
             <h3>
-              {searchTerm || metal || status === 'VOIDED'
+              {searchTerm || metal || status !== 'AVAILABLE'
                 ? 'No matching pieces'
                 : 'Your stock register starts here'}
             </h3>
             <p>
-              {searchTerm || metal || status === 'VOIDED'
+              {searchTerm || metal || status !== 'AVAILABLE'
                 ? 'Try another search or change your filters.'
                 : 'Receive your first gold or silver piece to start tracking your inventory.'}
             </p>
@@ -328,7 +329,7 @@ export function Inventory() {
         <div className="table-footer">
           <span>
             {data && !loading
-              ? `${data.list.total} ${data.list.total === 1 ? 'piece' : 'pieces'} · ${status === 'AVAILABLE' ? 'Available stock' : 'Voided receipts'}`
+              ? `${data.list.total} ${data.list.total === 1 ? 'piece' : 'pieces'} · ${status === 'AVAILABLE' ? 'Available stock' : status === 'SOLD' ? 'Sold pieces' : 'Voided receipts'}`
               : 'Stock register'}
           </span>
           <div className="pagination">

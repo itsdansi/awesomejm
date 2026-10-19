@@ -1,6 +1,6 @@
 # AwesomeJM
 
-A SaaS application for Nepali gold and silver shops. The workspace contains a React/Vite frontend, a NestJS API, PostgreSQL inventory, metal-rate and customer-account storage, shared public contracts and decimal calculation utilities.
+A SaaS application for Nepali gold and silver shops. The workspace contains a React/Vite frontend, a NestJS API, PostgreSQL inventory, metal-rate, customer-account and sales storage, shared public contracts and decimal calculation utilities.
 
 ## Requirements
 
@@ -40,7 +40,7 @@ The frontend proxies `/api` to the API during development. If the API port chang
 ```sh
 pnpm check       # Lint, type checks, calculation tests, builds, formatting
 pnpm smoke       # Start temporary API/web servers and verify their connection
-pnpm test:integration # Inventory/rates/customer APIs + real PostgreSQL; database must be running
+pnpm test:integration # Inventory/rates/customer/sales APIs + real PostgreSQL; database must be running
 pnpm format      # Format source and configuration
 ```
 
@@ -68,7 +68,7 @@ Keep database access, credentials, authorisation and authoritative transaction p
 - Receive individual gold/silver pieces with a unique item code, name, category, fineness, gross weight, stone/other weight and notes.
 - Stock is stored in exact decimal grams (3 decimal places). PostgreSQL derives net metal weight and fine-metal equivalent (6 decimal places). Fineness is parts per thousand; 22K is approximately 916.667‰, while the entered value should reflect the actual piece.
 - Display net grams and tola, with separate available gold/silver totals. Fine-metal equivalent is visible in piece details.
-- Search code, name and category; filter by metal or available/voided state; paginate results.
+- Search code, name and category; filter by metal or available/sold/voided state; paginate results.
 - Correct a mistaken receipt by voiding it with a reason. The piece and its negative reversal remain in history, and its code cannot be reused. This correction is not a sale, return, exchange or physical stock write-off.
 - Item receipt and movement posting are one database transaction. Row locking prevents duplicate corrections, database constraints prevent duplicate item codes, and movement updates/deletions are blocked by a database trigger.
 
@@ -92,7 +92,7 @@ Open **Metal rates** in the sidebar (`/#/rates`); inventory remains at `/#/inven
 - Select a date to see its latest quote for each metal/purity. A missing rate stays empty; yesterday's rate is not carried forward automatically.
 - Save revisions with a reason, preserving the original amounts, source, timestamp, conversion and revision number. The rate date, metal and purity identify a series; revisions cannot change those fields.
 - Filter all history by date range and metal, with pagination. Both initial rates and later revisions remain visible.
-- Money uses exact decimal strings and PostgreSQL `numeric(11,2)`. Each quote retains the shop's 11.664 g/tola conversion. Per-gram values are rounded display previews; future sales must calculate from the original per-tola rate and retain a rate snapshot.
+- Money uses exact decimal strings and PostgreSQL `numeric(11,2)`. Each quote retains the shop's 11.664 g/tola conversion. Per-gram values are rounded display previews; sales calculate from the original per-tola rate and retain a rate snapshot.
 - A quoted rate already applies to its stated purity. It must not receive a second purity adjustment. Buying and selling quotes are entered independently; no fixed margin is imposed.
 - Publishing uses a transaction, a lock on the normalized date/metal/purity key, and an expected revision. Concurrent submissions return a conflict rather than silently replacing another quote. Database triggers block rate updates/deletions.
 
@@ -129,13 +129,37 @@ Open **Customers** in the sidebar (`/#/customers`). A customer has a generated s
 | POST   | `/:id/payments`                                                | Record `PAYMENT` or `ADVANCE_REFUND`             |
 | POST   | `/:id/entries/:entryId/reverse`                                | Append a reversal with a reason                  |
 
-There is no general manual-charge endpoint. Sales, orders and exchanges will add their own linked postings and transaction snapshots in future modules. Posted financial history has no update or delete API.
+There is no general manual-charge endpoint. Sales add linked charges, payments and transaction snapshots. Orders and exchanges will add their own linked postings in future modules. Sale-linked entries must be corrected through Sales, so stock and accounts remain consistent. Posted financial history has no update or delete API.
+
+## Sales module
+
+Open **Sales** in the sidebar (`/#/sales`). Ready-made pieces can be sold to an existing customer, using the latest rate for each piece’s exact metal, fineness and sale date. Set the rate and receive the piece before starting a sale. Up to 20 individually tracked pieces can be posted together. Custom orders, old-metal exchanges and returns after delivery are separate future workflows.
+
+- Choose the customer, AD sale date and available pieces; enter billed wastage in grams, making and stone charges, discount, any tax/fees copied from the official bill, and money received now. An optional official bill reference connects the internal record to the shop’s existing billing process. No tax rate is inferred or automatically calculated, and this module does not issue official invoices.
+- Review the server-calculated amounts and customer balance before posting. Metal value is `net grams × quoted selling rate per tola ÷ that rate’s grams per tola`. The quoted purity rate is used once. Billed wastage uses the same formula with billed wastage grams; it does not reduce physical stock. Stone/other weight is excluded from physical net metal weight, while stone price is a separate charge.
+- Each metal, wastage, making and stone component is rounded half up to two decimal places, then summed into line totals and subtotal. Total is subtotal minus discount plus entered tax/fees. Money uses exact decimal strings, with a maximum of NPR 999,999,999.99 per component and per sale. Payment received for this sale cannot exceed its total; other customer payments/advances can be recorded in Customers.
+- The sale, immutable item/rate/customer snapshots, stock movements, account charge and optional payment commit in one transaction. Sold pieces leave available stock and retain a link to their sale. Sorted row locks prevent double selling; rate locks and expected review values reject stale rates, customer profile versions, balances or totals. A sale cannot precede its pieces’ receipt dates or the customer’s latest account date.
+- Existing advances apply to the amount remaining after this sale’s received payment. Positive overall balance means the customer owes the shop; negative means advance held. “Due at posting” and “account after posting” are historical snapshots. Later customer payments affect the account, with no per-invoice payment allocation in this version.
+- Search/filter/paginate the sales register by sale code, customer name, bill reference, status and date range. Summary cards cover all time and exclude cancellations from posted value. Print an internal sale record with the original prices and charges; it is labelled as an internal record, not a tax invoice.
+- Correct an erroneous sale only when all its pieces are physically still in the shop. A dated cancellation with a reason restores the pieces and appends reversals of both the charge and received payment. It does not transfer or refund money. The original sale and correction remain visible, and a restored piece may be sold again. A delivered-item return requires a separate return workflow; this version does not implement partial returns or exchanges.
+- Posting and cancellation require stable UUID request keys. Retrying the identical payload is safe, including after a lost response. A reused key with changed content returns a conflict. Inspect the register before creating a new request if a submission outcome is uncertain. Posted sales, lines and cancellations cannot be edited or deleted.
+
+| Method | Route under `/api/v1/sales`                        | Purpose                                                 |
+| ------ | -------------------------------------------------- | ------------------------------------------------------- |
+| GET    | `?search=&status=ALL&from=&to=&page=1&pageSize=20` | Filtered sales register (omit empty date fields)        |
+| GET    | `/summary`                                         | All-time posted/cancelled counts and posted value       |
+| GET    | `/:id`                                             | Original pricing snapshots and cancellation state       |
+| POST   | `/preview`                                         | Validate selection and calculate a read-only quote      |
+| POST   | `/`                                                | Post reviewed sale, stock movements and account entries |
+| POST   | `/:id/cancel`                                      | Correct an erroneous entry with confirmed in-shop stock |
+
+Posting includes the preview’s `expectedTotalNpr`, `expectedCustomerVersion` and `expectedBalanceNpr`. Cancellation requires `requestId`, `cancellationDate`, `reason` and `confirmStockInShop: true`.
 
 ## Scope and deployment
 
-The health endpoint confirms application startup, not database readiness. These are local, single-shop development modules: authentication, staff attribution, authorization and production tenant isolation are still required before hosting customer data. Inventory, rates and customer queries are scoped to a server-selected shop, but authenticated shop selection and PostgreSQL row-level security are not implemented. Keep the API on loopback while developing. Sales, custom orders, exchanges, suppliers, cost valuation, barcode printing, stocktaking and official billing remain future modules.
+The health endpoint confirms application startup, not database readiness. These are local, single-shop development modules: authentication, staff attribution, authorization and production tenant isolation are still required before hosting customer data. Inventory, rates, sales and customer queries are scoped to a server-selected shop, but authenticated shop selection and PostgreSQL row-level security are not implemented. Keep the API on loopback while developing. Custom orders, delivered-item returns, exchanges, suppliers, cost valuation, barcode printing, stocktaking and official billing remain future modules.
 
-The conversion uses the first client's stated **11.664 grams per tola**, retained on every piece. Confirm that convention before importing business stock. The first receive form accepts grams; alternate unit entry and shop-specific conversion settings can follow. Physical stone/other weight is distinct from any future commercial wastage charge.
+The conversion uses the first client's stated **11.664 grams per tola**, retained on every piece. Confirm that convention before importing business stock. The first receive form accepts grams; alternate unit entry and shop-specific conversion settings can follow. Physical stone/other weight is distinct from a commercial wastage charge.
 
 The Docker Compose credentials are for local development. Production needs separate credentials, TLS, access controls, backups with restore verification, and an explicit migration step.
 

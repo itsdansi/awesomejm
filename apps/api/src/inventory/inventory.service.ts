@@ -1,3 +1,4 @@
+import { inventoryColumns as columns } from './inventory-row.js';
 import { randomUUID } from 'node:crypto';
 import {
   ConflictException,
@@ -18,12 +19,6 @@ import { DatabaseService } from '../database/database.service.js';
 import { SHOP_ID } from '../shop/shop.js';
 // Shop identity is resolved by the server. Authenticated shop selection will replace
 // this single-shop configuration before multiple customers can use the service.
-const columns = `id, item_code AS "itemCode", name, category, metal, fineness,
-  gross_weight_grams AS "grossWeightGrams", non_metal_weight_grams AS "nonMetalWeightGrams",
-  net_weight_grams AS "netWeightGrams", fine_weight_grams AS "fineWeightGrams",
-  grams_per_tola AS "gramsPerTola", notes, status,
-  to_char(received_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') AS "receivedAt"`;
-
 @Injectable()
 export class InventoryService {
   constructor(private readonly database: DatabaseService) {}
@@ -103,7 +98,7 @@ export class InventoryService {
       );
       if (!exists.rowCount) throw new NotFoundException('Item not found.');
       const result = await client.query(
-        `SELECT id, kind, net_weight_grams AS "netWeightGrams", reason, to_char(created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') AS "createdAt" FROM inventory_movements WHERE shop_id = $1 AND item_id = $2 ORDER BY created_at, id`,
+        `SELECT id, kind, sale_id AS "saleId", net_weight_grams AS "netWeightGrams", reason, to_char(created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') AS "createdAt" FROM inventory_movements WHERE shop_id = $1 AND item_id = $2 ORDER BY created_at, id`,
         [SHOP_ID, id],
       );
       return inventoryHistorySchema.parse(result.rows);
@@ -119,7 +114,9 @@ export class InventoryService {
       if (!result.rowCount) throw new NotFoundException('Item not found.');
       const item = inventoryItemSchema.parse(result.rows[0]);
       if (item.status !== 'AVAILABLE')
-        throw new ConflictException('This receipt has already been voided.');
+        throw new ConflictException(
+          'Only an available piece can have its receipt voided. Correct sold pieces from Sales.',
+        );
       await client.query(
         `INSERT INTO inventory_movements (id, shop_id, item_id, kind, net_weight_grams, reason) VALUES ($1,$2,$3,'RECEIPT_VOID',-$4::numeric,$5)`,
         [randomUUID(), SHOP_ID, id, item.netWeightGrams, reason],

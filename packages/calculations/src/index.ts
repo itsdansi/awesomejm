@@ -1,4 +1,5 @@
 import { Decimal } from 'decimal.js';
+export * from './sales.js';
 
 // Initial conversion supplied by the first shop. Callers may supply another
 // agreed conversion without changing previously recorded transactions.

@@ -11,7 +11,7 @@ const positiveGramsSchema = gramsSchema.refine(
   'Weight must be greater than zero.',
 );
 export const metalSchema = z.enum(['GOLD', 'SILVER']);
-export const inventoryStatusSchema = z.enum(['AVAILABLE', 'VOIDED']);
+export const inventoryStatusSchema = z.enum(['AVAILABLE', 'VOIDED', 'SOLD']);
 
 export const receiveItemSchema = z
   .object({
@@ -79,6 +79,7 @@ export const inventoryItemSchema = z.object({
   gramsPerTola: z.string(),
   notes: z.string(),
   status: inventoryStatusSchema,
+  activeSaleId: z.uuid().nullable(),
   receivedAt: z.iso.datetime(),
 });
 export type InventoryItem = z.infer<typeof inventoryItemSchema>;
@@ -103,7 +104,8 @@ export type InventorySummary = z.infer<typeof inventorySummarySchema>;
 export const inventoryHistorySchema = z.array(
   z.object({
     id: z.uuid(),
-    kind: z.enum(['RECEIPT', 'RECEIPT_VOID']),
+    kind: z.enum(['RECEIPT', 'RECEIPT_VOID', 'SALE', 'SALE_CANCEL']),
+    saleId: z.uuid().nullable(),
     netWeightGrams: z.string(),
     reason: z.string(),
     createdAt: z.iso.datetime(),

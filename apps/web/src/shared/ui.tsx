@@ -12,10 +12,16 @@ export function Icon({
     | 'close'
     | 'diamond'
     | 'history'
-    | 'users';
+    | 'users'
+    | 'receipt';
   size?: number;
 }) {
   const paths = {
+    receipt: (
+      <>
+        <path d="M5 3h14v19l-3-2-4 2-4-2-3 2V3ZM8 8h8M8 12h8M8 16h4" />
+      </>
+    ),
     users: (
       <>
         <circle cx="9" cy="7" r="3" />

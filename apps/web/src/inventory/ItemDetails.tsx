@@ -64,7 +64,11 @@ export function ItemDetails({
           {item.metal === 'GOLD' ? 'Gold' : 'Silver'}
         </span>
         <span className="muted">
-          {item.status === 'AVAILABLE' ? 'Available' : 'Voided receipt'}
+          {item.status === 'AVAILABLE'
+            ? 'Available'
+            : item.status === 'SOLD'
+              ? 'Sold'
+              : 'Voided receipt'}
         </span>
       </div>
       <dl className="details-grid">
@@ -112,11 +116,23 @@ export function ItemDetails({
           <li key={entry.id}>
             <div>
               <strong>
-                {entry.kind === 'RECEIPT' ? 'Piece received' : 'Receipt voided'}
+                {
+                  {
+                    RECEIPT: 'Piece received',
+                    RECEIPT_VOID: 'Receipt voided',
+                    SALE: 'Piece sold',
+                    SALE_CANCEL: 'Sale cancelled',
+                  }[entry.kind]
+                }
               </strong>
               <span>{entry.netWeightGrams} g</span>
             </div>
             <p>{entry.reason}</p>
+            {entry.saleId && (
+              <a className="text-button" href={`#/sales/${entry.saleId}`}>
+                View sale →
+              </a>
+            )}
             <time dateTime={entry.createdAt}>
               {new Date(entry.createdAt).toLocaleString('en-NP', {
                 timeZone: 'Asia/Kathmandu',

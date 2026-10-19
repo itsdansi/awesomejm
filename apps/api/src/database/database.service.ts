@@ -40,7 +40,7 @@ export class DatabaseService implements OnApplicationShutdown {
       if (error instanceof HttpException) throw error;
       if (error instanceof Error && 'code' in error && error.code === '23505')
         throw new ConflictException(
-          'This record already exists. Refresh and use a unique item code or the latest rate revision.',
+          'This record already exists. Refresh and check the register before retrying.',
         );
       console.error('Database operation failed.');
       throw new ServiceUnavailableException(

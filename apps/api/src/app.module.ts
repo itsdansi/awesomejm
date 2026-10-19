@@ -7,6 +7,8 @@ import { RatesController } from './rates/rates.controller.js';
 import { RatesService } from './rates/rates.service.js';
 import { CustomersController } from './customers/customers.controller.js';
 import { CustomersService } from './customers/customers.service.js';
+import { SalesController } from './sales/sales.controller.js';
+import { SalesService } from './sales/sales.service.js';
 
 @Module({
   controllers: [
@@ -14,12 +16,14 @@ import { CustomersService } from './customers/customers.service.js';
     InventoryController,
     RatesController,
     CustomersController,
+    SalesController,
   ],
   providers: [
     DatabaseService,
     InventoryService,
     RatesService,
     CustomersService,
+    SalesService,
   ],
 })
 export class AppModule {}
