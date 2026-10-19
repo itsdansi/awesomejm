@@ -4,10 +4,24 @@ export function Icon({
   name,
   size = 20,
 }: {
-  name: 'box' | 'plus' | 'search' | 'arrow' | 'close' | 'diamond' | 'history';
+  name:
+    | 'box'
+    | 'plus'
+    | 'search'
+    | 'arrow'
+    | 'close'
+    | 'diamond'
+    | 'history'
+    | 'users';
   size?: number;
 }) {
   const paths = {
+    users: (
+      <>
+        <circle cx="9" cy="7" r="3" />
+        <path d="M3 21v-2a6 6 0 0 1 12 0v2M17 4a3 3 0 0 1 0 6m1 5a5 5 0 0 1 3 4v2" />
+      </>
+    ),
     box: (
       <>
         <path d="m12 3 9 5-9 5-9-5 9-5Z" />

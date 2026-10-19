@@ -5,7 +5,7 @@ export function AppShell({
   section,
   children,
 }: {
-  section: 'Inventory' | 'Metal rates';
+  section: 'Inventory' | 'Metal rates' | 'Customers';
   children: ReactNode;
 }) {
   return (
@@ -42,6 +42,12 @@ export function AppShell({
                 path: 'rates',
                 icon: 'diamond',
                 index: '02',
+              },
+              {
+                name: 'Customers',
+                path: 'customers',
+                icon: 'users',
+                index: '03',
               },
             ] as const
           ).map((item) => (

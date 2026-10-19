@@ -1,6 +1,6 @@
 # AwesomeJM
 
-A SaaS application for Nepali gold and silver shops. The workspace contains a React/Vite frontend, a NestJS API, PostgreSQL inventory and metal-rate storage, shared public contracts and decimal calculation utilities.
+A SaaS application for Nepali gold and silver shops. The workspace contains a React/Vite frontend, a NestJS API, PostgreSQL inventory, metal-rate and customer-account storage, shared public contracts and decimal calculation utilities.
 
 ## Requirements
 
@@ -40,7 +40,7 @@ The frontend proxies `/api` to the API during development. If the API port chang
 ```sh
 pnpm check       # Lint, type checks, calculation tests, builds, formatting
 pnpm smoke       # Start temporary API/web servers and verify their connection
-pnpm test:integration # Inventory/rates APIs + real PostgreSQL; database must be running
+pnpm test:integration # Inventory/rates/customer APIs + real PostgreSQL; database must be running
 pnpm format      # Format source and configuration
 ```
 
@@ -104,9 +104,36 @@ Open **Metal rates** in the sidebar (`/#/rates`); inventory remains at `/#/inven
 
 Publish fields: `rateDate`, `metal`, `fineness`, `buyRatePerTola`, `sellRatePerTola`, `source`, `reason`, `expectedRevision`. Use decimal strings for amounts and fineness. Set `expectedRevision` to `0` for a new series or the latest revision number for an update; updates require a reason of at least five characters. Future dates are rejected. Rates do not automatically revalue stock or change past transactions.
 
+## Customer accounts module
+
+Open **Customers** in the sidebar (`/#/customers`). A customer has a generated shop-scoped code, name, optional phone/address/PAN/notes, and an account opened on an AD date. Unicode names are supported. Phone punctuation is normalized, shared phone numbers are allowed, and an optional PAN accepts nine digits according to the [IRD FAQ](https://ird.gov.np/faq/). PAN format validation does not verify registration with IRD.
+
+- Create an account as settled, with opening dues, or with an opening advance. A nonzero opening balance requires a source reference. The customer, profile history, account entry and numbering are committed in one transaction.
+- Search name, phone, PAN or customer code; filter accounts by dues, advance or settled state. Summary totals show dues and advances separately rather than netting unrelated customer balances.
+- Record money received by cash, bank or digital wallet. Payments reduce dues; overpayment becomes an advance. Record an advance already returned to the customer using the refund action. This records completed money movements; no payment-provider integration is present.
+- Refunds cannot exceed the advance held. Entries must be on or after the opening date and the most recent entry date, and cannot be future-dated. The first version therefore posts in date order; choose the correct opening date before entering historical records.
+- All NPR amounts use decimal strings and PostgreSQL `numeric(11,2)`. A positive account balance means the customer owes the shop; a negative balance means an advance is held. A statement shows chronological running balances, newest entries first, and date-range opening/closing balances calculated across the full ledger before pagination.
+- Correct an entry with an equal and opposite reversal and a reason. The original remains visible and marked reversed. A reversal corrects a recording mistake; actual money returned belongs in an advance refund. An entry can be reversed only once, and reversals cannot themselves be reversed.
+- Customer creation, payments, refunds and reversals require a UUID `requestId`. Retrying the same normalized payload/key returns the saved record without repeating its financial effect. Reusing a key for different content returns a conflict. Keep the key when retrying an uncertain network response; use a fresh key for a genuinely new transaction.
+- Financial writes lock the customer row to serialize balance checks. Profile edits preserve omitted fields and use an expected version and reason, preserving an append-only audit history (the latest 20 changes are displayed). Posted account entries retain a snapshot of the customer details for acknowledgement printing.
+- View an entry to print an internal payment/refund acknowledgement. These records are not sales invoices or IRD-approved billing. Statements and account entries are not a complete double-entry general ledger or bank reconciliation.
+
+| Method | Route under `/api/v1/customers`                                | Purpose                                          |
+| ------ | -------------------------------------------------------------- | ------------------------------------------------ |
+| GET    | `?search=&balance=ALL&page=1&pageSize=20`                      | Search/filter customer balances                  |
+| GET    | `/summary`                                                     | Customer count, dues and advances                |
+| POST   | `/`                                                            | Create customer and optional opening balance     |
+| GET    | `/:id`                                                         | Customer and recent profile history              |
+| PATCH  | `/:id`                                                         | Edit profile with `expectedVersion` and `reason` |
+| GET    | `/:id/ledger?from=2026-01-01&to=2026-01-31&page=1&pageSize=20` | Account statement                                |
+| POST   | `/:id/payments`                                                | Record `PAYMENT` or `ADVANCE_REFUND`             |
+| POST   | `/:id/entries/:entryId/reverse`                                | Append a reversal with a reason                  |
+
+There is no general manual-charge endpoint. Sales, orders and exchanges will add their own linked postings and transaction snapshots in future modules. Posted financial history has no update or delete API.
+
 ## Scope and deployment
 
-The health endpoint confirms application startup, not database readiness. These are local, single-shop development modules: authentication, staff attribution, authorization and production tenant isolation are still required before hosting customer data. Stock and rate queries are scoped to a server-selected shop, but authenticated shop selection and PostgreSQL row-level security are not implemented. Keep the API on loopback while developing. Sales, custom orders, exchanges, suppliers, cost valuation, barcode printing, stocktaking and official billing remain future modules.
+The health endpoint confirms application startup, not database readiness. These are local, single-shop development modules: authentication, staff attribution, authorization and production tenant isolation are still required before hosting customer data. Inventory, rates and customer queries are scoped to a server-selected shop, but authenticated shop selection and PostgreSQL row-level security are not implemented. Keep the API on loopback while developing. Sales, custom orders, exchanges, suppliers, cost valuation, barcode printing, stocktaking and official billing remain future modules.
 
 The conversion uses the first client's stated **11.664 grams per tola**, retained on every piece. Confirm that convention before importing business stock. The first receive form accepts grams; alternate unit entry and shop-specific conversion settings can follow. Physical stone/other weight is distinct from any future commercial wastage charge.
 
