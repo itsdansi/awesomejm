@@ -40,11 +40,11 @@ export class DatabaseService implements OnApplicationShutdown {
       if (error instanceof HttpException) throw error;
       if (error instanceof Error && 'code' in error && error.code === '23505')
         throw new ConflictException(
-          'That item code already exists. Use a unique code, including for voided items.',
+          'This record already exists. Refresh and use a unique item code or the latest rate revision.',
         );
-      console.error('Inventory database operation failed.');
+      console.error('Database operation failed.');
       throw new ServiceUnavailableException(
-        'Inventory storage is unavailable. Start the database and run migrations.',
+        'Storage is unavailable. Start the database and run migrations.',
       );
     } finally {
       client?.release();

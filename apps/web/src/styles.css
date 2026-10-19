@@ -1127,3 +1127,243 @@ footer {
     border-color: #91a37c;
   }
 }
+
+.rate-intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 19px 22px;
+  margin-bottom: 25px;
+  border: 1px solid #e5dfca;
+  border-radius: 8px;
+  background: #faf8ef;
+}
+.rate-intro > div {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.rate-intro-icon {
+  display: grid;
+  place-items: center;
+  width: 43px;
+  height: 43px;
+  background: #eee7d3;
+  color: #967a36;
+  border-radius: 9px;
+}
+.rate-intro strong {
+  font-size: 12px;
+  font-weight: 550;
+}
+.rate-intro p {
+  font-size: 10px;
+  margin: 6px 0 0;
+  color: #8d835f;
+}
+.manual-badge {
+  font-size: 8px;
+  letter-spacing: 1.4px;
+  color: #9b8b55;
+  border: 1px solid #e2dac0;
+  padding: 6px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.date-filter {
+  display: flex;
+  gap: 7px;
+  flex-direction: column;
+  color: #7e8b70;
+  font-size: 10px;
+}
+.date-filter input {
+  font: inherit;
+  color: #4f6545;
+  font-size: 12px;
+  border: 1px solid #e2e7d9;
+  border-radius: 6px;
+  padding: 9px 11px;
+  background: white;
+  min-height: 37px;
+}
+.rate-toolbar {
+  align-items: flex-end;
+}
+.rate-toolbar > .filter-label {
+  margin-left: auto;
+}
+.rate-toolbar > .text-button {
+  min-height: 37px;
+  color: #798b61;
+}
+.rate-empty {
+  min-height: 250px;
+}
+.rate-amount {
+  font-size: 14px;
+  font-weight: 550;
+}
+.rate-amount > small {
+  font-size: 8px;
+  font-weight: 400;
+  color: #82936f;
+}
+.rate-amount > span,
+.rate-subline {
+  display: block;
+  font-size: 9px;
+  font-weight: 400;
+  color: #849570;
+  margin-top: 6px;
+}
+.rate-purity {
+  display: block;
+  font-size: 12px;
+  font-weight: 550;
+  margin-top: 7px;
+}
+.rate-source {
+  white-space: normal;
+  max-width: 180px;
+  line-height: 1.7;
+  font-size: 10px;
+  overflow-wrap: anywhere;
+}
+.compact {
+  min-height: 30px;
+  padding: 6px 10px;
+  font-size: 10px;
+}
+.rate-book-footnote {
+  padding: 14px 25px;
+  border-top: 1px solid #edf0e7;
+  font-size: 9px;
+  color: #889873;
+  line-height: 1.7;
+}
+.rate-history-panel {
+  margin-top: 26px;
+}
+.history-placeholder {
+  padding: 30px 25px;
+  border-top: 1px solid #edf0e7;
+  color: #84966d;
+  font-size: 11px;
+  line-height: 1.8;
+}
+.history-date {
+  font-size: 11px;
+  font-weight: 500;
+}
+.history-reason {
+  white-space: normal;
+  max-width: 300px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.history-reason strong {
+  font-size: 10px;
+  font-weight: 500;
+}
+.history-reason span {
+  display: block;
+  font-size: 10px;
+  color: #748b5a;
+  margin-top: 4px;
+  white-space: pre-wrap;
+}
+.history-reason small {
+  display: block;
+  font-size: 9px;
+  color: #82986a;
+  margin-top: 4px;
+}
+.rate-form-note {
+  margin: 0;
+  line-height: 1.8;
+}
+.nav-item + .nav-item {
+  margin-top: 6px;
+}
+@media (max-width: 800px) {
+  .sidebar nav {
+    display: flex;
+    gap: 5px;
+  }
+  .nav-item + .nav-item {
+    margin-top: 0;
+  }
+  .nav-item {
+    font-size: 11px;
+  }
+  .rate-intro {
+    padding: 16px;
+  }
+  .rate-book-footnote {
+    padding-left: 20px;
+  }
+  .history-placeholder {
+    padding-left: 20px;
+  }
+}
+@media (max-width: 540px) {
+  .sidebar {
+    gap: 12px;
+    padding: 15px 18px;
+  }
+  .brand {
+    font-size: 17px;
+    gap: 7px;
+  }
+  .brand small {
+    font-size: 6px;
+    letter-spacing: 1.2px;
+  }
+  .nav-item {
+    gap: 5px;
+    padding: 9px 6px;
+    font-size: 10px;
+  }
+  .nav-item svg {
+    width: 16px;
+  }
+  .manual-badge {
+    display: none;
+  }
+  .rate-intro p {
+    line-height: 1.8;
+  }
+  .rate-toolbar {
+    flex-wrap: wrap;
+  }
+  .rate-toolbar > .filter-label {
+    flex: 0 0 auto;
+  }
+  .rate-intro-icon {
+    flex-shrink: 0;
+  }
+  .date-filter input {
+    max-width: 155px;
+  }
+  .rate-intro strong {
+    font-size: 11px;
+  }
+  .history-toolbar {
+    gap: 15px;
+  }
+  .history-toolbar .date-filter {
+    flex: 1;
+  }
+  .history-toolbar input {
+    max-width: 100%;
+    width: 100%;
+  }
+  .rate-form-note {
+    font-size: 9px;
+  }
+  .rate-amount {
+    font-size: 12px;
+  }
+}

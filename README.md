@@ -1,6 +1,6 @@
 # AwesomeJM
 
-A SaaS application for Nepali gold and silver shops. The workspace contains a React/Vite frontend, a NestJS API, PostgreSQL inventory storage, shared public contracts and decimal weight-conversion utilities.
+A SaaS application for Nepali gold and silver shops. The workspace contains a React/Vite frontend, a NestJS API, PostgreSQL inventory and metal-rate storage, shared public contracts and decimal calculation utilities.
 
 ## Requirements
 
@@ -40,7 +40,7 @@ The frontend proxies `/api` to the API during development. If the API port chang
 ```sh
 pnpm check       # Lint, type checks, calculation tests, builds, formatting
 pnpm smoke       # Start temporary API/web servers and verify their connection
-pnpm test:integration # Inventory API + real PostgreSQL; database must be running
+pnpm test:integration # Inventory/rates APIs + real PostgreSQL; database must be running
 pnpm format      # Format source and configuration
 ```
 
@@ -84,9 +84,29 @@ API routes under `/api/v1/inventory`:
 
 Run `pnpm db:migrate` after pulling new migrations. Applied migrations are tracked and serialized using a PostgreSQL advisory lock. Database changes are explicit rather than applied when the API starts. Migration source lives in `apps/api/migrations`; do not edit already-applied migrations.
 
+## Metal rates module
+
+Open **Metal rates** in the sidebar (`/#/rates`); inventory remains at `/#/inventory`.
+
+- Record manual buying and selling quotes in NPR per tola for a metal, actual fineness and AD date. Nepal's timezone determines today's date. No live market-feed integration is included.
+- Select a date to see its latest quote for each metal/purity. A missing rate stays empty; yesterday's rate is not carried forward automatically.
+- Save revisions with a reason, preserving the original amounts, source, timestamp, conversion and revision number. The rate date, metal and purity identify a series; revisions cannot change those fields.
+- Filter all history by date range and metal, with pagination. Both initial rates and later revisions remain visible.
+- Money uses exact decimal strings and PostgreSQL `numeric(11,2)`. Each quote retains the shop's 11.664 g/tola conversion. Per-gram values are rounded display previews; future sales must calculate from the original per-tola rate and retain a rate snapshot.
+- A quoted rate already applies to its stated purity. It must not receive a second purity adjustment. Buying and selling quotes are entered independently; no fixed margin is imposed.
+- Publishing uses a transaction, a lock on the normalized date/metal/purity key, and an expected revision. Concurrent submissions return a conflict rather than silently replacing another quote. Database triggers block rate updates/deletions.
+
+| Method | Route under `/api/v1/rates`                                                             | Purpose                                       |
+| ------ | --------------------------------------------------------------------------------------- | --------------------------------------------- |
+| GET    | `?date=2026-01-15&metal=GOLD`                                                           | Latest quotes on exactly that date            |
+| POST   | `/`                                                                                     | Publish an initial quote or append a revision |
+| GET    | `/history?from=2026-01-01&to=2026-01-31&metal=GOLD&fineness=916.667&page=1&pageSize=20` | Filtered revision history                     |
+
+Publish fields: `rateDate`, `metal`, `fineness`, `buyRatePerTola`, `sellRatePerTola`, `source`, `reason`, `expectedRevision`. Use decimal strings for amounts and fineness. Set `expectedRevision` to `0` for a new series or the latest revision number for an update; updates require a reason of at least five characters. Future dates are rejected. Rates do not automatically revalue stock or change past transactions.
+
 ## Scope and deployment
 
-The health endpoint confirms application startup, not database readiness. This is a local, single-shop development module: authentication, staff attribution, authorization and production tenant isolation are still required before hosting customer data. Each stock query is scoped to a server-selected shop, but authenticated shop selection and PostgreSQL row-level security are not implemented. Keep the API on loopback while developing. Sales, custom orders, exchanges, suppliers, cost valuation, barcode printing, stocktaking and official billing remain future modules.
+The health endpoint confirms application startup, not database readiness. These are local, single-shop development modules: authentication, staff attribution, authorization and production tenant isolation are still required before hosting customer data. Stock and rate queries are scoped to a server-selected shop, but authenticated shop selection and PostgreSQL row-level security are not implemented. Keep the API on loopback while developing. Sales, custom orders, exchanges, suppliers, cost valuation, barcode printing, stocktaking and official billing remain future modules.
 
 The conversion uses the first client's stated **11.664 grams per tola**, retained on every piece. Confirm that convention before importing business stock. The first receive form accepts grams; alternate unit entry and shop-specific conversion settings can follow. Physical stone/other weight is distinct from any future commercial wastage charge.
 

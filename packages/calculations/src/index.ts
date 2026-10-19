@@ -4,6 +4,17 @@ import { Decimal } from 'decimal.js';
 // agreed conversion without changing previously recorded transactions.
 export const DEFAULT_GRAMS_PER_TOLA = '11.664';
 
+// Display only: future transaction amounts must use the original per-tola rate,
+// avoiding another rounding step through this per-gram preview.
+export function ratePerGram(
+  ratePerTola: string,
+  gramsPerTola = DEFAULT_GRAMS_PER_TOLA,
+): string {
+  const rate = weight(ratePerTola);
+  if (rate.lte(0)) throw new RangeError('Rate must be greater than zero.');
+  return rate.div(conversion(gramsPerTola)).toFixed(6, Decimal.ROUND_HALF_UP);
+}
+
 export function inventoryWeights(
   grossGrams: string,
   nonMetalGrams: string,

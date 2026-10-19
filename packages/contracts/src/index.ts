@@ -1,5 +1,6 @@
 import { z } from 'zod';
 export * from './inventory.js';
+export * from './rates.js';
 
 export const healthResponseSchema = z.object({
   status: z.literal('ok'),

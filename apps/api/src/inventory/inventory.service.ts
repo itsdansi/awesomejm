@@ -15,7 +15,7 @@ import {
 import { DEFAULT_GRAMS_PER_TOLA } from '@awesomejm/calculations';
 import { DatabaseService } from '../database/database.service.js';
 
-const SHOP_ID = '00000000-0000-4000-8000-000000000001';
+import { SHOP_ID } from '../shop/shop.js';
 // Shop identity is resolved by the server. Authenticated shop selection will replace
 // this single-shop configuration before multiple customers can use the service.
 const columns = `id, item_code AS "itemCode", name, category, metal, fineness,
