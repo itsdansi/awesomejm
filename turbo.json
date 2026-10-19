@@ -10,7 +10,7 @@
       "dependsOn": ["^build"],
       "cache": false,
       "persistent": true,
-      "passThroughEnv": ["PORT", "HOST", "API_PROXY_TARGET"]
+      "passThroughEnv": ["PORT", "HOST", "API_PROXY_TARGET", "DATABASE_URL"]
     },
     "lint": {},
     "typecheck": {

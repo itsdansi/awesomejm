@@ -8,9 +8,13 @@
     "dev": "pnpm build && concurrently --kill-others -n types,server \"tsc -p tsconfig.json --watch --preserveWatchOutput\" \"node --watch --env-file-if-exists=.env dist/main.js\"",
     "start": "node --env-file-if-exists=.env dist/main.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "lint": "eslint src"
+    "lint": "eslint src scripts test",
+    "db:migrate": "node --env-file-if-exists=.env scripts/migrate.mjs",
+    "test:integration": "node --env-file-if-exists=.env --test test/*.test.mjs"
   },
   "dependencies": {
+    "@awesomejm/calculations": "workspace:*",
+    "pg": "catalog:",
     "@awesomejm/contracts": "workspace:*",
     "@nestjs/common": "catalog:",
     "@nestjs/core": "catalog:",
@@ -19,6 +23,7 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
+    "@types/pg": "catalog:",
     "@awesomejm/tooling": "workspace:*",
     "@types/node": "catalog:",
     "concurrently": "catalog:",

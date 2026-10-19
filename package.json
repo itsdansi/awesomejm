@@ -18,7 +18,11 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm format:check",
-    "smoke": "pnpm build && node scripts/smoke.mjs"
+    "smoke": "pnpm build && node scripts/smoke.mjs",
+    "db:up": "docker compose up -d --wait db",
+    "db:stop": "docker compose stop db",
+    "db:migrate": "pnpm --filter @awesomejm/api db:migrate",
+    "test:integration": "pnpm build && pnpm --filter @awesomejm/api test:integration"
   },
   "keywords": [],
   "author": "Dansi Acharya",

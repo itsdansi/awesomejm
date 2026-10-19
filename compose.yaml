@@ -1,0 +1,19 @@
+name: awesomejm
+services:
+  db:
+    image: postgres:18-alpine
+    ports:
+      - '127.0.0.1:5433:5432'
+    environment:
+      POSTGRES_USER: awesomejm
+      POSTGRES_PASSWORD: awesomejm_dev
+      POSTGRES_DB: awesomejm
+    volumes:
+      - inventory_db:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U awesomejm -d awesomejm']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+volumes:
+  inventory_db:
