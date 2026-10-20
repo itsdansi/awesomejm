@@ -279,6 +279,25 @@ test('encrypted backups restore exact database contents and verify recovery with
         );
         assert.equal(login.status, 200);
         const session = await login.json();
+        const settings = await globalThis.fetch(
+          `${await app.getUrl()}/api/v1/auth/shop-settings`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-AwesomeJM-Request': '1',
+              'X-CSRF-Token': session.csrfToken,
+              Cookie: login.headers.get('set-cookie').split(';')[0],
+            },
+            body: JSON.stringify({
+              calendar: 'BS',
+              timeZone: 'Asia/Kathmandu',
+              hourCycle: 'h23',
+            }),
+          },
+        );
+        assert.equal(settings.status, 200);
+        assert.equal((await settings.json()).calendar, 'BS');
         const posted = await globalThis.fetch(
           `${await app.getUrl()}/api/v1/inventory/items`,
           {

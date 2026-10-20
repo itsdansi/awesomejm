@@ -34,7 +34,7 @@
     "stockMetalPurityCombinationsNeedTodaySRate": "stock metal/purity combinations need today’s rate →"
   },
   "overview": {
-    "asOfDate": "{date} AD · Nepal time",
+    "asOfDate": "{date}",
     "moneyMovementHelp": "Money movement is recorded receipts minus payouts, including corrections. Sales value is not profit or cash received. Old-metal lots remain separate from ready-made jewellery."
   }
 }

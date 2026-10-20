@@ -17,5 +17,6 @@ export const navigationKeys = {
   Purchases: 'common.navigation.purchases',
   Reports: 'common.navigation.reports',
   Account: 'common.navigation.account',
+  Settings: 'settings.title',
   'Staff & recovery': 'common.navigation.staff',
 } as const satisfies Record<string, TranslationKey>;

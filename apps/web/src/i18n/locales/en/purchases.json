@@ -103,7 +103,7 @@
     "accountCreditHelp": "The purchase credits this customer’s existing account."
   },
   "purchaseDetails": {
-    "adNpr": "AD · NPR",
+    "adNpr": " / NPR",
     "amountsAndWeightsBelowShowTheOriginalPosting": "Amounts and weights below show the original posting. The linked records were reversed together.",
     "cancelErroneousSettlement": "Cancel erroneous settlement",
     "correctErroneousSettlement": "Correct erroneous settlement",

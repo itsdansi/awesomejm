@@ -30,10 +30,10 @@
     "searchOrders": "Search orders",
     "upcomingDeliveryDatesFirstClosedOrdersStayIn": "Upcoming delivery dates first. Closed orders stay in the register.",
     "designs": "designs",
-    "orderRecordsAdDates": "order records · AD dates"
+    "orderRecordsAdDates": "order records"
   },
   "orderDetails": {
-    "adDelivery": "AD · Delivery",
+    "adDelivery": " / Delivery ",
     "accountCreditNpr": "Account credit (NPR)",
     "addressAtBooking": "Address at booking",
     "amountReceivedNpr": "Amount received (NPR)",

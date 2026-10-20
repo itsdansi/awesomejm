@@ -30,10 +30,10 @@
     "searchOrders": "अर्डर खोज्नुहोस्",
     "upcomingDeliveryDatesFirstClosedOrdersStayIn": "नजिकको बुझाउने मिति पहिले। बन्द अर्डर पनि सूचीमा रहन्छन्।",
     "designs": "डिजाइन",
-    "orderRecordsAdDates": "अर्डर अभिलेख · ई.सं. मिति"
+    "orderRecordsAdDates": "अर्डर अभिलेख"
   },
   "orderDetails": {
-    "adDelivery": "ई.सं. · बुझाउने मिति",
+    "adDelivery": "· बुझाउने मिति",
     "accountCreditNpr": "खातामा जम्मा (रु.)",
     "addressAtBooking": "अर्डर गर्दाको ठेगाना",
     "amountReceivedNpr": "प्राप्त रकम (रु.)",

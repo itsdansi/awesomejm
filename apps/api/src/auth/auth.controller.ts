@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 import {
   auditListSchema,
+  displaySettingsSchema,
   changePasswordSchema,
   createStaffSchema,
   loginSchema,
@@ -87,6 +88,15 @@ export class AuthController {
     await this.auth.changePassword(req.user!, v.currentPassword, v.password);
     this.auth.cookie(res, null);
     return { ok: true };
+  }
+  @RequirePermission('settings.manage') @Patch('shop-settings') settings(
+    @Body() body: unknown,
+    @Req() req: AuthRequest,
+  ) {
+    return this.auth.updateDisplaySettings(
+      req.user!,
+      parse(displaySettingsSchema, body),
+    );
   }
   @RequirePermission('staff.manage') @Get('staff') staff() {
     return this.auth.staff();

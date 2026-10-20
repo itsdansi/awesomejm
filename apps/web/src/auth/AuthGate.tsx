@@ -40,9 +40,12 @@ export function AuthGate({ children }: { children: ReactNode }) {
       setSessionCsrf(null);
     };
     globalThis.addEventListener('session-expired', expired);
+    const focused = () => void refresh();
+    globalThis.addEventListener('focus', focused);
     const interval = globalThis.setInterval(() => void refresh(), 60000);
     return () => {
       globalThis.removeEventListener('session-expired', expired);
+      globalThis.removeEventListener('focus', focused);
       globalThis.clearInterval(interval);
     };
   }, [refresh]);

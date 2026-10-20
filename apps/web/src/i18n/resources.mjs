@@ -1,3 +1,5 @@
+import enSettings from './locales/en/settings.json' with { type: 'json' };
+import neSettings from './locales/ne/settings.json' with { type: 'json' };
 import enAuth from './locales/en/auth.json' with { type: 'json' };
 import enCommon from './locales/en/common.json' with { type: 'json' };
 import enCustomers from './locales/en/customers.json' with { type: 'json' };
@@ -28,6 +30,7 @@ import neValidation from './locales/ne/validation.json' with { type: 'json' };
 // Register each namespace explicitly so the same resources work in Vite and Node tests.
 export const resources = {
   en: {
+    settings: enSettings,
     auth: enAuth,
     common: enCommon,
     customers: enCustomers,
@@ -43,6 +46,7 @@ export const resources = {
     validation: enValidation,
   },
   ne: {
+    settings: neSettings,
     auth: neAuth,
     common: neCommon,
     customers: neCustomers,

@@ -18,3 +18,5 @@ export * from './purchases.js';
 
 export * from './reports.js';
 export * from './auth.js';
+
+export * from './settings.js';

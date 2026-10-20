@@ -1,3 +1,4 @@
+import { DateValue } from '../settings/DateValue';
 import { useAuth } from '../auth/AuthContext';
 import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
@@ -57,7 +58,7 @@ export function PurchaseDetails({ purchaseId }: { purchaseId: string }) {
                   {detail.sale
                     ? t('purchases.purchaseDetails.exchange')
                     : t('purchases.purchaseDetails.oldMetalPurchase')}{' '}
-                  · {detail.purchase.purchaseDate} {' ' + t('common.labels.ad')}
+                  · <DateValue value={detail.purchase.purchaseDate} />
                 </p>
                 <h1>{detail.purchase.purchaseCode}</h1>
               </div>
@@ -89,7 +90,7 @@ export function PurchaseDetails({ purchaseId }: { purchaseId: string }) {
                     </span>
                   </h2>
                   <p>
-                    {detail.purchase.purchaseDate}{' '}
+                    <DateValue value={detail.purchase.purchaseDate} />{' '}
                     {' ' + t('purchases.purchaseDetails.adNpr')}
                   </p>
                 </div>
@@ -97,8 +98,7 @@ export function PurchaseDetails({ purchaseId }: { purchaseId: string }) {
               {detail.purchase.status === 'CANCELLED' && (
                 <p className="receipt-reversed sale-cancelled">
                   {t('common.labels.cancelled') + ' '}
-                  {detail.purchase.cancellationDate}{' '}
-                  {' ' + t('common.dates.adSeparator')}{' '}
+                  <DateValue value={detail.purchase.cancellationDate} /> {' · '}{' '}
                   {detail.purchase.cancellationReason}
                   <br />
                   {t(

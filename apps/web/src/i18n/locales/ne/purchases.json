@@ -103,7 +103,7 @@
     "accountCreditHelp": "खरिदबापत रकम यही ग्राहकको पुरानो खातामा जम्मा हुन्छ।"
   },
   "purchaseDetails": {
-    "adNpr": "ई.सं. · रु.",
+    "adNpr": "· रु.",
     "amountsAndWeightsBelowShowTheOriginalPosting": "तलका रकम र तौल मूल प्रविष्टिका हुन्। सम्बन्धित अभिलेखहरू सँगै उल्ट्याइएका छन्।",
     "cancelErroneousSettlement": "गलत हिसाब मिलान रद्द गर्नुहोस्",
     "correctErroneousSettlement": "गलत हिसाब मिलान सच्याउनुहोस्",

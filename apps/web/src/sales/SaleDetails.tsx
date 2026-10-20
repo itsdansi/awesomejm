@@ -1,3 +1,4 @@
+import { DateValue } from '../settings/DateValue';
 import { useAuth } from '../auth/AuthContext';
 import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
@@ -56,7 +57,7 @@ export function SaleDetails({ saleId }: { saleId: string }) {
               <div>
                 <p className="eyebrow">
                   {t('sales.saleDetails.recordedSale') + ' '}
-                  {detail.sale.saleDate} {' ' + t('common.labels.ad')}
+                  <DateValue value={detail.sale.saleDate} />
                 </p>
                 <h1>{detail.sale.saleCode}</h1>
               </div>
@@ -86,8 +87,7 @@ export function SaleDetails({ saleId }: { saleId: string }) {
                     </span>
                   </h2>
                   <p>
-                    {detail.sale.saleDate}{' '}
-                    {' ' + t('common.dates.adSeparator') + ' '}
+                    <DateValue value={detail.sale.saleDate} /> {' · '}
                     {detail.lines.length}{' '}
                     {' ' + t('sales.saleDetails.piecesNpr')}
                   </p>
@@ -96,8 +96,7 @@ export function SaleDetails({ saleId }: { saleId: string }) {
               {detail.sale.status === 'CANCELLED' && (
                 <p className="receipt-reversed sale-cancelled">
                   {t('common.labels.cancelled') + ' '}
-                  {detail.sale.cancellationDate}{' '}
-                  {' ' + t('common.dates.adSeparator')}{' '}
+                  <DateValue value={detail.sale.cancellationDate} /> {' · '}{' '}
                   {detail.sale.cancellationReason}
                   <br />
                   {t(

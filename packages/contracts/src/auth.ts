@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { displaySettingsSchema } from './settings.js';
 export const roleSchema = z.enum(['OWNER', 'MANAGER', 'CASHIER', 'VIEWER']);
 export type StaffRole = z.infer<typeof roleSchema>;
 export const permissions = [
@@ -11,12 +12,15 @@ export const permissions = [
   'purchases.write',
   'records.correct',
   'staff.manage',
+  'settings.manage',
 ] as const;
 export type Permission = (typeof permissions)[number];
 export function rolePermissions(role: StaffRole): Permission[] {
   if (role === 'OWNER') return [...permissions];
   if (role === 'MANAGER')
-    return permissions.filter((p) => p !== 'staff.manage');
+    return permissions.filter(
+      (p) => p !== 'staff.manage' && p !== 'settings.manage',
+    );
   if (role === 'CASHIER')
     return ['workspace.read', 'customers.write', 'sales.write', 'orders.write'];
   return ['workspace.read'];
@@ -75,6 +79,7 @@ export const staffSchema = z.object({
 export const currentStaffSchema = staffSchema.extend({
   shopId: z.uuid(),
   shopName: z.string(),
+  displaySettings: displaySettingsSchema,
   permissions: z.array(z.enum(permissions)),
 });
 export const sessionSchema = z.object({

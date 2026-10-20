@@ -1,5 +1,6 @@
 export const resources: {
   en: {
+    settings: typeof import('./locales/en/settings.json');
     auth: typeof import('./locales/en/auth.json');
     common: typeof import('./locales/en/common.json');
     customers: typeof import('./locales/en/customers.json');
@@ -15,6 +16,7 @@ export const resources: {
     validation: typeof import('./locales/en/validation.json');
   };
   ne: {
+    settings: typeof import('./locales/ne/settings.json');
     auth: typeof import('./locales/ne/auth.json');
     common: typeof import('./locales/ne/common.json');
     customers: typeof import('./locales/ne/customers.json');

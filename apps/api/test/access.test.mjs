@@ -184,6 +184,101 @@ test('staff authentication, permissions, attribution and revocation protect all 
       },
     );
     await t.test(
+      'shop display settings are validated, owner-managed, tenant-scoped and shared across sessions',
+      async () => {
+        const defaults = {
+          calendar: 'AD',
+          timeZone: 'Asia/Kathmandu',
+          hourCycle: 'h23',
+        };
+        assert.deepEqual(owner.user.displaySettings, defaults);
+        const chosen = {
+          calendar: 'BS',
+          timeZone: 'America/New_York',
+          hourCycle: 'h12',
+        };
+        assert.equal(
+          (await api('/auth/shop-settings', chosen, null, {}, 'PATCH')).status,
+          401,
+        );
+        assert.equal(
+          (
+            await api(
+              '/auth/shop-settings',
+              chosen,
+              owner,
+              { 'X-CSRF-Token': '' },
+              'PATCH',
+            )
+          ).status,
+          403,
+        );
+        for (const session of [manager, cashier, viewer])
+          assert.equal(
+            (await api('/auth/shop-settings', chosen, session, {}, 'PATCH'))
+              .status,
+            403,
+          );
+        for (const invalid of [
+          { ...chosen, timeZone: 'invented/zone' },
+          { ...chosen, calendar: 'BOTH' },
+          { ...chosen, hourCycle: '24' },
+          { ...chosen, shopId: randomUUID() },
+        ])
+          assert.equal(
+            (await api('/auth/shop-settings', invalid, owner, {}, 'PATCH'))
+              .status,
+            400,
+          );
+        const otherShop = randomUUID();
+        await db.query('INSERT INTO shops(id,name) VALUES($1,$2)', [
+          otherShop,
+          'Other shop',
+        ]);
+        assert.deepEqual(
+          (await api('/auth/shop-settings', chosen, owner, {}, 'PATCH')).body,
+          chosen,
+        );
+        for (const session of [owner, manager, cashier, viewer])
+          assert.deepEqual(
+            (await api('/auth/session', undefined, session)).body.user
+              .displaySettings,
+            chosen,
+          );
+        const untouched = (
+          await db.query(
+            'SELECT display_calendar,display_time_zone,display_hour_cycle FROM shops WHERE id=$1',
+            [otherShop],
+          )
+        ).rows[0];
+        assert.deepEqual(untouched, {
+          display_calendar: 'AD',
+          display_time_zone: 'Asia/Kathmandu',
+          display_hour_cycle: 'h23',
+        });
+        const audit = (
+          await api('/auth/audit', undefined, owner)
+        ).body.items.find(
+          (event) => event.action === 'DISPLAY_SETTINGS_UPDATED',
+        );
+        assert.equal(audit.actorUsername, 'owner');
+        assert.equal(audit.resource, 'shop');
+        assert.deepEqual(audit.details, chosen);
+        await app.close();
+        await start();
+        assert.deepEqual(
+          (await api('/auth/session', undefined, viewer)).body.user
+            .displaySettings,
+          chosen,
+        );
+        assert.equal(
+          (await api('/auth/shop-settings', defaults, owner, {}, 'PATCH'))
+            .status,
+          200,
+        );
+      },
+    );
+    await t.test(
       'role matrix is enforced before business logic and privileged variants stay restricted',
       async () => {
         const id = randomUUID();

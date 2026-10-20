@@ -1,3 +1,4 @@
+import { DateValue } from '../settings/DateValue';
 import { t, message, useLanguage } from '../i18n/language';
 import { useState, type FormEvent } from 'react';
 import {
@@ -251,7 +252,7 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
               <div>
                 <h2>{review.quote.customer.name}</h2>
                 <p>
-                  {date} {' ' + t('common.dates.adSeparator') + ' '}
+                  <DateValue value={date} /> {' · '}
                   {exchange
                     ? t('purchases.labels.exchange')
                     : t('common.labels.oldMetalPurchase')}{' '}

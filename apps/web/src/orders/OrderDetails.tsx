@@ -1,3 +1,4 @@
+import { DateValue } from '../settings/DateValue';
 import { t, message, useLanguage } from '../i18n/language';
 import { useAuth } from '../auth/AuthContext';
 import { Permission } from '../auth/Permission';
@@ -62,7 +63,7 @@ export function OrderDetails({ orderId }: { orderId: string }) {
               <div>
                 <p className="eyebrow">
                   {t('orders.orderDetails.customOrder') + ' '}
-                  {detail.order.orderDate} {' ' + t('common.labels.ad')}
+                  <DateValue value={detail.order.orderDate} />
                 </p>
                 <h1>{detail.order.orderCode}</h1>
                 <p className="description">
@@ -72,7 +73,7 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                     ? t('common.labels.piece')
                     : t('common.labels.pieces')}{' '}
                   {' ' + t('orders.orderDetails.promised') + ' '}
-                  {detail.order.dueDate} {' ' + t('common.labels.ad')}
+                  <DateValue value={detail.order.dueDate} />
                 </p>
               </div>
               <div className="order-heading-actions">
@@ -111,9 +112,9 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                   </h2>
                   <p>
                     {t('orders.labels.booked') + ' '}
-                    {detail.order.orderDate}{' '}
+                    <DateValue value={detail.order.orderDate} />{' '}
                     {' ' + t('orders.orderDetails.adDelivery')}{' '}
-                    {detail.order.dueDate} {' ' + t('common.labels.ad')}{' '}
+                    <DateValue value={detail.order.dueDate} />{' '}
                     {detail.order.overdue
                       ? t('orders.orderDetails.overdue')
                       : ''}
@@ -370,7 +371,7 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                   <table>
                     <thead>
                       <tr>
-                        <th>{t('orders.orderDetails.entryDateAd')}</th>
+                        <th>{t('settings.date')}</th>
                         <th>{t('common.labels.details')}</th>
                         <th className="numeric">
                           {t('orders.orderDetails.accountCreditNpr')}
@@ -382,7 +383,9 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                         <tr key={payment.id}>
                           <td>
                             <strong>{payment.entryCode}</strong>
-                            <code>{payment.entryDate}</code>
+                            <code>
+                              <DateValue value={payment.entryDate} />
+                            </code>
                           </td>
                           <td>
                             {payment.kind === 'REVERSAL'
@@ -436,9 +439,9 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                       <span className={statusClass(event.status)}>
                         {t(statusTitle[event.status])}
                       </span>
-                      <time>
-                        {event.eventDate} {' ' + t('common.labels.ad')}
-                      </time>
+                      <span>
+                        <DateValue value={event.eventDate} />
+                      </span>
                       <small>
                         {t('common.labels.revision') + ' '}
                         {event.version}

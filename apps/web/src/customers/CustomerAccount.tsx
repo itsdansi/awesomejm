@@ -1,5 +1,7 @@
+import { DateValue, TimeValue } from '../settings/DateValue';
+import { useDates } from '../settings/useDates';
 import { Pagination } from '../shared/Pagination';
-import { locale, t, message, useLanguage } from '../i18n/language';
+import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useEffect, useState } from 'react';
 import {
@@ -21,6 +23,7 @@ import { balance, entryTitle, methodTitle, money } from './format';
 
 export function CustomerAccount({ customerId }: { customerId: string }) {
   useLanguage();
+  const { date: displayDate } = useDates();
 
   const [result, setResult] = useState<{
     key: string;
@@ -99,7 +102,7 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
             {customer
               ? t(
                   'customers.customerAccount.openedAdCustomerDetailsAndAccountStatement',
-                  { date: customer.openedOn },
+                  { date: displayDate(customer.openedOn) },
                 )
               : t('customers.customerAccount.loadingCustomerDetails')}
           </p>
@@ -317,7 +320,7 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
                         <tr key={item.id}>
                           <td>
                             <strong className="history-date">
-                              {item.entryDate}
+                              <DateValue value={item.entryDate} />
                             </strong>
                             <code>{item.entryCode}</code>
                           </td>
@@ -414,12 +417,7 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
                     {' ' + t('customers.customerAccount.pan') + ' '}
                     {change.pan || '—'}
                   </small>
-                  <time dateTime={change.changedAt}>
-                    {new Date(change.changedAt).toLocaleString(locale(), {
-                      timeZone: 'Asia/Kathmandu',
-                    })}{' '}
-                    {t('common.labels.npt')}
-                  </time>
+                  <TimeValue value={change.changedAt} />
                 </li>
               ))}
             </ol>

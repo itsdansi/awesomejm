@@ -38,6 +38,10 @@ const Sales = lazy(() =>
   import('./sales/Sales').then((module) => ({ default: module.Sales })),
 );
 
+const Settings = lazy(() =>
+  import('./settings/Settings').then((m) => ({ default: m.Settings })),
+);
+
 export function App() {
   const [route, setRoute] = useState(() => globalThis.location.hash);
   useEffect(() => {
@@ -46,6 +50,7 @@ export function App() {
     return () => globalThis.removeEventListener('hashchange', navigate);
   }, []);
   const { can } = useAuth();
+  if (route === '#/settings') return <Settings />;
   if (route === '#/account') return <Account />;
   if (route === '#/staff') return can('staff.manage') ? <Staff /> : <Account />;
   const required = route.startsWith('#/sales/new')

@@ -9,6 +9,8 @@ import {
 } from '@nestjs/common';
 import {
   currentStaffSchema,
+  displaySettingsSchema,
+  type DisplaySettings,
   rolePermissions,
   staffSchema,
   type CurrentStaff,
@@ -93,7 +95,7 @@ export class AuthService {
   }
   async loadUser(c: pg.PoolClient, id: string) {
     const result = await c.query(
-      `SELECT ${columns},shop_id AS "shopId",(SELECT name FROM shops WHERE id=$2) AS "shopName" FROM staff_users WHERE id=$1 AND shop_id=$2 AND active`,
+      `SELECT ${columns},shop_id AS "shopId",(SELECT name FROM shops WHERE id=$2) AS "shopName",(SELECT json_build_object('calendar',display_calendar,'timeZone',display_time_zone,'hourCycle',display_hour_cycle) FROM shops WHERE id=$2) AS "displaySettings" FROM staff_users WHERE id=$1 AND shop_id=$2 AND active`,
       [id, SHOP_ID],
     );
     if (!result.rowCount) return null;
@@ -108,9 +110,10 @@ export class AuthService {
     action: string,
     recordId: string | null,
     details: Record<string, unknown> = {},
+    resource = 'staff',
   ) {
     await c.query(
-      `INSERT INTO audit_events(shop_id,actor_id,actor_name,actor_username,action,resource,record_id,details) VALUES($1,$2,$3,$4,$5,'staff',$6,$7)`,
+      `INSERT INTO audit_events(shop_id,actor_id,actor_name,actor_username,action,resource,record_id,details) VALUES($1,$2,$3,$4,$5,$8,$6,$7)`,
       [
         SHOP_ID,
         user?.id ?? null,
@@ -119,8 +122,28 @@ export class AuthService {
         action,
         recordId,
         details,
+        resource,
       ],
     );
+  }
+  async updateDisplaySettings(user: CurrentStaff, input: DisplaySettings) {
+    return this.db.run(async (c) => {
+      await c.query(
+        'UPDATE shops SET display_calendar=$1,display_time_zone=$2,display_hour_cycle=$3 WHERE id=$4',
+        [input.calendar, input.timeZone, input.hourCycle, SHOP_ID],
+      );
+      await this.event(
+        c,
+        user,
+        'DISPLAY_SETTINGS_UPDATED',
+        SHOP_ID,
+        {
+          ...input,
+        },
+        'shop',
+      );
+      return displaySettingsSchema.parse(input);
+    }, true);
   }
   async login(username: string, password: string, ip: string) {
     // Reserve persistent account and network attempt budgets before expensive hashing.

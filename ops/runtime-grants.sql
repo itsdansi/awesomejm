@@ -10,7 +10,7 @@ GRANT INSERT ON inventory_items, inventory_movements, metal_rates, customers,
  sale_cancellations, custom_orders, custom_order_events, metal_purchases,
  old_metal_lots, purchase_cancellations, old_metal_movements, shop_counters,
  audit_events, staff_users, staff_sessions, login_limits TO ajm_runtime;
-GRANT UPDATE ON inventory_items, customers, custom_orders, shop_counters,
+GRANT UPDATE ON shops, inventory_items, customers, custom_orders, shop_counters,
  staff_users, staff_sessions, login_limits TO ajm_runtime;
 GRANT DELETE ON staff_sessions, login_limits TO ajm_runtime;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO ajm_runtime;

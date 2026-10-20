@@ -1,3 +1,4 @@
+import { DateValue, TimeValue } from '../settings/DateValue';
 import { Pagination } from '../shared/Pagination';
 import { locale, t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
@@ -21,15 +22,6 @@ const npr = (value: string) =>
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(Number(value));
-const time = (value: string) =>
-  new Date(value).toLocaleString(locale(), {
-    timeZone: 'Asia/Kathmandu',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-
 export function Rates() {
   useLanguage();
 
@@ -255,9 +247,9 @@ export function Rates() {
                     </td>
                     <td className="rate-source">
                       {rate.source}
-                      <time className="rate-subline" dateTime={rate.createdAt}>
-                        {time(rate.createdAt)} {' ' + t('common.labels.npt')}
-                      </time>
+                      <span className="rate-subline">
+                        <TimeValue value={rate.createdAt} />
+                      </span>
                     </td>
                     <td>
                       <Permission name="rates.write">
@@ -383,7 +375,9 @@ export function Rates() {
                 {history.items.map((rate) => (
                   <tr key={rate.id}>
                     <td>
-                      <strong className="history-date">{rate.rateDate}</strong>
+                      <strong className="history-date">
+                        <DateValue value={rate.rateDate} />
+                      </strong>
                       <span className="rate-subline">
                         {rate.metal === 'GOLD'
                           ? t('common.metals.gold')
@@ -406,8 +400,8 @@ export function Rates() {
                       </strong>
                       <span>{rate.reason || t('rates.book.initialRate')}</span>
                       <small>
-                        {rate.source} · {time(rate.createdAt)}{' '}
-                        {' ' + t('common.labels.npt')}
+                        {rate.source} ·{' '}
+                        <TimeValue value={rate.createdAt} />{' '}
                       </small>
                     </td>
                   </tr>

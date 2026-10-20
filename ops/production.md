@@ -20,6 +20,12 @@ An owner can open **Staff & recovery**, create staff with temporary passwords, e
 
 If the owner loses their password, a trusted database operator can run `pnpm staff:reset` against the intended database. This sets a personal password through a hidden prompt, revokes all sessions and records an operator recovery event. It does not re-enable a disabled account. An existing owner must re-enable disabled staff. A new owner can be bootstrapped only when there is no active owner.
 
+## Shop display settings
+
+The avatar menu includes **Settings** for every staff member. Only owners can save the shop-wide calendar (AD or BS), timestamp timezone and 12/24-hour time. Settings are stored in `shops`, included in encrypted backups, and refresh on other open devices within 60 seconds or on focus. Date entry, CSV exports and Nepal accounting periods stay AD; BS changes display only. Monthly report rows retain their actual AD accounting boundaries, rendered as BS date ranges. BS dates outside the converter's supported 2000–2090 range fall back to labelled AD dates.
+
+Apply migration `008_display_settings.sql` and reapply `ops/runtime-grants.sql` during upgrades: saving settings needs `UPDATE` access on `shops`. The migration keeps AD, Asia/Kathmandu and 24-hour defaults.
+
 ## Staff roles
 
 | Capability                                                                   | Owner | Manager | Cashier | Viewer |

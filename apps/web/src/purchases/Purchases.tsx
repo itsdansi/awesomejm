@@ -1,3 +1,4 @@
+import { DateValue } from '../settings/DateValue';
 import { Pagination } from '../shared/Pagination';
 import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
@@ -118,7 +119,7 @@ function PurchaseRegister() {
             <table>
               <thead>
                 <tr>
-                  <th>{t('purchases.purchases.purchaseDateAd')}</th>
+                  <th>{t('settings.date')}</th>
                   <th>{t('common.labels.customer')}</th>
                   <th>{t('purchases.purchases.typeStatus')}</th>
                   <th className="numeric">
@@ -141,7 +142,9 @@ function PurchaseRegister() {
                       <a className="item-link" href={`#/purchases/${p.id}`}>
                         {p.purchaseCode}
                       </a>
-                      <code>{p.purchaseDate}</code>
+                      <code>
+                        <DateValue value={p.purchaseDate} />
+                      </code>
                     </td>
                     <td>
                       {p.customerSnapshot.name}

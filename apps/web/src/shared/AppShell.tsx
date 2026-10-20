@@ -20,6 +20,7 @@ export function AppShell({
     | 'Reports'
     | 'Dashboard'
     | 'Account'
+    | 'Settings'
     | 'Staff & recovery';
   children: ReactNode;
 }) {

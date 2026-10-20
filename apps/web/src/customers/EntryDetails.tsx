@@ -1,3 +1,4 @@
+import { DateValue } from '../settings/DateValue';
 import { useAuth } from '../auth/AuthContext';
 import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
@@ -84,7 +85,7 @@ export function EntryDetails({
               : t('customers.entryDetails.accountEntry')}
           </strong>
           <small>
-            {entry.entryCode} · {entry.entryDate} {' ' + t('common.labels.ad')}
+            {entry.entryCode} · <DateValue value={entry.entryDate} />
           </small>
         </div>
         {entry.reversed && (

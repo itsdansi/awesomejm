@@ -75,7 +75,7 @@
     "noAddress": "ठेगाना छैन",
     "noEntriesInThisPeriod": "यस अवधिमा प्रविष्टि छैनन्",
     "noOutstandingDuesOrAdvance": "बक्यौता वा अग्रिम बाँकी छैन।",
-    "openedAdCustomerDetailsAndAccountStatement": "खाता खुलेको {date} ई.सं. · ग्राहक विवरण र खाता विवरण",
+    "openedAdCustomerDetailsAndAccountStatement": "खाता खुलेको {date} · ग्राहक विवरण र खाता विवरण",
     "particulars": "विवरण",
     "paymentRecordedTheCustomerBalanceIsUpTo": "भुक्तानी अभिलेखित भयो। ग्राहकको मौज्दात अद्यावधिक छ।",
     "periodClosing": "अवधिको अन्तिम मौज्दात",

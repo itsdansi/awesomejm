@@ -70,4 +70,12 @@ Both locales are loaded eagerly for this two-language MVP, so switching stays sy
 
 `t()` accepts semantic IDs only. `message()` is the compatibility boundary for existing API, shared-contract validation and notification strings. `messages.mjs` matches known English **resource values** to their semantic IDs; it is separate from component lookup and preserves unknown errors as received. Dynamic external messages retain their named values. As long as the API uses English prose, changes to an API message require updating the matching English resource and its translation. A future error-code/parameter protocol can replace this adapter without renaming UI keys.
 
-Missing locale values fall back to the English value at runtime, while CI rejects incomplete committed catalogs. Unknown IDs remain visible as IDs for diagnosis; prototype properties cannot become translations. UI language does not change stored data, machine-readable CSV fields, accounting precision, Latin digits or the AD calendar.
+Missing locale values fall back to the English value at runtime, while CI rejects incomplete committed catalogs. Unknown IDs remain visible as IDs for diagnosis; prototype properties cannot become translations. UI language does not change stored data, machine-readable CSV fields, accounting precision, Latin digits or stored AD business dates. Shop-wide Settings control AD/BS display, timestamp timezone and 12/24-hour time, independently of language.
+
+## Date and time display
+
+Use `DateValue`, `TimeValue`, `PeriodValue` from `settings/DateValue.tsx`, or `useDates()` for interpolated date text. `DateValue` accepts an AD civil date without timezone shifting. `TimeValue` accepts an ISO instant and uses the saved shop timezone. Date-entry fields, validation, CSV exports and Nepal accounting boundaries remain AD. Monthly report rows display their actual Gregorian bucket endpoints in BS.
+
+The MIT-licensed `nepali-date-converter` lookup table covers BS 2000–2090; conversion failures and out-of-range dates retain a labelled AD date. Keep the conversion dependency current as future BS month lengths are published. Do not implement BS with a year offset or the Intl Indian/Saka calendar.
+
+Owners save shop-wide preferences through `PATCH /auth/shop-settings`; all roles receive the settings in their session. Changes apply immediately after saving and propagate to other open sessions on focus or within 60 seconds. Database migration 008 adds these columns to `shops`; deployed runtime roles need the updated `ops/runtime-grants.sql`.

@@ -1,7 +1,8 @@
+import { TimeValue } from '../settings/DateValue';
 import { Pagination } from '../shared/Pagination';
 import type { StaticTranslationKey } from '../i18n/schema';
 import { roleKeys } from '../i18n/labels';
-import { locale, t, message, useLanguage } from '../i18n/language';
+import { t, message, useLanguage } from '../i18n/language';
 import {
   useCallback,
   useEffect,
@@ -36,6 +37,7 @@ const roleDescriptions: Record<StaffRole, StaticTranslationKey> = {
 const actions: Partial<Record<string, StaticTranslationKey>> = {
   INSERT: 'staff.access.recordAdded',
   UPDATE: 'staff.access.recordChanged',
+  DISPLAY_SETTINGS_UPDATED: 'settings.updated',
   LOGIN: 'staff.access.signedIn',
   LOGOUT: 'staff.access.signedOut',
   LOGIN_FAILED: 'staff.access.signInFailed',
@@ -64,11 +66,8 @@ const resources: Partial<Record<string, StaticTranslationKey>> = {
   purchase_cancellations: 'staff.access.purchaseCorrection',
   old_metal_movements: 'staff.access.oldMetalMovement',
   staff: 'staff.access.staffAccount',
+  shop: 'settings.title',
 };
-const time = (value: string | null) =>
-  value
-    ? new Date(value).toLocaleString(locale(), { timeZone: 'Asia/Kathmandu' })
-    : t('staff.access.notVerified');
 export function Staff() {
   useLanguage();
 
@@ -237,7 +236,7 @@ export function Staff() {
               <thead>
                 <tr>
                   <th>{t('staff.access.archive')}</th>
-                  <th>{t('staff.access.createdNepalTime')}</th>
+                  <th>{t('settings.created')}</th>
                   <th>{t('staff.access.restoreVerified')}</th>
                   <th>{t('staff.access.tablesChecked')}</th>
                 </tr>
@@ -253,8 +252,16 @@ export function Staff() {
                         {b.sha256.slice(0, 12)}…
                       </small>
                     </td>
-                    <td>{time(b.createdAt)}</td>
-                    <td>{time(b.verifiedAt)}</td>
+                    <td>
+                      <TimeValue value={b.createdAt} />
+                    </td>
+                    <td>
+                      {b.verifiedAt ? (
+                        <TimeValue value={b.verifiedAt} />
+                      ) : (
+                        t('staff.access.notVerified')
+                      )}
+                    </td>
                     <td>{b.tableCount ?? '—'}</td>
                   </tr>
                 ))}
@@ -274,7 +281,7 @@ export function Staff() {
       <section className="panel">
         <div className="panel-heading">
           <h2>{t('staff.access.auditTrail')}</h2>
-          <span>{t('staff.access.latestChangesNepalTime')}</span>
+          <span>{t('settings.latestChanges')}</span>
         </div>
         <div className="table-scroll" aria-busy={loading}>
           <table>
@@ -289,7 +296,9 @@ export function Staff() {
             <tbody>
               {audit?.items.map((event) => (
                 <tr key={event.id}>
-                  <td>{time(event.occurredAt)}</td>
+                  <td>
+                    <TimeValue value={event.occurredAt} />
+                  </td>
                   <td>
                     {event.actorName ??
                       t('staff.access.serverOperatorLegacyImport')}

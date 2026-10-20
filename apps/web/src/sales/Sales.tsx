@@ -1,3 +1,4 @@
+import { DateValue } from '../settings/DateValue';
 import { Pagination } from '../shared/Pagination';
 import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
@@ -194,7 +195,7 @@ function SalesRegister() {
             <table>
               <thead>
                 <tr>
-                  <th>{t('sales.list.saleDateAd')}</th>
+                  <th>{t('settings.date')}</th>
                   <th>{t('common.labels.customerAtPosting')}</th>
                   <th>{t('common.labels.status')}</th>
                   <th className="numeric">{t('sales.labels.saleTotalNpr')}</th>
@@ -213,7 +214,9 @@ function SalesRegister() {
                       <a className="item-link" href={`#/sales/${sale.id}`}>
                         {sale.saleCode}
                       </a>
-                      <code>{sale.saleDate}</code>
+                      <code>
+                        <DateValue value={sale.saleDate} />
+                      </code>
                     </td>
                     <td>
                       <strong>{sale.customerSnapshot.name}</strong>
@@ -274,7 +277,6 @@ function SalesRegister() {
             {list.data
               ? t('sales.list.saleRecords', { count: list.data.total })
               : t('sales.list.salesRegister')}{' '}
-            {' ' + t('sales.list.adDates')}
           </span>
           <Pagination
             page={page}

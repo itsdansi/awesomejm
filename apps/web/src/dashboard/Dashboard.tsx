@@ -1,3 +1,5 @@
+import { DateValue } from '../settings/DateValue';
+import { useDates } from '../settings/useDates';
 import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useState } from 'react';
@@ -9,6 +11,7 @@ import { money } from '../customers/format';
 import { ActivityCards } from '../reports/ReportParts';
 export function Dashboard() {
   useLanguage();
+  const { date: displayDate } = useDates();
 
   const [revision, setRevision] = useState(0),
     result = useResource('/dashboard', dashboardSchema, revision),
@@ -20,7 +23,9 @@ export function Dashboard() {
           <h1>{t('dashboard.dashboard.shopOverview')}</h1>
           <p className="description">
             {data
-              ? t('dashboard.overview.asOfDate', { date: data.date })
+              ? t('dashboard.overview.asOfDate', {
+                  date: displayDate(data.date),
+                })
               : t('dashboard.dashboard.todaySTradeStockAndCustomerBalances')}
           </p>
         </div>
@@ -108,7 +113,10 @@ export function Dashboard() {
                 <p className="eyebrow">
                   {t('dashboard.dashboard.monthToDate')}
                 </p>
-                <h2>{data.date.slice(0, 7)}</h2>
+                <h2>
+                  <DateValue value={`${data.date.slice(0, 7)}-01`} /> {' — '}{' '}
+                  <DateValue value={data.date} />
+                </h2>
               </div>
               <div>
                 <small>{t('common.labels.netSales')}</small>
@@ -261,7 +269,7 @@ export function Dashboard() {
                   <table>
                     <thead>
                       <tr>
-                        <th>{t('dashboard.dashboard.recordDateAd')}</th>
+                        <th>{t('settings.recordDate')}</th>
                         <th>{t('common.labels.customerAtPosting')}</th>
                         <th>{t('dashboard.dashboard.type')}</th>
                         <th className="numeric">
@@ -280,7 +288,9 @@ export function Dashboard() {
                             >
                               {row.code}
                             </a>
-                            <code>{row.date}</code>
+                            <code>
+                              <DateValue value={row.date} />
+                            </code>
                           </td>
                           <td>{row.customerName}</td>
                           <td>

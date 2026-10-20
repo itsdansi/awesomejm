@@ -130,9 +130,22 @@ export function UserMenu() {
             <Icon name="user" size={18} />
             {t('auth.userMenu.account')}
           </a>
-          <button
+          <a
             ref={(element) => {
               items.current[1] = element;
+            }}
+            href="#/settings"
+            role="menuitem"
+            tabIndex={-1}
+            className="user-menu-item"
+            onClick={() => close()}
+          >
+            <Icon name="settings" size={18} />
+            {t('settings.title')}
+          </a>
+          <button
+            ref={(element) => {
+              items.current[2] = element;
             }}
             type="button"
             role="menuitem"

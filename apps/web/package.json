@@ -15,6 +15,7 @@
   "dependencies": {
     "@awesomejm/calculations": "workspace:*",
     "@awesomejm/contracts": "workspace:*",
+    "nepali-date-converter": "3.3.4",
     "react": "catalog:",
     "react-dom": "catalog:"
   },

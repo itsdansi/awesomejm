@@ -1,4 +1,5 @@
-import { locale, t, message, useLanguage } from '../i18n/language';
+import { TimeValue } from '../settings/DateValue';
+import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useEffect, useState, type FormEvent } from 'react';
 import { gramsToTola } from '@awesomejm/calculations';
@@ -151,12 +152,7 @@ export function ItemDetails({
                 {t('common.labels.viewSale')}
               </a>
             )}
-            <time dateTime={entry.createdAt}>
-              {new Date(entry.createdAt).toLocaleString(locale(), {
-                timeZone: 'Asia/Kathmandu',
-              })}{' '}
-              {t('inventory.itemDetails.nepalTime')}
-            </time>
+            <TimeValue value={entry.createdAt} />
           </li>
         ))}
       </ol>

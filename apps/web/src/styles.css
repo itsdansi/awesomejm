@@ -3355,3 +3355,50 @@ html[lang='ne'] .auth-card h1 {
 .session-error {
   white-space: pre-line;
 }
+
+.settings-panel {
+  max-width: 700px;
+  padding: 28px;
+  margin-top: 24px;
+}
+.settings-panel > p {
+  color: #718078;
+}
+.settings-panel fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+.settings-panel select {
+  width: 100%;
+}
+.settings-preview {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  background: #f7f8f5;
+  border: 1px solid #e0e5df;
+  border-radius: 12px;
+  overflow-wrap: anywhere;
+}
+.settings-preview span,
+.settings-help {
+  color: #718078;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.settings-preview output {
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+.settings-panel .button {
+  justify-self: start;
+}
+@media (max-width: 600px) {
+  .settings-panel {
+    padding: 20px;
+  }
+}

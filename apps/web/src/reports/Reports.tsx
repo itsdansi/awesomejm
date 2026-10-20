@@ -1,3 +1,4 @@
+import { DateValue, PeriodValue } from '../settings/DateValue';
 import { useAuth } from '../auth/AuthContext';
 import { t, message, useLanguage } from '../i18n/language';
 import { useState, type FormEvent } from 'react';
@@ -74,7 +75,7 @@ export function Reports() {
       'netCashNpr',
     ] as const;
     downloadCsv(
-      `awesomejm-activity-${report.from}-${report.to}.csv`,
+      `awesomejm-activity-$<DateValue value={report.from} />-$<DateValue value={report.to} />.csv`,
       [...keys],
       report.series.map((row) => keys.map((key) => row[key])),
     );
@@ -95,7 +96,7 @@ export function Reports() {
       'closingFineGrams',
     ] as const;
     downloadCsv(
-      `awesomejm-stock-${report.from}-${report.to}.csv`,
+      `awesomejm-stock-$<DateValue value={report.from} />-$<DateValue value={report.to} />.csv`,
       [...keys],
       report.stock.map((row) => keys.map((key) => row[key])),
     );
@@ -153,7 +154,7 @@ export function Reports() {
           >
             {t('reports.overview.previousMonth')}
           </button>
-          <span>{t('reports.overview.adDatesNepalTime')}</span>
+          <span>{t('settings.range')}</span>
         </div>
         <div className="toolbar sales-toolbar">
           <label className="date-filter">
@@ -226,7 +227,8 @@ export function Reports() {
                 {t('common.print.shopHeading', { shopName: user.shopName })}
               </p>
               <h2>
-                {report.from} — {report.to} {' ' + t('common.labels.ad')}
+                <DateValue value={report.from} /> —{' '}
+                <DateValue value={report.to} />
               </h2>
               <p>
                 {report.groupBy === 'DAY'
@@ -251,7 +253,7 @@ export function Reports() {
                 <table className="activity-report">
                   <thead>
                     <tr>
-                      <th>{t('reports.overview.periodAd')}</th>
+                      <th>{t('settings.period')}</th>
                       <th className="numeric">
                         {t('reports.overview.netSalesNpr')}
                       </th>
@@ -273,7 +275,12 @@ export function Reports() {
                     {report.series.map((row) => (
                       <tr key={row.period}>
                         <td>
-                          <strong>{row.period}</strong>
+                          <strong>
+                            <PeriodValue
+                              value={row.period}
+                              range={{ from: report.from, to: report.to }}
+                            />
+                          </strong>
                         </td>
                         <td className="numeric">
                           {money(row.netSalesNpr)}
@@ -381,7 +388,7 @@ export function Reports() {
               <section className="stock-panel report-account-balances">
                 <p className="eyebrow">
                   {t('reports.overview.customerAccountsAt') + ' '}
-                  {report.to} {' ' + t('common.labels.ad')}
+                  <DateValue value={report.to} />
                 </p>
                 <dl>
                   <div>

@@ -1,3 +1,4 @@
+import { DateValue } from '../settings/DateValue';
 import { Pagination } from '../shared/Pagination';
 import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
@@ -172,7 +173,7 @@ function OrderRegister() {
                 <tr>
                   <th>{t('orders.list.orderCustomer')}</th>
                   <th>{t('orders.list.pieces')}</th>
-                  <th>{t('orders.list.deliveryDateAd')}</th>
+                  <th>{t('settings.date')}</th>
                   <th>{t('common.labels.status')}</th>
                   <th className="numeric">{t('orders.list.estimateNpr')}</th>
                   <th>
@@ -203,7 +204,7 @@ function OrderRegister() {
                     </td>
                     <td>
                       <span className={order.overdue ? 'danger-text' : ''}>
-                        {order.dueDate}
+                        <DateValue value={order.dueDate} />
                       </span>
                       {order.overdue && (
                         <small className="rate-subline danger-text">

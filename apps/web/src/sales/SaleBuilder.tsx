@@ -1,3 +1,4 @@
+import { DateValue } from '../settings/DateValue';
 import { t, message, useLanguage } from '../i18n/language';
 import { useState, type FormEvent } from 'react';
 import {
@@ -258,8 +259,8 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
               <div>
                 <h2>{review.quote.customer.name}</h2>
                 <p>
-                  {review.quote.customer.customerCode} · {review.quote.saleDate}{' '}
-                  {t('common.dates.adSeparator') + ' '}
+                  {review.quote.customer.customerCode} ·{' '}
+                  <DateValue value={review.quote.saleDate} /> {' · '}
                   {review.quote.lines.length} {' ' + t('common.labels.pieces')}
                 </p>
               </div>

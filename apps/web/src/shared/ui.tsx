@@ -19,6 +19,7 @@ export function Icon({
     | 'users'
     | 'user'
     | 'logout'
+    | 'settings'
     | 'receipt'
     | 'overview'
     | 'exchange'
@@ -26,6 +27,13 @@ export function Icon({
   size?: number;
 }) {
   const paths = {
+    settings: (
+      <>
+        <path d="M4 7h16M4 17h16" />
+        <circle cx="9" cy="7" r="3" fill="var(--surface, white)" />
+        <circle cx="15" cy="17" r="3" fill="var(--surface, white)" />
+      </>
+    ),
     user: (
       <>
         <circle cx="12" cy="8" r="4" />
