@@ -1,0 +1,192 @@
+{
+  "steps": {
+    "details": "01 / विवरण",
+    "review": "02 / समीक्षा"
+  },
+  "labels": {
+    "npr": ": रु.",
+    "ad": "ई.सं.",
+    "awesomejm": "AWESOMEJM",
+    "actions": "कार्यहरू",
+    "active": "सक्रिय",
+    "addPiece": "गहना थप्नुहोस्",
+    "addTheCustomerInCustomersFirst": "पहिले ग्राहक खण्डमा ग्राहक थप्नुहोस्।",
+    "added": "थपिएको",
+    "advancesCreditHeld": "अग्रिम / जम्मा रकम",
+    "awesomejmHome": "AwesomeJM गृहपृष्ठ",
+    "backToDetails": "विवरणमा फर्कनुहोस्",
+    "backToRegister": "अभिलेख सूचीमा फर्कनुहोस्",
+    "bank": "बैंक",
+    "billedWastageG": "बिलमा जोडिएको जर्ती (ग्राम)",
+    "bookAnOrder": "अर्डर लिनुहोस्",
+    "buyExchangeMetal": "धातु किन्नुहोस् / साट्नुहोस्",
+    "cancelled": "रद्द ·",
+    "calculating": "हिसाब हुँदै…",
+    "careInEveryDetail": "हरेक विवरणमा सावधानी।",
+    "cash": "नगद",
+    "changeCustomer": "ग्राहक बदल्नुहोस्",
+    "clearDates": "मिति हटाउनुहोस्",
+    "closeDialog": "संवाद बन्द गर्नुहोस्",
+    "correct": "{code} सच्याउनुहोस्",
+    "correctionDateAd": "सच्याउने मिति (ई.सं.)",
+    "creditNpr": "जमा (रु.)",
+    "customer": "ग्राहक",
+    "customerDate": "ग्राहक र मिति",
+    "customerAccountEntry": "ग्राहक खाता प्रविष्टि",
+    "customerAtPosting": "प्रविष्टि गर्दाको ग्राहक",
+    "customerDues": "ग्राहक बक्यौता",
+    "delivering": "बुझाइँदै",
+    "details": "विवरण",
+    "digitalWallet": "डिजिटल वालेट",
+    "dismissMessage": "सन्देश हटाउनुहोस्",
+    "filterByMetal": "धातुअनुसार छान्नुहोस्",
+    "forGoldAndSilverBusinesses": "सुनचाँदी व्यवसायको लागि",
+    "fromAd": "देखि (ई.सं.)",
+    "gold": "सुन",
+    "gross": "कुल",
+    "grossWeightG": "कुल तौल (ग्राम)",
+    "jewelleryManager": "गहना व्यवस्थापन",
+    "loadingCustomers": "ग्राहकहरू लोड हुँदै…",
+    "loadingOrder": "अर्डर लोड हुँदै…",
+    "madeForYourEverydayCraft": "तपाईंको दैनिक शिल्पका लागि।",
+    "mainNavigation": "मुख्य नेभिगेसन",
+    "metal": "धातु",
+    "metalPurity": "धातु र शुद्धता",
+    "method": "माध्यम",
+    "nprNepalTimeNpt": "रु. · नेपाल समय",
+    "npt": "नेपाल समय",
+    "netMoneyMovement": "खुद रकम आवागमन",
+    "netSales": "खुद बिक्री",
+    "noMatchingCustomer": "मिल्ने ग्राहक छैन।",
+    "noPhone": "फोन छैन",
+    "notEntered": "राखिएको छैन",
+    "notesOptional": "टिप्पणी (वैकल्पिक)",
+    "oldMetalLots": "पुरानो धातुका लट",
+    "oldMetalPurchase": "पुरानो धातु खरिद",
+    "open": "{code} खोल्नुहोस्",
+    "orderProgress": "अर्डर प्रगति",
+    "overdue": "म्याद नाघेको",
+    "pan": "PAN:",
+    "page": "पृष्ठ",
+    "paymentMethod": "भुक्तानी माध्यम",
+    "paymentReferenceOptional": "भुक्तानी सन्दर्भ (वैकल्पिक)",
+    "phonePan": "फोन / PAN",
+    "posted": "अभिलेखित",
+    "posting": "अभिलेखित हुँदै…",
+    "printInternalRecord": "आन्तरिक अभिलेख छाप्नुहोस्",
+    "purityFineness": "शुद्धता / प्रति हजार अंश (‰)",
+    "ready": "तयार",
+    "reasonForCorrection": "सुधारको कारण",
+    "recordASale": "बिक्री राख्नुहोस्",
+    "reversed": "उल्ट्याइएको",
+    "revision": "संशोधन",
+    "s": "S",
+    "sale": "बिक्री",
+    "searchCustomerNamePhoneOrCode": "ग्राहकको नाम, फोन वा कोड खोज्नुहोस्…",
+    "showing20MatchesRefineYourSearchToFind": "20 नतिजा देखाइएका छन्। अर्को ग्राहक खोज्न खोजी थप स्पष्ट गर्नुहोस्।",
+    "silver": "चाँदी",
+    "somethingWentWrongPleaseTryAgain": "केही समस्या आयो। कृपया फेरि प्रयास गर्नुहोस्।",
+    "status": "अवस्था",
+    "stoneOtherWeightG": "पत्थर / अन्य तौल (ग्राम)",
+    "stones": "पत्थर",
+    "theRequestFailed": "अनुरोध पूरा भएन।",
+    "toAd": "सम्म (ई.सं.)",
+    "today": "आज",
+    "viewCustomerAccount": "ग्राहक खाता हेर्नुहोस् →",
+    "viewOrder": "अर्डर हेर्नुहोस् →",
+    "viewSale": "बिक्री हेर्नुहोस् →",
+    "workspace": "कार्यस्थल",
+    "access": "पहुँच",
+    "awesome": "awesome",
+    "gBilled": "ग्राम बिलमा",
+    "gNet": "ग्राम खुद",
+    "gTola": "ग्राम/तोला",
+    "jm": "jm",
+    "piece": "गहना",
+    "pieces": "गहना",
+    "piecesLots": "गहना/लट",
+    "backToOrder": "← अर्डरमा फर्कनुहोस्"
+  },
+  "dates": {
+    "adSeparator": "ई.सं. ·"
+  },
+  "status": {
+    "cancelled": "रद्द गरिएको"
+  },
+  "money": {
+    "currency": "रु.",
+    "symbol": "रु.",
+    "perTola": "रु. {amount} / तोला"
+  },
+  "navigation": {
+    "workspace": "कार्यस्थल",
+    "account": "खाता",
+    "customers": "ग्राहकहरू",
+    "rates": "धातु दर",
+    "staff": "कर्मचारी र पुनःप्राप्ति",
+    "dashboard": "सारांश",
+    "inventory": "मौज्दात",
+    "sales": "बिक्री",
+    "orders": "अर्डरहरू",
+    "purchases": "खरिद",
+    "reports": "प्रतिवेदन"
+  },
+  "print": {
+    "shopHeading": "AWESOMEJM / {shopName}"
+  },
+  "fields": {
+    "address": "ठेगाना",
+    "amount": "रकम (रु.)",
+    "grossWeight": "कुल तौल",
+    "pan": "PAN",
+    "phone": "फोन",
+    "purity": "शुद्धता",
+    "quantity": "परिमाण",
+    "reason": "कारण",
+    "nonMetalWeight": "पत्थर / अन्य तौल"
+  },
+  "filters": {
+    "allMetals": "सबै धातु",
+    "allRecords": "सबै अभिलेख"
+  },
+  "actions": {
+    "cancel": "रद्द गर्नुहोस्",
+    "next": "अर्को",
+    "previous": "अघिल्लो",
+    "refresh": "पुनः लोड गर्नुहोस्",
+    "saving": "सुरक्षित हुँदै…",
+    "signOut": "बाहिरिनुहोस्",
+    "tryAgain": "फेरि प्रयास गर्नुहोस्",
+    "viewRecord": "{code} हेर्नुहोस्"
+  },
+  "metals": {
+    "gold": "सुन",
+    "silver": "चाँदी"
+  },
+  "units": {
+    "grams": "ग्रा."
+  },
+  "roles": {
+    "owner": "सञ्चालक",
+    "manager": "व्यवस्थापक",
+    "cashier": "क्यासियर",
+    "viewer": "दर्शक"
+  },
+  "enums": {
+    "gold": "सुन",
+    "silver": "चाँदी"
+  },
+  "paymentMethods": {
+    "cash": "नगद",
+    "bank": "बैंक",
+    "digitalWallet": "डिजिटल वालेट"
+  },
+  "language": {
+    "choose": "भाषा छान्नुहोस्",
+    "english": "English",
+    "nepali": "नेपाली"
+  },
+  "feedback": {
+    "loadingWorkspace": "कार्यस्थल लोड हुँदै…"
+  }
+}

@@ -1,0 +1,192 @@
+{
+  "steps": {
+    "details": "01 / DETAILS",
+    "review": "02 / REVIEW"
+  },
+  "labels": {
+    "npr": ": NPR",
+    "ad": "AD",
+    "awesomejm": "AWESOMEJM",
+    "actions": "Actions",
+    "active": "Active",
+    "addPiece": "Add piece",
+    "addTheCustomerInCustomersFirst": "Add the customer in Customers first.",
+    "added": "Added",
+    "advancesCreditHeld": "Advances / credit held",
+    "awesomejmHome": "AwesomeJM home",
+    "backToDetails": "Back to details",
+    "backToRegister": "Back to register",
+    "bank": "Bank",
+    "billedWastageG": "Billed wastage (g)",
+    "bookAnOrder": "Book an order",
+    "buyExchangeMetal": "Buy / exchange metal",
+    "cancelled": "CANCELLED ·",
+    "calculating": "Calculating…",
+    "careInEveryDetail": "Care in every detail.",
+    "cash": "Cash",
+    "changeCustomer": "Change customer",
+    "clearDates": "Clear dates",
+    "closeDialog": "Close dialog",
+    "correct": "Correct {code}",
+    "correctionDateAd": "Correction date (AD)",
+    "creditNpr": "Credit (NPR)",
+    "customer": "Customer",
+    "customerDate": "Customer & date",
+    "customerAccountEntry": "Customer account entry",
+    "customerAtPosting": "Customer at posting",
+    "customerDues": "Customer dues",
+    "delivering": "Delivering",
+    "details": "Details",
+    "digitalWallet": "Digital wallet",
+    "dismissMessage": "Dismiss message",
+    "filterByMetal": "Filter by metal",
+    "forGoldAndSilverBusinesses": "For gold and silver businesses",
+    "fromAd": "From (AD)",
+    "gold": "Gold · सुन",
+    "gross": "Gross",
+    "grossWeightG": "Gross weight (g)",
+    "jewelleryManager": "JEWELLERY MANAGER",
+    "loadingCustomers": "Loading customers…",
+    "loadingOrder": "Loading order…",
+    "madeForYourEverydayCraft": "Made for your everyday craft.",
+    "mainNavigation": "Main navigation",
+    "metal": "Metal",
+    "metalPurity": "Metal & purity",
+    "method": "Method",
+    "nprNepalTimeNpt": "NPR · Nepal time (NPT)",
+    "npt": "NPT",
+    "netMoneyMovement": "Net money movement",
+    "netSales": "Net sales",
+    "noMatchingCustomer": "No matching customer.",
+    "noPhone": "No phone",
+    "notEntered": "Not entered",
+    "notesOptional": "Notes (optional)",
+    "oldMetalLots": "Old-metal lots",
+    "oldMetalPurchase": "Old-metal purchase",
+    "open": "Open {code}",
+    "orderProgress": "Order progress",
+    "overdue": "Overdue",
+    "pan": "PAN:",
+    "page": "Page",
+    "paymentMethod": "Payment method",
+    "paymentReferenceOptional": "Payment reference (optional)",
+    "phonePan": "Phone / PAN",
+    "posted": "Posted",
+    "posting": "Posting…",
+    "printInternalRecord": "Print internal record",
+    "purityFineness": "Purity / fineness (‰)",
+    "ready": "Ready",
+    "reasonForCorrection": "Reason for correction",
+    "recordASale": "Record a sale",
+    "reversed": "Reversed",
+    "revision": "Revision",
+    "s": "S",
+    "sale": "Sale",
+    "searchCustomerNamePhoneOrCode": "Search customer name, phone or code…",
+    "showing20MatchesRefineYourSearchToFind": "Showing 20 matches. Refine your search to find another customer.",
+    "silver": "Silver · चाँदी",
+    "somethingWentWrongPleaseTryAgain": "Something went wrong. Please try again.",
+    "status": "Status",
+    "stoneOtherWeightG": "Stone / other weight (g)",
+    "stones": "Stones",
+    "theRequestFailed": "The request failed.",
+    "toAd": "To (AD)",
+    "today": "Today",
+    "viewCustomerAccount": "View customer account →",
+    "viewOrder": "View order →",
+    "viewSale": "View sale →",
+    "workspace": "WORKSPACE",
+    "access": "access",
+    "awesome": "awesome",
+    "gBilled": "g billed",
+    "gNet": "g net",
+    "gTola": "g/tola",
+    "jm": "jm",
+    "piece": "piece",
+    "pieces": "pieces",
+    "piecesLots": "pieces/lots",
+    "backToOrder": "← Back to order"
+  },
+  "dates": {
+    "adSeparator": "AD ·"
+  },
+  "status": {
+    "cancelled": "Cancelled"
+  },
+  "money": {
+    "currency": "NPR",
+    "symbol": "रु",
+    "perTola": "NPR {amount} / tola"
+  },
+  "navigation": {
+    "workspace": "Workspace",
+    "account": "Account",
+    "customers": "Customers",
+    "rates": "Metal rates",
+    "staff": "Staff & recovery",
+    "dashboard": "Dashboard",
+    "inventory": "Inventory",
+    "sales": "Sales",
+    "orders": "Orders",
+    "purchases": "Purchases",
+    "reports": "Reports"
+  },
+  "print": {
+    "shopHeading": "AWESOMEJM / {shopName}"
+  },
+  "fields": {
+    "address": "Address",
+    "amount": "Amount (NPR)",
+    "grossWeight": "Gross weight",
+    "pan": "PAN",
+    "phone": "Phone",
+    "purity": "Purity",
+    "quantity": "Quantity",
+    "reason": "Reason",
+    "nonMetalWeight": "Stone / other weight"
+  },
+  "filters": {
+    "allMetals": "All metals",
+    "allRecords": "All records"
+  },
+  "actions": {
+    "cancel": "Cancel",
+    "next": "Next",
+    "previous": "Previous",
+    "refresh": "Refresh",
+    "saving": "Saving…",
+    "signOut": "Sign out",
+    "tryAgain": "Try again",
+    "viewRecord": "View {code}"
+  },
+  "metals": {
+    "gold": "Gold",
+    "silver": "Silver"
+  },
+  "units": {
+    "grams": "g"
+  },
+  "roles": {
+    "owner": "Owner",
+    "manager": "Manager",
+    "cashier": "Cashier",
+    "viewer": "Viewer"
+  },
+  "enums": {
+    "gold": "Gold",
+    "silver": "Silver"
+  },
+  "paymentMethods": {
+    "cash": "Cash",
+    "bank": "Bank",
+    "digitalWallet": "Digital wallet"
+  },
+  "language": {
+    "choose": "Choose language",
+    "english": "English",
+    "nepali": "नेपाली"
+  },
+  "feedback": {
+    "loadingWorkspace": "Loading workspace…"
+  }
+}

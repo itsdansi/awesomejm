@@ -91,76 +91,76 @@ export function CustomerForm({
   }
   return (
     <Dialog
-      title={customer ? t('Edit customer') : t('Add a customer')}
-      eyebrow={t('Customer accounts')}
+      title={
+        customer
+          ? t('customers.customerForm.editCustomer')
+          : t('customers.labels.addACustomer')
+      }
+      eyebrow={t('customers.labels.customerAccounts')}
       busy={busy}
       onClose={onClose}
     >
       <p className="dialog-description">
         {customer
-          ? t(
-              'Changes are recorded in profile history. Earlier account entries keep their original customer details.',
-            )
-          : t(
-              'Create a customer record and bring forward an existing balance if needed. Search by phone or PAN first to avoid duplicate records.',
-            )}
+          ? t('customers.customerForm.profileHistoryHelp')
+          : t('customers.customerForm.createACustomerRecordAndBringForwardAn')}
       </p>
       <form onSubmit={(event) => void submit(event)}>
         <fieldset className="form-grid" disabled={busy}>
           <label className="full-width">
-            {t('Customer name')}
+            {t('customers.fields.name')}
             <input
               autoComplete="name"
               required
               maxLength={120}
-              placeholder={t('नाम / Customer name')}
+              placeholder={t('customers.customerForm.customerName')}
               {...field('name')}
             />
           </label>
           <label>
-            {t('Phone (optional)')}
+            {t('customers.customerForm.phoneOptional')}
             <input
               type="tel"
               autoComplete="tel"
               maxLength={30}
-              placeholder={t('98XXXXXXXX or +977…')}
+              placeholder={t('customers.customerForm.phonePlaceholder')}
               {...field('phone')}
             />
           </label>
           <label>
-            {t('PAN (optional)')}
+            {t('customers.customerForm.panOptional')}
             <input
               inputMode="numeric"
               maxLength={9}
-              placeholder={t('9 digits')}
+              placeholder={t('customers.customerForm.panPlaceholder')}
               {...field('pan')}
             />
           </label>
           <label className="full-width">
-            {t('Address (optional)')}
+            {t('customers.customerForm.addressOptional')}
             <input
               autoComplete="street-address"
               maxLength={300}
-              placeholder={t('City, ward or address')}
+              placeholder={t('customers.customerForm.cityWardOrAddress')}
               {...field('address')}
             />
           </label>
           <label className="full-width">
-            {t('Notes (optional)')}
+            {t('common.labels.notesOptional')}
             <textarea rows={2} maxLength={1000} {...field('notes')} />
           </label>
           {!customer && (
             <>
               <div className="form-section full-width">
-                <h3>{t('Opening account balance')}</h3>
+                <h3>{t('customers.customerForm.openingAccountBalance')}</h3>
                 <p>
                   {t(
-                    'Use the balance from the shop’s existing records. This is recorded once when the account is created.',
+                    'customers.customerForm.useTheBalanceFromTheShopSExisting',
                   )}
                 </p>
               </div>
               <label>
-                {t('Opening date (AD)')}
+                {t('customers.customerForm.openingDateAd')}
                 <input
                   type="date"
                   required
@@ -170,7 +170,7 @@ export function CustomerForm({
                 />
               </label>
               <label>
-                {t('Balance type')}
+                {t('customers.customerForm.balanceType')}
                 <select
                   {...field('openingType')}
                   onChange={(event) =>
@@ -184,13 +184,17 @@ export function CustomerForm({
                     })
                   }
                 >
-                  <option value="NONE">{t('Settled · No balance')}</option>
+                  <option value="NONE">
+                    {t('customers.customerForm.settledNoBalance')}
+                  </option>
                   <Permission name="records.correct">
-                    <option value="DUE">{t('Customer owes the shop')}</option>
+                    <option value="DUE">
+                      {t('customers.customerForm.customerOwesTheShop')}
+                    </option>
                   </Permission>
                   <Permission name="records.correct">
                     <option value="ADVANCE">
-                      {t('Shop holds an advance')}
+                      {t('customers.customerForm.shopHoldsAnAdvance')}
                     </option>
                   </Permission>
                 </select>
@@ -198,7 +202,7 @@ export function CustomerForm({
               {fields.openingType !== 'NONE' && (
                 <>
                   <label>
-                    {t('Opening amount (NPR)')}
+                    {t('customers.fields.openingAmount')}
                     <input
                       required
                       inputMode="decimal"
@@ -207,12 +211,14 @@ export function CustomerForm({
                     />
                   </label>
                   <label>
-                    {t('Opening balance source')}
+                    {t('customers.customerForm.openingBalanceSource')}
                     <input
                       required
                       minLength={5}
                       maxLength={160}
-                      placeholder={t('e.g. Paper ledger balance')}
+                      placeholder={t(
+                        'customers.customerForm.eGPaperLedgerBalance',
+                      )}
                       {...field('openingReference')}
                     />
                   </label>
@@ -222,7 +228,7 @@ export function CustomerForm({
           )}
           {customer && (
             <label className="full-width">
-              {t('Reason for profile change')}
+              {t('customers.customerForm.reasonForProfileChange')}
               <textarea
                 required
                 minLength={5}
@@ -245,14 +251,14 @@ export function CustomerForm({
             disabled={busy}
             onClick={onClose}
           >
-            {t('Cancel')}
+            {t('common.actions.cancel')}
           </button>
           <button className="button primary" disabled={busy}>
             {busy
-              ? t('Saving…')
+              ? t('common.actions.saving')
               : customer
-                ? t('Save profile')
-                : t('Create customer')}
+                ? t('customers.customerForm.saveProfile')
+                : t('customers.customerForm.createCustomer')}
             <Icon name="arrow" size={18} />
           </button>
         </div>

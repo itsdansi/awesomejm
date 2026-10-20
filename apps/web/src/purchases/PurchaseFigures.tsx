@@ -30,11 +30,17 @@ export function PurchaseFigures({
         <table className="purchase-lines">
           <thead>
             <tr>
-              <th>{t('Incoming lot / assay')}</th>
-              <th className="numeric">{t('Physical net')}</th>
-              <th className="numeric">{t('Buying quote')}</th>
-              <th className="numeric">{t('Agreed deductions')}</th>
-              <th className="numeric">{t('Credit (NPR)')}</th>
+              <th>{t('purchases.purchaseFigures.incomingLotAssay')}</th>
+              <th className="numeric">
+                {t('purchases.purchaseFigures.physicalNet')}
+              </th>
+              <th className="numeric">
+                {t('purchases.purchaseFigures.buyingQuote')}
+              </th>
+              <th className="numeric">
+                {t('purchases.purchaseFigures.agreedDeductions')}
+              </th>
+              <th className="numeric">{t('common.labels.creditNpr')}</th>
             </tr>
           </thead>
           <tbody>
@@ -43,46 +49,50 @@ export function PurchaseFigures({
                 <td>
                   <strong className="sale-piece-name">{line.name}</strong>
                   <code>
-                    {line.metal === 'GOLD' ? t('Gold') : t('Silver')} ·{' '}
-                    {line.fineness}‰
+                    {line.metal === 'GOLD'
+                      ? t('common.metals.gold')
+                      : t('common.metals.silver')}{' '}
+                    · {line.fineness}‰
                   </code>
                   <small className="rate-subline">{line.assayNotes}</small>
                   <small className="rate-subline">
-                    {t('Gross ')}
-                    {line.grossWeightGrams} {t(' g · stone/other')}{' '}
-                    {line.nonMetalWeightGrams} {t(' g')}
+                    {t('common.labels.gross') + ' '}
+                    {line.grossWeightGrams}{' '}
+                    {' ' + t('purchases.purchaseFigures.gStoneOther')}{' '}
+                    {line.nonMetalWeightGrams} {' ' + t('common.units.grams')}
                   </small>
                 </td>
                 <td className="numeric">
-                  {line.netWeightGrams} {t(' g')}
+                  {line.netWeightGrams} {' ' + t('common.units.grams')}
                   <small className="rate-subline">
-                    {t('Fine equivalent ')}
-                    {line.fineWeightGrams} {t(' g')}
+                    {t('purchases.purchaseFigures.fineEquivalent') + ' '}
+                    {line.fineWeightGrams} {' ' + t('common.units.grams')}
                   </small>
                   <small className="rate-subline">
-                    {t('Payable ')}
-                    {line.payableWeightGrams} {t(' g')}
+                    {t('purchases.purchaseFigures.payable') + ' '}
+                    {line.payableWeightGrams} {' ' + t('common.units.grams')}
                   </small>
                 </td>
                 <td className="numeric">
                   {money(line.rate.buyRatePerTola)}
                   <small className="rate-subline">
-                    {t('NPR/tola · ')}
-                    {line.rate.gramsPerTola} {t(' g/tola')}
+                    {t('purchases.purchaseFigures.nprTola') + ' '}
+                    {line.rate.gramsPerTola} {' ' + t('common.labels.gTola')}
                   </small>
                   <small className="rate-subline">
-                    {t('Metal value ')}
+                    {t('purchases.purchaseFigures.metalValue') + ' '}
                     {money(line.metalNpr)}
                   </small>
                 </td>
                 <td className="numeric">
-                  {line.deductedWeightGrams} {t(' g')}
+                  {line.deductedWeightGrams} {' ' + t('common.units.grams')}
                   <small className="rate-subline">
-                    {t('NPR ')}
+                    {t('common.money.currency') + ' '}
                     {money(line.deductionNpr)}
                   </small>
                   <small className="rate-subline">
-                    {line.deductionReason || t('No deductions')}
+                    {line.deductionReason ||
+                      t('purchases.purchaseFigures.noDeductions')}
                   </small>
                 </td>
                 <td className="numeric">
@@ -97,19 +107,31 @@ export function PurchaseFigures({
         <>
           <div className="stock-heading">
             <div>
-              <h2>{t('Outgoing jewellery')}</h2>
-              <p>{t('The new pieces supplied in this exchange.')}</p>
+              <h2>{t('purchases.purchaseFigures.outgoingJewellery')}</h2>
+              <p>
+                {t(
+                  'purchases.purchaseFigures.theNewPiecesSuppliedInThisExchange',
+                )}
+              </p>
             </div>
           </div>
           <div className="table-scroll">
             <table>
               <thead>
                 <tr>
-                  <th>{t('Piece')}</th>
-                  <th className="numeric">{t('Net grams')}</th>
-                  <th className="numeric">{t('Metal / wastage')}</th>
-                  <th className="numeric">{t('Making / stones')}</th>
-                  <th className="numeric">{t('Line value (NPR)')}</th>
+                  <th>{t('purchases.purchaseFigures.piece')}</th>
+                  <th className="numeric">
+                    {t('purchases.purchaseFigures.netGrams')}
+                  </th>
+                  <th className="numeric">
+                    {t('purchases.purchaseFigures.metalWastage')}
+                  </th>
+                  <th className="numeric">
+                    {t('purchases.purchaseFigures.makingStones')}
+                  </th>
+                  <th className="numeric">
+                    {t('purchases.purchaseFigures.lineValueNpr')}
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -125,14 +147,14 @@ export function PurchaseFigures({
                     <td className="numeric">
                       {money(line.metalNpr)}
                       <small className="rate-subline">
-                        {t('Wastage ')}
+                        {t('purchases.purchaseFigures.wastage') + ' '}
                         {money(line.wastageNpr)}
                       </small>
                     </td>
                     <td className="numeric">
                       {money(line.makingNpr)}
                       <small className="rate-subline">
-                        {t('Stones ')}
+                        {t('common.labels.stones') + ' '}
                         {money(line.stonesNpr)}
                       </small>
                     </td>
@@ -148,47 +170,49 @@ export function PurchaseFigures({
       )}
       <div className="sale-settlement">
         <div className="sale-account-note">
-          <p className="eyebrow">{t('ACCOUNT AFTER COMPLETE SETTLEMENT')}</p>
+          <p className="eyebrow">
+            {t('purchases.purchaseFigures.accountAfterCompleteSettlement')}
+          </p>
           <strong className={closing.className}>
-            {t('NPR ')}
+            {t('common.money.currency') + ' '}
             {closing.amount}
           </strong>
           <p>
             {t(closing.label)}
-            {t('. Includes earlier customer transactions.')}
+            {t('purchases.purchaseFigures.includesEarlierCustomerTransactions')}
           </p>
           <small>
             {t(
-              'Full physical net metal is received into old-metal lots. Deductions affect valuation, not the metal held.',
+              'purchases.purchaseFigures.fullPhysicalNetMetalIsReceivedIntoOld',
             )}
           </small>
         </div>
         <dl className="sale-totals">
           <div>
             <dt>
-              {t('Earlier balance · ')}
+              {t('purchases.purchaseFigures.earlierBalance') + ' '}
               {t(opening.label)}
             </dt>
             <dd>{opening.amount}</dd>
           </div>
           <div>
-            <dt>{t('Old-metal credit')}</dt>
+            <dt>{t('purchases.purchaseFigures.oldMetalCredit')}</dt>
             <dd>− {money(totalNpr)}</dd>
           </div>
           <div>
-            <dt>{t('New jewellery total')}</dt>
+            <dt>{t('purchases.purchaseFigures.newJewelleryTotal')}</dt>
             <dd>{money(saleTotalNpr)}</dd>
           </div>
           <div>
-            <dt>{t('Received now')}</dt>
+            <dt>{t('purchases.purchaseFigures.receivedNow')}</dt>
             <dd>− {money(receivedNpr)}</dd>
           </div>
           <div>
-            <dt>{t('Paid out now')}</dt>
+            <dt>{t('purchases.purchaseFigures.paidOutNow')}</dt>
             <dd>{money(payoutNpr)}</dd>
           </div>
           <div className="sale-grand-total">
-            <dt>{t('Balance (signed NPR)')}</dt>
+            <dt>{t('purchases.purchaseFigures.balanceSignedNpr')}</dt>
             <dd>{money(balanceAfterNpr)}</dd>
           </div>
         </dl>

@@ -8,8 +8,9 @@
     "build": "tsc -p tsconfig.json --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "lint": "eslint src test vite.config.ts",
-    "test": "node --test test/*.test.mjs"
+    "lint": "eslint src test scripts vite.config.ts",
+    "test": "node --test test/*.test.mjs",
+    "i18n:types": "node scripts/i18n-schema.mjs"
   },
   "dependencies": {
     "@awesomejm/calculations": "workspace:*",

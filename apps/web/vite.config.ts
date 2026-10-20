@@ -14,6 +14,20 @@ export default defineConfig(({ mode }) => {
   };
   return {
     plugins: [react()],
+    build: {
+      rolldownOptions: {
+        output: {
+          codeSplitting: {
+            groups: [
+              {
+                name: 'translations',
+                test: /[\\/]i18n[\\/]locales[\\/]/,
+              },
+            ],
+          },
+        },
+      },
+    },
     server: { host: '127.0.0.1', port: 5173, strictPort: true, proxy },
     preview: { host: '127.0.0.1', port: 4173, strictPort: true, proxy },
   };

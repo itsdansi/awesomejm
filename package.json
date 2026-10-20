@@ -28,7 +28,8 @@
     "db:backup": "pnpm --filter @awesomejm/api db:backup",
     "db:backup-key": "pnpm --filter @awesomejm/api db:backup-key",
     "db:verify-backup": "pnpm --filter @awesomejm/api db:verify-backup",
-    "db:restore": "pnpm --filter @awesomejm/api db:restore"
+    "db:restore": "pnpm --filter @awesomejm/api db:restore",
+    "i18n:types": "pnpm --filter @awesomejm/web i18n:types"
   },
   "keywords": [],
   "author": "Dansi Acharya",

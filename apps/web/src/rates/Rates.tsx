@@ -112,15 +112,13 @@ export function Rates() {
     <AppShell section="Metal rates">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">{t('A CLEAR RECORD OF EVERY QUOTE')}</p>
+          <p className="eyebrow">{t('rates.book.aClearRecordOfEveryQuote')}</p>
           <h1>
-            {t('Gold & silver rates')}
+            {t('rates.labels.goldSilverRates')}
             <span>.</span>
           </h1>
           <p className="description">
-            {t(
-              'Your shop’s buying and selling rates, with every revision preserved.',
-            )}
+            {t('rates.book.yourShopSBuyingAndSellingRatesWith')}
           </p>
         </div>
         <Permission name="rates.write">
@@ -133,7 +131,7 @@ export function Rates() {
             }}
           >
             <Icon name="plus" size={18} />
-            {t('Set a rate')}
+            {t('rates.book.setARate')}
           </button>
         </Permission>
       </div>
@@ -143,18 +141,18 @@ export function Rates() {
             <Icon name="diamond" size={23} />
           </span>
           <div>
-            <strong>{t('Your shop’s rate book')}</strong>
-            <p>{t('Manual quotes in NPR per tola · 1 tola = 11.664 g')}</p>
+            <strong>{t('rates.book.yourShopSRateBook')}</strong>
+            <p>{t('rates.book.manualQuotesInNprPerTola1Tola')}</p>
           </div>
         </div>
-        <span className="manual-badge">{t('MANUAL ENTRY')}</span>
+        <span className="manual-badge">{t('rates.book.manualEntry')}</span>
       </div>
       {notice && (
         <div className="success" role="status">
           {message(notice)}
           <button
             className="icon-button"
-            aria-label={t('Dismiss message')}
+            aria-label={t('common.labels.dismissMessage')}
             onClick={() => setNotice('')}
           >
             <Icon name="close" size={16} />
@@ -169,20 +167,20 @@ export function Rates() {
         <div className="stock-heading">
           <div>
             <h2 id="rate-book-title">
-              {t('Daily rate book ')}
+              {t('rates.book.dailyRateBook') + ' '}
               <span>{book?.rates.length ?? '—'}</span>
             </h2>
-            <p>{t('Latest revision for each purity on the selected date.')}</p>
+            <p>{t('rates.book.latestRevisionForEachPurityOnTheSelected')}</p>
           </div>
           <button className="text-button" onClick={refresh}>
-            {t('Refresh')}
+            {t('common.actions.refresh')}
           </button>
         </div>
         <div className="toolbar rate-toolbar">
           <label className="date-filter">
-            {t('Rate date (AD)')}
+            {t('rates.labels.rateDateAd')}
             <input
-              aria-label={t('Rate book date')}
+              aria-label={t('rates.book.rateBookDate')}
               type="date"
               min="2000-01-01"
               max={today}
@@ -191,37 +189,37 @@ export function Rates() {
             />
           </label>
           <button className="text-button" onClick={() => setDate(nepalToday())}>
-            {t('Today')}
+            {t('common.labels.today')}
           </button>
           <label className="filter-label">
-            <span className="sr-only">{t('Filter by metal')}</span>
+            <span className="sr-only">{t('common.labels.filterByMetal')}</span>
             <select
-              aria-label={t('Filter by metal')}
+              aria-label={t('common.labels.filterByMetal')}
               value={metal}
               onChange={(event) => {
                 setMetal(event.target.value);
                 setPage(1);
               }}
             >
-              <option value="">{t('All metals')}</option>
-              <option value="GOLD">{t('Gold')}</option>
-              <option value="SILVER">{t('Silver')}</option>
+              <option value="">{t('common.filters.allMetals')}</option>
+              <option value="GOLD">{t('common.metals.gold')}</option>
+              <option value="SILVER">{t('common.metals.silver')}</option>
             </select>
           </label>
         </div>
         {bookLoading ? (
           <div className="empty-state rate-empty" role="status">
             <span className="loading-dot" />
-            <p>{t('Loading the rate book…')}</p>
+            <p>{t('rates.book.loadingTheRateBook')}</p>
           </div>
         ) : bookError ? (
           <div className="empty-state rate-empty">
-            <h3>{t('Rate book couldn’t load')}</h3>
+            <h3>{t('rates.book.rateBookCouldnTLoad')}</h3>
             <p className="error" role="alert">
               {message(bookError)}
             </p>
             <button className="button secondary" onClick={refresh}>
-              {t('Try again')}
+              {t('common.actions.tryAgain')}
             </button>
           </div>
         ) : book?.rates.length ? (
@@ -229,12 +227,14 @@ export function Rates() {
             <table>
               <thead>
                 <tr>
-                  <th>{t('Metal & purity')}</th>
-                  <th className="numeric">{t('Buying / tola')}</th>
-                  <th className="numeric">{t('Selling / tola')}</th>
-                  <th>{t('Source / saved')}</th>
+                  <th>{t('common.labels.metalPurity')}</th>
+                  <th className="numeric">{t('rates.book.buyingTola')}</th>
+                  <th className="numeric">{t('rates.book.sellingTola')}</th>
+                  <th>{t('rates.book.sourceSaved')}</th>
                   <th>
-                    <span className="sr-only">{t('Actions')}</span>
+                    <span className="sr-only">
+                      {t('common.labels.actions')}
+                    </span>
                   </th>
                 </tr>
               </thead>
@@ -246,51 +246,51 @@ export function Rates() {
                         className={`metal-badge ${rate.metal.toLowerCase()}`}
                       >
                         {rate.metal === 'GOLD'
-                          ? t('Gold · सुन')
-                          : t('Silver · चाँदी')}
+                          ? t('common.labels.gold')
+                          : t('common.labels.silver')}
                       </span>
                       <strong className="rate-purity">{rate.fineness}‰</strong>
                       <small className="rate-subline">
-                        {t('Revision ')}
+                        {t('common.labels.revision') + ' '}
                         {rate.revision}
                       </small>
                     </td>
                     <td className="numeric rate-amount">
-                      <small>{t('NPR ')}</small>
+                      <small>{t('common.money.currency') + ' '}</small>
                       {npr(rate.buyRatePerTola)}
                       <span>
                         ≈ {ratePerGram(rate.buyRatePerTola, rate.gramsPerTola)}{' '}
-                        / {t('g')}
+                        / {t('common.units.grams')}
                       </span>
                     </td>
                     <td className="numeric rate-amount">
-                      <small>{t('NPR ')}</small>
+                      <small>{t('common.money.currency') + ' '}</small>
                       {npr(rate.sellRatePerTola)}
                       <span>
                         ≈ {ratePerGram(rate.sellRatePerTola, rate.gramsPerTola)}{' '}
-                        / {t('g')}
+                        / {t('common.units.grams')}
                       </span>
                     </td>
                     <td className="rate-source">
                       {rate.source}
                       <time className="rate-subline" dateTime={rate.createdAt}>
-                        {time(rate.createdAt)} {t(' NPT')}
+                        {time(rate.createdAt)} {' ' + t('common.labels.npt')}
                       </time>
                     </td>
                     <td>
                       <Permission name="rates.write">
                         <button
                           className="button secondary compact"
-                          aria-label={t('Revise {value0} {value1}', {
-                            value0: rate.metal.toLowerCase(),
-                            value1: rate.fineness,
+                          aria-label={t('rates.book.reviseQuote', {
+                            metal: rate.metal.toLowerCase(),
+                            purity: rate.fineness,
                           })}
                           onClick={() => {
                             setForm({ rate });
                             setNotice('');
                           }}
                         >
-                          {t('Revise')}
+                          {t('rates.book.revise')}
                         </button>
                       </Permission>
                     </td>
@@ -304,12 +304,8 @@ export function Rates() {
             <span className="empty-icon">
               <Icon name="diamond" size={30} />
             </span>
-            <h3>{t('No rates recorded for this date')}</h3>
-            <p>
-              {t(
-                'Set a quote for each metal and purity you trade. Previous dates are available in history.',
-              )}
-            </p>
+            <h3>{t('rates.book.noRatesRecordedForThisDate')}</h3>
+            <p>{t('rates.book.setAQuoteForEachMetalAndPurity')}</p>
             <Permission name="rates.write">
               <button
                 className="button secondary"
@@ -317,15 +313,13 @@ export function Rates() {
                 onClick={() => setForm({})}
               >
                 <Icon name="plus" size={17} />
-                {t('Set first rate')}
+                {t('rates.book.setFirstRate')}
               </button>
             </Permission>
           </div>
         )}
         <div className="rate-book-footnote">
-          {t(
-            'Quotes apply to their stated purity. Per-gram values are rounded previews.',
-          )}
+          {t('rates.book.quotesApplyToTheirStatedPurityPerGram')}
         </div>
       </section>
       <section
@@ -336,18 +330,18 @@ export function Rates() {
         <div className="stock-heading">
           <div>
             <h2 id="rate-history-title">
-              {t('Rate history ')}
+              {t('rates.book.rateHistory') + ' '}
               <span>{history?.total ?? '—'}</span>
             </h2>
-            <p>{t('Original entries and every subsequent revision.')}</p>
+            <p>{t('rates.book.originalEntriesAndEverySubsequentRevision')}</p>
           </div>
           <Icon name="history" size={19} />
         </div>
         <div className="toolbar rate-toolbar history-toolbar">
           <label className="date-filter">
-            {t('From (AD)')}
+            {t('common.labels.fromAd')}
             <input
-              aria-label={t('History start date')}
+              aria-label={t('rates.book.historyStartDate')}
               type="date"
               min="2000-01-01"
               max={to || today}
@@ -359,9 +353,9 @@ export function Rates() {
             />
           </label>
           <label className="date-filter">
-            {t('To (AD)')}
+            {t('common.labels.toAd')}
             <input
-              aria-label={t('History end date')}
+              aria-label={t('rates.book.historyEndDate')}
               type="date"
               min={from || '2000-01-01'}
               max={today}
@@ -381,19 +375,19 @@ export function Rates() {
                 setPage(1);
               }}
             >
-              {t('Clear dates')}
+              {t('common.labels.clearDates')}
             </button>
           )}
         </div>
         {historyLoading ? (
           <div className="history-placeholder" role="status">
-            {t('Loading rate history…')}
+            {t('rates.book.loadingRateHistory')}
           </div>
         ) : historyError ? (
           <div className="history-placeholder error" role="alert">
             {message(historyError)}{' '}
             <button className="text-button" onClick={refresh}>
-              {t('Try again')}
+              {t('common.actions.tryAgain')}
             </button>
           </div>
         ) : history?.items.length ? (
@@ -401,10 +395,10 @@ export function Rates() {
             <table>
               <thead>
                 <tr>
-                  <th>{t('Date / purity')}</th>
-                  <th className="numeric">{t('Buying / tola')}</th>
-                  <th className="numeric">{t('Selling / tola')}</th>
-                  <th>{t('Revision / reason')}</th>
+                  <th>{t('rates.book.datePurity')}</th>
+                  <th className="numeric">{t('rates.book.buyingTola')}</th>
+                  <th className="numeric">{t('rates.book.sellingTola')}</th>
+                  <th>{t('rates.book.revisionReason')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -413,26 +407,29 @@ export function Rates() {
                     <td>
                       <strong className="history-date">{rate.rateDate}</strong>
                       <span className="rate-subline">
-                        {rate.metal === 'GOLD' ? t('Gold') : t('Silver')} ·{' '}
-                        {rate.fineness}‰
+                        {rate.metal === 'GOLD'
+                          ? t('common.metals.gold')
+                          : t('common.metals.silver')}{' '}
+                        · {rate.fineness}‰
                       </span>
                     </td>
                     <td className="numeric">
-                      {t('NPR ')}
+                      {t('common.money.currency') + ' '}
                       {npr(rate.buyRatePerTola)}
                     </td>
                     <td className="numeric">
-                      {t('NPR ')}
+                      {t('common.money.currency') + ' '}
                       {npr(rate.sellRatePerTola)}
                     </td>
                     <td className="history-reason">
                       <strong>
-                        {t('Revision ')}
+                        {t('common.labels.revision') + ' '}
                         {rate.revision}
                       </strong>
-                      <span>{rate.reason || t('Initial rate')}</span>
+                      <span>{rate.reason || t('rates.book.initialRate')}</span>
                       <small>
-                        {rate.source} · {time(rate.createdAt)} {t(' NPT')}
+                        {rate.source} · {time(rate.createdAt)}{' '}
+                        {' ' + t('common.labels.npt')}
                       </small>
                     </td>
                   </tr>
@@ -442,34 +439,40 @@ export function Rates() {
           </div>
         ) : (
           <div className="history-placeholder">
-            {t('No rate history')}{' '}
-            {from || to || metal ? t('matches these filters') : t('yet')}
-            {t('. Saved quotes will appear here.')}
+            {t('rates.book.noRateHistory')}{' '}
+            {from || to || metal
+              ? t('rates.book.matchesTheseFilters')
+              : t('rates.book.yet')}
+            {t('rates.book.savedQuotesWillAppearHere')}
           </div>
         )}
         <div className="table-footer">
           <span>
             {history
-              ? t('{value0} recorded {value1}', {
-                  value0: history.total,
-                  value1: t(history.total === 1 ? 'entry' : 'entries'),
+              ? t('rates.book.recorded', {
+                  count: history.total,
+                  unit: t(
+                    history.total === 1
+                      ? 'rates.book.entry'
+                      : 'rates.book.entries',
+                  ),
                 })
-              : t('Rate history')}
+              : t('rates.book.rateHistory')}
           </span>
           <div className="pagination">
             <button
-              aria-label={t('Previous history page')}
+              aria-label={t('rates.book.previousHistoryPage')}
               disabled={page === 1 || historyLoading}
               onClick={() => setPage((value) => value - 1)}
             >
               ‹
             </button>
             <span>
-              {t('Page ')}
+              {t('common.labels.page') + ' '}
               {page}
             </span>
             <button
-              aria-label={t('Next history page')}
+              aria-label={t('rates.book.nextHistoryPage')}
               disabled={
                 !history ||
                 page * history.pageSize >= history.total ||

@@ -76,63 +76,67 @@ function CustomerRegister() {
     <AppShell section="Customers">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">{t('EVERY RELATIONSHIP, EVERY BALANCE')}</p>
+          <p className="eyebrow">
+            {t('customers.list.everyRelationshipEveryBalance')}
+          </p>
           <h1>
-            {t('Customer accounts')}
+            {t('customers.labels.customerAccounts')}
             <span>.</span>
           </h1>
           <p className="description">
-            {t('Keep customer details, dues and advances in one place.')}
+            {t('customers.list.keepCustomerDetailsDuesAndAdvancesInOne')}
           </p>
         </div>
         <Permission name="customers.write">
           <button className="button primary" onClick={() => setCreating(true)}>
             <Icon name="plus" size={18} />
-            {t('Add a customer')}
+            {t('customers.labels.addACustomer')}
           </button>
         </Permission>
       </div>
       <section
         className="summary-cards"
-        aria-label={t('Customer account totals')}
+        aria-label={t('customers.list.customerAccountTotals')}
       >
         <article className="summary-card">
           <div className="summary-top">
-            <span>{t('Customers')}</span>
+            <span>{t('common.navigation.customers')}</span>
             <span className="summary-icon neutral">
               <Icon name="users" />
             </span>
           </div>
           <strong>{data?.summary.customers ?? '—'}</strong>
-          <p>{t('Customer records in your shop')}</p>
+          <p>{t('customers.list.customerRecordsInYourShop')}</p>
         </article>
         <article className="summary-card gold-card">
           <div className="summary-top">
-            <span>{t('Customer dues')}</span>
-            <span className="summary-icon gold">{t('रु')}</span>
+            <span>{t('common.labels.customerDues')}</span>
+            <span className="summary-icon gold">
+              {t('common.money.symbol')}
+            </span>
           </div>
           <strong className="customer-money">
             {data ? money(data.summary.receivableNpr) : '—'}
-            <small>{t('NPR')}</small>
+            <small>{t('common.money.currency')}</small>
           </strong>
-          <p>{t('Total owed to the shop')}</p>
+          <p>{t('customers.list.totalOwedToTheShop')}</p>
         </article>
         <article className="summary-card">
           <div className="summary-top">
-            <span>{t('Advances held')}</span>
-            <span className="summary-icon neutral">{t('रु')}</span>
+            <span>{t('customers.list.advancesHeld')}</span>
+            <span className="summary-icon neutral">
+              {t('common.money.symbol')}
+            </span>
           </div>
           <strong className="customer-money">
             {data ? money(data.summary.advanceNpr) : '—'}
-            <small>{t('NPR')}</small>
+            <small>{t('common.money.currency')}</small>
           </strong>
-          <p>{t('Customer funds held by the shop')}</p>
+          <p>{t('customers.list.customerFundsHeldByTheShop')}</p>
         </article>
       </section>
       <p className="account-scope-note">
-        {t(
-          'Opening balances, sales, old-metal purchases, exchanges, order advances and payments appear here.',
-        )}
+        {t('customers.list.accountScopeHelp')}
       </p>
       <section
         className="stock-panel"
@@ -142,12 +146,12 @@ function CustomerRegister() {
         <div className="stock-heading">
           <div>
             <h2 id="customer-register-title">
-              {t('Customer register ')}
+              {t('customers.list.customerRegister') + ' '}
               <span>{data?.list.total ?? '—'}</span>
             </h2>
             <p>
               {t(
-                'Search before adding a customer. Shared phone numbers are allowed.',
+                'customers.list.searchBeforeAddingACustomerSharedPhoneNumbers',
               )}
             </p>
           </div>
@@ -155,45 +159,49 @@ function CustomerRegister() {
             className="text-button"
             onClick={() => setRevision((value) => value + 1)}
           >
-            {t('Refresh')}
+            {t('common.actions.refresh')}
           </button>
         </div>
         <div className="toolbar">
           <label className="search">
             <Icon name="search" size={18} />
             <input
-              aria-label={t('Search customers')}
-              placeholder={t('Search name, phone, PAN or code…')}
+              aria-label={t('customers.list.searchCustomers')}
+              placeholder={t('customers.list.searchNamePhonePanOrCode')}
               maxLength={120}
               value={search}
               onChange={(event) => setSearch(event.target.value)}
             />
           </label>
           <label className="filter-label">
-            <span className="sr-only">{t('Filter by balance')}</span>
+            <span className="sr-only">
+              {t('customers.list.filterByBalance')}
+            </span>
             <select
-              aria-label={t('Filter by balance')}
+              aria-label={t('customers.list.filterByBalance')}
               value={filter}
               onChange={(event) => {
                 setFilter(event.target.value);
                 setPage(1);
               }}
             >
-              <option value="ALL">{t('All balances')}</option>
-              <option value="DUE">{t('Customer owes')}</option>
-              <option value="ADVANCE">{t('Advance held')}</option>
-              <option value="SETTLED">{t('Settled')}</option>
+              <option value="ALL">{t('customers.list.allBalances')}</option>
+              <option value="DUE">{t('customers.labels.customerOwes')}</option>
+              <option value="ADVANCE">
+                {t('customers.labels.advanceHeld')}
+              </option>
+              <option value="SETTLED">{t('customers.labels.settled')}</option>
             </select>
           </label>
         </div>
         {loading ? (
           <div className="empty-state" role="status">
             <span className="loading-dot" />
-            <p>{t('Loading customer accounts…')}</p>
+            <p>{t('customers.list.loadingCustomerAccounts')}</p>
           </div>
         ) : error ? (
           <div className="empty-state">
-            <h3>{t('Customer accounts couldn’t load')}</h3>
+            <h3>{t('customers.list.customerAccountsCouldnTLoad')}</h3>
             <p className="error" role="alert">
               {message(error)}
             </p>
@@ -201,7 +209,7 @@ function CustomerRegister() {
               className="button secondary"
               onClick={() => setRevision((value) => value + 1)}
             >
-              {t('Try again')}
+              {t('common.actions.tryAgain')}
             </button>
           </div>
         ) : data?.list.items.length ? (
@@ -209,12 +217,16 @@ function CustomerRegister() {
             <table>
               <thead>
                 <tr>
-                  <th>{t('Customer / code')}</th>
-                  <th>{t('Phone')}</th>
-                  <th>{t('Address')}</th>
-                  <th className="numeric">{t('Account balance')}</th>
+                  <th>{t('customers.list.customerCode')}</th>
+                  <th>{t('common.fields.phone')}</th>
+                  <th>{t('common.fields.address')}</th>
+                  <th className="numeric">
+                    {t('customers.labels.accountBalance')}
+                  </th>
                   <th>
-                    <span className="sr-only">{t('Account')}</span>
+                    <span className="sr-only">
+                      {t('common.navigation.account')}
+                    </span>
                   </th>
                 </tr>
               </thead>
@@ -241,15 +253,15 @@ function CustomerRegister() {
                       >
                         <strong>{account.amount}</strong>
                         <small>
-                          {t('NPR · ')}
+                          {t('customers.list.npr') + ' '}
                           {t(account.label)}
                         </small>
                       </td>
                       <td>
                         <a
                           className="icon-button"
-                          aria-label={t('Open {value0}', {
-                            value0: customer.customerCode,
+                          aria-label={t('common.labels.open', {
+                            code: customer.customerCode,
                           })}
                           href={`#/customers/${customer.id}`}
                         >
@@ -269,15 +281,13 @@ function CustomerRegister() {
             </span>
             <h3>
               {term || filter !== 'ALL'
-                ? t('No matching customers')
-                : t('Start with your first customer')}
+                ? t('customers.list.noMatchingCustomers')
+                : t('customers.list.startWithYourFirstCustomer')}
             </h3>
             <p>
               {term || filter !== 'ALL'
-                ? t('Try another search or balance filter.')
-                : t(
-                    'Add a customer and bring forward their existing dues or advance.',
-                  )}
+                ? t('customers.list.tryAnotherSearchOrBalanceFilter')
+                : t('customers.list.addACustomerAndBringForwardTheirExisting')}
             </p>
             {!term && filter === 'ALL' && (
               <Permission name="customers.write">
@@ -286,7 +296,7 @@ function CustomerRegister() {
                   onClick={() => setCreating(true)}
                 >
                   <Icon name="plus" size={17} />
-                  {t('Add first customer')}
+                  {t('customers.list.addFirstCustomer')}
                 </button>
               </Permission>
             )}
@@ -295,23 +305,23 @@ function CustomerRegister() {
         <div className="table-footer">
           <span>
             {data
-              ? t('{value0} customer records', { value0: data.list.total })
-              : t('Customer register')}
+              ? t('customers.list.customerRecords', { count: data.list.total })
+              : t('customers.list.customerRegister')}
           </span>
           <div className="pagination">
             <button
-              aria-label={t('Previous customer page')}
+              aria-label={t('customers.list.previousCustomerPage')}
               disabled={page === 1 || loading}
               onClick={() => setPage((value) => value - 1)}
             >
               ‹
             </button>
             <span>
-              {t('Page ')}
+              {t('common.labels.page') + ' '}
               {page}
             </span>
             <button
-              aria-label={t('Next customer page')}
+              aria-label={t('customers.list.nextCustomerPage')}
               disabled={
                 !data || page * data.list.pageSize >= data.list.total || loading
               }

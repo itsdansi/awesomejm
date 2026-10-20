@@ -30,15 +30,15 @@ export function SaleDetails({ saleId }: { saleId: string }) {
   return (
     <AppShell section="Sales">
       <a className="back-link" href="#/sales">
-        {t('← Sales register')}
+        {t('sales.labels.salesRegister')}
       </a>
       {result.loading ? (
         <div className="empty-state" role="status">
-          {t('Loading sale…')}
+          {t('sales.saleDetails.loadingSale')}
         </div>
       ) : result.error ? (
         <div className="empty-state">
-          <h2>{t('Sale couldn’t load')}</h2>
+          <h2>{t('sales.saleDetails.saleCouldnTLoad')}</h2>
           <p className="error" role="alert">
             {message(result.error)}
           </p>
@@ -46,7 +46,7 @@ export function SaleDetails({ saleId }: { saleId: string }) {
             className="button secondary"
             onClick={() => setRevision((value) => value + 1)}
           >
-            {t('Try again')}
+            {t('common.actions.tryAgain')}
           </button>
         </div>
       ) : (
@@ -55,29 +55,29 @@ export function SaleDetails({ saleId }: { saleId: string }) {
             <div className="page-heading">
               <div>
                 <p className="eyebrow">
-                  {t('RECORDED SALE · ')}
-                  {detail.sale.saleDate} {t(' AD')}
+                  {t('sales.saleDetails.recordedSale') + ' '}
+                  {detail.sale.saleDate} {' ' + t('common.labels.ad')}
                 </p>
                 <h1>
                   {detail.sale.saleCode}
                   <span>.</span>
                 </h1>
                 <p className="description">
-                  {t('The pieces and prices saved when this sale was posted.')}
+                  {t('sales.saleDetails.thePiecesAndPricesSavedWhenThisSale')}
                 </p>
               </div>
               <button
                 className="button secondary"
                 onClick={() => globalThis.print()}
               >
-                {t('Print internal record')}
+                {t('common.labels.printInternalRecord')}
               </button>
             </div>
             <section className="stock-panel print-document">
               <div className="stock-heading">
                 <div>
                   <p className="eyebrow">
-                    {t('AWESOMEJM / {shopName} · INTERNAL SALE RECORD', {
+                    {t('sales.saleDetails.awesomejmInternalSaleRecord', {
                       shopName: user.shopName,
                     })}
                   </p>
@@ -87,87 +87,94 @@ export function SaleDetails({ saleId }: { saleId: string }) {
                       className={`status ${detail.sale.status === 'CANCELLED' ? 'voided' : ''}`}
                     >
                       {detail.sale.status === 'CANCELLED'
-                        ? t('Cancelled')
-                        : t('Posted')}
+                        ? t('common.status.cancelled')
+                        : t('common.labels.posted')}
                     </span>
                   </h2>
                   <p>
-                    {detail.sale.saleDate} {t(' AD · ')}
-                    {detail.lines.length} {t(' pieces · NPR')}
+                    {detail.sale.saleDate}{' '}
+                    {' ' + t('common.dates.adSeparator') + ' '}
+                    {detail.lines.length}{' '}
+                    {' ' + t('sales.saleDetails.piecesNpr')}
                   </p>
                 </div>
               </div>
               {detail.sale.status === 'CANCELLED' && (
                 <p className="receipt-reversed sale-cancelled">
-                  {t('CANCELLED · ')}
-                  {detail.sale.cancellationDate} {t(' AD ·')}{' '}
+                  {t('common.labels.cancelled') + ' '}
+                  {detail.sale.cancellationDate}{' '}
+                  {' ' + t('common.dates.adSeparator')}{' '}
                   {detail.sale.cancellationReason}
                   <br />
                   {t(
-                    'The linked stock and account entries were reversed. Amounts below show the original posting.',
+                    'sales.saleDetails.theLinkedStockAndAccountEntriesWereReversed',
                   )}
                 </p>
               )}
               <dl className="details-grid sale-customer-details">
                 <div>
-                  <dt>{t('Customer at posting')}</dt>
+                  <dt>{t('common.labels.customerAtPosting')}</dt>
                   <dd>
                     {detail.sale.customerSnapshot.name}
                     <small>{detail.sale.customerSnapshot.customerCode}</small>
                   </dd>
                 </div>
                 <div>
-                  <dt>{t('Phone / PAN')}</dt>
+                  <dt>{t('common.labels.phonePan')}</dt>
                   <dd>
                     {detail.sale.customerSnapshot.phone || '—'}
                     <small>
-                      {t('PAN: ')}
+                      {t('common.labels.pan') + ' '}
                       {detail.sale.customerSnapshot.pan || '—'}
                     </small>
                   </dd>
                 </div>
                 <div>
-                  <dt>{t('Address')}</dt>
+                  <dt>{t('common.fields.address')}</dt>
                   <dd>{detail.sale.customerSnapshot.address || '—'}</dd>
                 </div>
                 <div>
-                  <dt>{t('Official bill reference')}</dt>
-                  <dd>{detail.sale.billReference || t('Not entered')}</dd>
-                </div>
-                <div>
-                  <dt>{t('Payment method')}</dt>
+                  <dt>{t('sales.saleDetails.officialBillReference')}</dt>
                   <dd>
-                    {detail.sale.paymentMethod
-                      ? t(methodTitle[detail.sale.paymentMethod])
-                      : t('No money received')}
+                    {detail.sale.billReference || t('common.labels.notEntered')}
                   </dd>
                 </div>
                 <div>
-                  <dt>{t('Payment reference')}</dt>
+                  <dt>{t('common.labels.paymentMethod')}</dt>
+                  <dd>
+                    {detail.sale.paymentMethod
+                      ? t(methodTitle[detail.sale.paymentMethod])
+                      : t('sales.saleDetails.noMoneyReceived')}
+                  </dd>
+                </div>
+                <div>
+                  <dt>{t('sales.saleDetails.paymentReference')}</dt>
                   <dd>{detail.sale.paymentReference || '—'}</dd>
                 </div>
               </dl>
               {detail.sale.orderId && (
                 <p className="sale-review-reference">
-                  {t('Linked custom order:')}{' '}
+                  {t('sales.saleDetails.linkedCustomOrder')}{' '}
                   <a
                     className="text-button"
                     href={`#/orders/${detail.sale.orderId}`}
                   >
-                    {t('View order →')}
+                    {t('common.labels.viewOrder')}
                   </a>
                 </p>
               )}
               {detail.sale.purchaseId && (
                 <p className="sale-review-reference">
-                  {t('Linked exchange:')}{' '}
+                  {t('sales.saleDetails.linkedExchange')}{' '}
                   <a
                     className="text-button"
                     href={`#/purchases/${detail.sale.purchaseId}`}
                   >
-                    {t('View complete settlement / correction →')}
+                    {t('sales.saleDetails.viewCompleteSettlementCorrection')}
                   </a>
-                  {t('. This sale snapshot precedes any purchase payout.')}
+                  {t(
+                    'sales.saleDetails.thisSaleSnapshotPrecedesAnyPurchasePayout',
+                  )}
                 </p>
               )}
               <SaleFigures lines={detail.lines} totals={detail.sale} />
@@ -175,9 +182,7 @@ export function SaleDetails({ saleId }: { saleId: string }) {
                 <p className="sale-review-reference">{detail.sale.notes}</p>
               )}
               <p className="receipt-disclaimer sale-disclaimer">
-                {t(
-                  'Internal sale record · This is not a tax invoice. Balances and dues shown are snapshots at posting; later payments appear in the customer account.',
-                )}
+                {t('sales.saleDetails.internalSaleRecordThisIsNotATax')}
               </p>
             </section>
             <div className="sale-page-actions">
@@ -185,7 +190,7 @@ export function SaleDetails({ saleId }: { saleId: string }) {
                 className="button secondary"
                 href={`#/customers/${detail.sale.customerId}`}
               >
-                {t('View customer account →')}
+                {t('common.labels.viewCustomerAccount')}
               </a>
               {detail.sale.status === 'POSTED' && !detail.sale.purchaseId && (
                 <Permission name="records.correct">
@@ -193,7 +198,7 @@ export function SaleDetails({ saleId }: { saleId: string }) {
                     className="text-button danger-text"
                     onClick={() => setCorrecting(true)}
                   >
-                    {t('Correct an erroneous sale')}
+                    {t('sales.saleDetails.correctAnErroneousSale')}
                   </button>
                 </Permission>
               )}
@@ -259,8 +264,8 @@ function CancelSale({
   }
   return (
     <Dialog
-      title={t('Correct {value0}', { value0: sale.saleCode })}
-      eyebrow={t('SALE RECORD CORRECTION')}
+      title={t('common.labels.correct', { code: sale.saleCode })}
+      eyebrow={t('sales.saleDetails.saleRecordCorrection')}
       busy={busy}
       onClose={onClose}
     >
@@ -268,19 +273,14 @@ function CancelSale({
         className="correction-form"
         onSubmit={(event) => void cancel(event)}
       >
+        <p>{t('sales.saleDetails.useThisOnlyForAnErroneousEntryWhile')}</p>
         <p>
-          {t(
-            'Use this only for an erroneous entry while all pieces are still in the shop. This restores the pieces and reverses the recorded charge and received payment together. The original record remains visible.',
-          )}
-        </p>
-        <p>
-          {sale.orderId && t('The linked order returns to Ready. ')}
-          {t(
-            'This records a correction. For a customer return after delivery or money actually refunded, a separate return or refund record is needed.',
-          )}
+          {sale.orderId &&
+            t('sales.saleDetails.theLinkedOrderReturnsToReady') + ' '}
+          {t('sales.saleDetails.thisRecordsACorrectionForACustomerReturn')}
         </p>
         <label>
-          {t('Correction date (AD)')}
+          {t('common.labels.correctionDateAd')}
           <input
             type="date"
             required
@@ -292,7 +292,7 @@ function CancelSale({
           />
         </label>
         <label>
-          {t('Reason for correction')}
+          {t('common.labels.reasonForCorrection')}
           <textarea
             required
             minLength={5}
@@ -311,7 +311,7 @@ function CancelSale({
             required
             disabled={busy}
           />
-          {t('All pieces from this sale are physically in the shop.')}
+          {t('sales.saleDetails.physicalReturnConfirmation')}
         </label>
         {error && (
           <p className="error" role="alert">
@@ -325,10 +325,12 @@ function CancelSale({
             disabled={busy}
             onClick={onClose}
           >
-            {t('Keep sale')}
+            {t('sales.saleDetails.keepSale')}
           </button>
           <button className="button danger" disabled={busy || !confirmed}>
-            {busy ? t('Recording correction…') : t('Cancel erroneous sale')}
+            {busy
+              ? t('sales.saleDetails.recordingCorrection')
+              : t('sales.saleDetails.cancelErroneousSale')}
           </button>
         </div>
       </form>

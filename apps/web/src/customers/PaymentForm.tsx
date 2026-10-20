@@ -70,35 +70,33 @@ export function PaymentForm({
     <Dialog
       title={
         kind === 'PAYMENT'
-          ? t('Record a payment')
-          : t('Record an advance refund')
+          ? t('customers.paymentForm.recordAPayment')
+          : t('customers.paymentForm.recordAnAdvanceRefund')
       }
-      eyebrow={t('Customer accounts')}
+      eyebrow={t('customers.labels.customerAccounts')}
       busy={busy}
       onClose={onClose}
     >
       <p className="dialog-description">
         {kind === 'PAYMENT'
-          ? t('Record money received from')
-          : t('Record an advance already returned to')}{' '}
+          ? t('customers.paymentForm.recordMoneyReceivedFrom')
+          : t('customers.paymentForm.recordAnAdvanceAlreadyReturnedTo')}{' '}
         <strong>{customer.name}</strong>.{' '}
         {kind === 'PAYMENT'
-          ? t(
-              'Any amount beyond the dues becomes an advance held for this customer.',
-            )
-          : t('The refund is limited to the advance currently held.')}
+          ? t('customers.paymentForm.anyAmountBeyondTheDuesBecomesAnAdvance')
+          : t('customers.paymentForm.theRefundIsLimitedToTheAdvanceCurrently')}
       </p>
       <div className={`account-form-balance ${current.className}`}>
         <span>{t(current.label)}</span>
         <strong>
-          {t('NPR ')}
+          {t('common.money.currency') + ' '}
           {current.amount}
         </strong>
       </div>
       <form onSubmit={(event) => void submit(event)}>
         <fieldset className="form-grid" disabled={busy}>
           <label>
-            {t('Amount (NPR)')}
+            {t('common.fields.amount')}
             <input
               required
               inputMode="decimal"
@@ -108,7 +106,7 @@ export function PaymentForm({
             />
           </label>
           <label>
-            {t('Entry date (AD)')}
+            {t('customers.paymentForm.entryDateAd')}
             <input
               required
               type="date"
@@ -118,34 +116,36 @@ export function PaymentForm({
               onChange={(event) => setDate(event.target.value)}
             />
             <span className="field-hint">
-              {t('On or after ')}
+              {t('customers.paymentForm.onOrAfter') + ' '}
               {customer.latestEntryDate}.
             </span>
           </label>
           <label>
-            {t('Payment method')}
+            {t('common.labels.paymentMethod')}
             <select
               value={method}
               onChange={(event) =>
                 setMethod(event.target.value as AccountPayment['method'])
               }
             >
-              <option value="CASH">{t('Cash')}</option>
-              <option value="BANK">{t('Bank')}</option>
-              <option value="DIGITAL_WALLET">{t('Digital wallet')}</option>
+              <option value="CASH">{t('common.labels.cash')}</option>
+              <option value="BANK">{t('common.labels.bank')}</option>
+              <option value="DIGITAL_WALLET">
+                {t('common.labels.digitalWallet')}
+              </option>
             </select>
           </label>
           <label>
-            {t('Reference (optional)')}
+            {t('customers.paymentForm.referenceOptional')}
             <input
               maxLength={160}
-              placeholder={t('Bank / wallet / paper reference')}
+              placeholder={t('customers.paymentForm.bankWalletPaperReference')}
               value={reference}
               onChange={(event) => setReference(event.target.value)}
             />
           </label>
           <label className="full-width">
-            {t('Notes (optional)')}
+            {t('common.labels.notesOptional')}
             <textarea
               rows={2}
               maxLength={500}
@@ -166,14 +166,14 @@ export function PaymentForm({
             disabled={busy}
             onClick={onClose}
           >
-            {t('Cancel')}
+            {t('common.actions.cancel')}
           </button>
           <button className="button primary" disabled={busy}>
             {busy
-              ? t('Saving…')
+              ? t('common.actions.saving')
               : kind === 'PAYMENT'
-                ? t('Save payment')
-                : t('Save refund')}
+                ? t('customers.paymentForm.savePayment')
+                : t('customers.paymentForm.saveRefund')}
             <Icon name="arrow" size={18} />
           </button>
         </div>

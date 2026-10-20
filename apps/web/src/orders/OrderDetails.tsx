@@ -36,15 +36,15 @@ export function OrderDetails({ orderId }: { orderId: string }) {
   return (
     <AppShell section="Orders">
       <a className="back-link" href="#/orders">
-        {t('← Order book')}
+        {t('orders.labels.orderBook')}
       </a>
       {result.loading ? (
         <div className="empty-state" role="status">
-          {t('Loading order…')}
+          {t('common.labels.loadingOrder')}
         </div>
       ) : result.error ? (
         <div className="empty-state">
-          <h2>{t('Order couldn’t load')}</h2>
+          <h2>{t('orders.orderDetails.orderCouldnTLoad')}</h2>
           <p className="error" role="alert">
             {message(result.error)}
           </p>
@@ -52,7 +52,7 @@ export function OrderDetails({ orderId }: { orderId: string }) {
             className="button secondary"
             onClick={() => setRevision((value) => value + 1)}
           >
-            {t('Try again')}
+            {t('common.actions.tryAgain')}
           </button>
         </div>
       ) : (
@@ -61,8 +61,8 @@ export function OrderDetails({ orderId }: { orderId: string }) {
             <div className="page-heading">
               <div>
                 <p className="eyebrow">
-                  {t('CUSTOM ORDER · ')}
-                  {detail.order.orderDate} {t(' AD')}
+                  {t('orders.orderDetails.customOrder') + ' '}
+                  {detail.order.orderDate} {' ' + t('common.labels.ad')}
                 </p>
                 <h1>
                   {detail.order.orderCode}
@@ -71,9 +71,11 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                 <p className="description">
                   {detail.order.customerSnapshot.name} ·{' '}
                   {detail.order.pieceCount}{' '}
-                  {detail.order.pieceCount === 1 ? t('piece') : t('pieces')}{' '}
-                  {t(' · Promised ')}
-                  {detail.order.dueDate} {t(' AD')}
+                  {detail.order.pieceCount === 1
+                    ? t('common.labels.piece')
+                    : t('common.labels.pieces')}{' '}
+                  {' ' + t('orders.orderDetails.promised') + ' '}
+                  {detail.order.dueDate} {' ' + t('common.labels.ad')}
                 </p>
               </div>
               <div className="order-heading-actions">
@@ -81,7 +83,7 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                   className="button secondary"
                   onClick={() => globalThis.print()}
                 >
-                  {t('Print order slip')}
+                  {t('orders.orderDetails.printOrderSlip')}
                 </button>
                 {!closed && (
                   <Permission name="orders.write">
@@ -89,7 +91,7 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                       className="button primary"
                       onClick={() => setAction('status')}
                     >
-                      {t('Update progress')}
+                      {t('orders.orderDetails.updateProgress')}
                       <Icon name="arrow" size={17} />
                     </button>
                   </Permission>
@@ -100,7 +102,7 @@ export function OrderDetails({ orderId }: { orderId: string }) {
               <div className="stock-heading">
                 <div>
                   <p className="eyebrow">
-                    {t('AWESOMEJM / {shopName} · CUSTOM ORDER', {
+                    {t('orders.orderDetails.awesomejmCustomOrder', {
                       shopName: user.shopName,
                     })}
                   </p>
@@ -111,26 +113,32 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                     </span>
                   </h2>
                   <p>
-                    {t('Booked ')}
-                    {detail.order.orderDate} {t(' AD · Delivery')}{' '}
-                    {detail.order.dueDate} {t(' AD')}{' '}
-                    {detail.order.overdue ? t('· OVERDUE') : ''}
+                    {t('orders.labels.booked') + ' '}
+                    {detail.order.orderDate}{' '}
+                    {' ' + t('orders.orderDetails.adDelivery')}{' '}
+                    {detail.order.dueDate} {' ' + t('common.labels.ad')}{' '}
+                    {detail.order.overdue
+                      ? t('orders.orderDetails.overdue')
+                      : ''}
                   </p>
                 </div>
                 <span
                   className={`manual-badge ${detail.order.overdue ? 'danger-text' : ''}`}
                 >
                   {detail.order.overdue
-                    ? t('DELIVERY OVERDUE')
-                    : t('{value0} {value1}', {
-                        value0: detail.order.pieceCount,
-                        value1:
+                    ? t('orders.orderDetails.deliveryOverdue')
+                    : t('orders.orderDetails.pieceCount', {
+                        count: detail.order.pieceCount,
+                        unit:
                           detail.order.pieceCount === 1 ? 'PIECE' : 'PIECES',
                       })}
                 </span>
               </div>
               {detail.order.status !== 'CANCELLED' && (
-                <ol className="order-progress" aria-label={t('Order progress')}>
+                <ol
+                  className="order-progress"
+                  aria-label={t('common.labels.orderProgress')}
+                >
                   {(
                     ['BOOKED', 'IN_PROGRESS', 'READY', 'DELIVERED'] as const
                   ).map((status, index, stages) => {
@@ -152,43 +160,45 @@ export function OrderDetails({ orderId }: { orderId: string }) {
               )}
               {detail.order.status === 'CANCELLED' && (
                 <p className="receipt-reversed sale-cancelled">
-                  {t(
-                    'ORDER CANCELLED · Its specifications and payment history are retained. Cancellation does not refund recorded payments.',
-                  )}
+                  {t('orders.orderDetails.cancelledHelp')}
                 </p>
               )}
               <dl className="details-grid sale-customer-details">
                 <div>
-                  <dt>{t('Customer at booking')}</dt>
+                  <dt>{t('orders.orderDetails.customerAtBooking')}</dt>
                   <dd>
                     {detail.order.customerSnapshot.name}
                     <small>{detail.order.customerSnapshot.customerCode}</small>
                   </dd>
                 </div>
                 <div>
-                  <dt>{t('Phone / PAN at booking')}</dt>
+                  <dt>{t('orders.orderDetails.phonePanAtBooking')}</dt>
                   <dd>
                     {detail.order.customerSnapshot.phone || '—'}
                     <small>
-                      {t('PAN: ')}
+                      {t('common.labels.pan') + ' '}
                       {detail.order.customerSnapshot.pan || '—'}
                     </small>
                   </dd>
                 </div>
                 <div>
-                  <dt>{t('Address at booking')}</dt>
+                  <dt>{t('orders.orderDetails.addressAtBooking')}</dt>
                   <dd>{detail.order.customerSnapshot.address || '—'}</dd>
                 </div>
               </dl>
               <div className="order-specs">
-                <p className="eyebrow">{t('ORDERED DESIGNS')}</p>
+                <p className="eyebrow">
+                  {t('orders.orderDetails.orderedDesigns')}
+                </p>
                 {detail.order.lines.map((line, index) => (
                   <article className="order-spec" key={index}>
                     <div className="order-spec-title">
                       <span
                         className={`metal-badge ${line.metal.toLowerCase()}`}
                       >
-                        {line.metal === 'GOLD' ? t('Gold') : t('Silver')}
+                        {line.metal === 'GOLD'
+                          ? t('common.metals.gold')
+                          : t('common.metals.silver')}
                       </span>
                       <h3>{line.name}</h3>
                       <span className="muted">× {line.quantity}</span>
@@ -196,40 +206,44 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                     <p>{line.design}</p>
                     <dl>
                       <div>
-                        <dt>{t('Purity')}</dt>
+                        <dt>{t('common.fields.purity')}</dt>
                         <dd>{line.fineness}‰</dd>
                       </div>
                       <div>
-                        <dt>{t('Size / measurement')}</dt>
-                        <dd>{line.size || t('Not specified')}</dd>
+                        <dt>{t('orders.orderDetails.sizeMeasurement')}</dt>
+                        <dd>
+                          {line.size || t('orders.orderDetails.notSpecified')}
+                        </dd>
                       </div>
                       <div>
-                        <dt>{t('Expected net / piece')}</dt>
+                        <dt>{t('orders.orderDetails.expectedNetPiece')}</dt>
                         <dd>
-                          {line.expectedNetWeightGrams} {t(' g')}
+                          {line.expectedNetWeightGrams}{' '}
+                          {' ' + t('common.units.grams')}
                           <small>
                             ≈ {gramsToTola(line.expectedNetWeightGrams)}{' '}
-                            {t(' tola')}
+                            {' ' + t('orders.orderDetails.tola')}
                           </small>
                         </dd>
                       </div>
                       <div>
-                        <dt>{t('Planned wastage / piece')}</dt>
+                        <dt>{t('orders.orderDetails.plannedWastagePiece')}</dt>
                         <dd>
-                          {line.plannedWastageGrams} {t(' g billed')}
+                          {line.plannedWastageGrams}{' '}
+                          {' ' + t('common.labels.gBilled')}
                         </dd>
                       </div>
                       <div>
-                        <dt>{t('Planned making / piece')}</dt>
+                        <dt>{t('orders.orderDetails.plannedMakingPiece')}</dt>
                         <dd>
-                          {t('NPR ')}
+                          {t('common.money.currency') + ' '}
                           {money(line.plannedMakingNpr)}
                         </dd>
                       </div>
                       <div>
-                        <dt>{t('Planned stones / piece')}</dt>
+                        <dt>{t('orders.orderDetails.plannedStonesPiece')}</dt>
                         <dd>
-                          {t('NPR ')}
+                          {t('common.money.currency') + ' '}
                           {money(line.plannedStonesNpr)}
                         </dd>
                       </div>
@@ -239,29 +253,33 @@ export function OrderDetails({ orderId }: { orderId: string }) {
               </div>
               <div className="order-finances">
                 <div>
-                  <p className="eyebrow">{t('ESTIMATED ORDER TOTAL')}</p>
+                  <p className="eyebrow">
+                    {t('orders.orderDetails.estimatedOrderTotal')}
+                  </p>
                   <strong>
                     {detail.order.estimatedTotalNpr === null
-                      ? t('Not set')
-                      : t('NPR {value0}', {
-                          value0: money(detail.order.estimatedTotalNpr),
+                      ? t('orders.labels.notSet')
+                      : t('orders.orderDetails.amount', {
+                          amount: money(detail.order.estimatedTotalNpr),
                         })}
                   </strong>
                   <small>
-                    {t('Guide only. Final pricing is recorded in Sales.')}
+                    {t(
+                      'orders.orderDetails.guideOnlyFinalPricingIsRecordedInSales',
+                    )}
                   </small>
                 </div>
                 <div>
                   <p className="eyebrow">
-                    {t('PAYMENTS TAGGED TO THIS ORDER')}
+                    {t('orders.orderDetails.paymentsTaggedToThisOrder')}
                   </p>
                   <strong>
-                    {t('NPR ')}
+                    {t('common.money.currency') + ' '}
                     {money(detail.order.taggedPaymentsNpr)}
                   </strong>
                   <small>
                     {t(
-                      'Net of corrections. Credits the customer’s overall account.',
+                      'orders.orderDetails.netOfCorrectionsCreditsTheCustomerSOverall',
                     )}
                   </small>
                 </div>
@@ -271,26 +289,29 @@ export function OrderDetails({ orderId }: { orderId: string }) {
               )}
               <p className="receipt-disclaimer sale-disclaimer">
                 {t(
-                  'Internal order slip · Not a tax invoice. Expected weights exclude stones. Conversion display: 1 tola = 11.664 g. Rates and final weights are agreed at delivery.',
+                  'orders.orderDetails.internalOrderSlipNotATaxInvoiceExpected',
                 )}
               </p>
             </section>
             <div className="order-followup">
               <div>
-                <p className="eyebrow">{t('CURRENT CUSTOMER ACCOUNT')}</p>
+                <p className="eyebrow">
+                  {t('orders.orderDetails.currentCustomerAccount')}
+                </p>
                 <strong className={currentBalance?.className}>
-                  {t('NPR ')}
+                  {t('common.money.currency') + ' '}
                   {currentBalance?.amount}
                 </strong>
                 <p>
                   {t(currentBalance?.label)}{' '}
-                  {t(' · Includes all orders, sales and payments.')}
+                  {' ' +
+                    t('orders.orderDetails.includesAllOrdersSalesAndPayments')}
                 </p>
                 <a
                   className="text-button"
                   href={`#/customers/${detail.customer.id}`}
                 >
-                  {t('View customer account →')}
+                  {t('common.labels.viewCustomerAccount')}
                 </a>
               </div>
               <div className="order-followup-actions">
@@ -300,7 +321,7 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                       className="button secondary"
                       onClick={() => setAction('payment')}
                     >
-                      {t('Record order advance')}
+                      {t('orders.orderDetails.recordOrderAdvance')}
                     </button>
                   </Permission>
                 )}
@@ -311,15 +332,11 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                         className="button primary"
                         href={`#/sales/new?orderId=${detail.order.id}`}
                       >
-                        {t('Deliver through Sales')}
+                        {t('orders.orderDetails.deliverThroughSales')}
                         <Icon name="arrow" size={17} />
                       </a>
                     </Permission>
-                    <small>
-                      {t(
-                        'Receive all finished pieces in Inventory first. Select the ordered quantity, metal and purity in Sales.',
-                      )}
-                    </small>
+                    <small>{t('orders.orderDetails.deliveryHelp')}</small>
                   </>
                 )}
                 {detail.order.status === 'READY' && (
@@ -328,7 +345,7 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                       className="button secondary"
                       href={`#/purchases/new?orderId=${detail.order.id}`}
                     >
-                      {t('Deliver with old-metal exchange →')}
+                      {t('orders.orderDetails.deliverWithOldMetalExchange')}
                     </a>
                   </Permission>
                 )}
@@ -337,7 +354,7 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                     className="button primary"
                     href={`#/sales/${detail.order.activeSaleId}`}
                   >
-                    {t('View delivery sale →')}
+                    {t('orders.orderDetails.viewDeliverySale')}
                   </a>
                 )}
               </div>
@@ -346,12 +363,12 @@ export function OrderDetails({ orderId }: { orderId: string }) {
               <div className="stock-heading">
                 <div>
                   <h2>
-                    {t('Order payments ')}
+                    {t('orders.orderDetails.orderPayments') + ' '}
                     <span>{detail.payments.length}</span>
                   </h2>
                   <p>
                     {t(
-                      'Amounts received for this order and any recorded corrections.',
+                      'orders.orderDetails.amountsReceivedForThisOrderAndAnyRecorded',
                     )}
                   </p>
                 </div>
@@ -361,9 +378,11 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                   <table>
                     <thead>
                       <tr>
-                        <th>{t('Entry / date (AD)')}</th>
-                        <th>{t('Details')}</th>
-                        <th className="numeric">{t('Account credit (NPR)')}</th>
+                        <th>{t('orders.orderDetails.entryDateAd')}</th>
+                        <th>{t('common.labels.details')}</th>
+                        <th className="numeric">
+                          {t('orders.orderDetails.accountCreditNpr')}
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -375,13 +394,13 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                           </td>
                           <td>
                             {payment.kind === 'REVERSAL'
-                              ? t('Payment reversed')
+                              ? t('orders.orderDetails.paymentReversed')
                               : payment.method
                                 ? t(methodTitle[payment.method])
-                                : t('Payment')}
+                                : t('orders.orderDetails.payment')}
                             {payment.reversed && (
                               <span className="reversed-badge">
-                                {t('Reversed')}
+                                {t('common.labels.reversed')}
                               </span>
                             )}
                             <small className="rate-subline">
@@ -391,8 +410,8 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                           <td className="numeric">
                             {payment.amountNpr.startsWith('-')
                               ? money(payment.amountNpr.slice(1))
-                              : t('− {value0}', {
-                                  value0: money(payment.amountNpr),
+                              : t('orders.orderDetails.negativeAmount', {
+                                  amount: money(payment.amountNpr),
                                 })}
                           </td>
                         </tr>
@@ -402,25 +421,21 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                 </div>
               ) : (
                 <div className="order-no-payments">
-                  {t('No payments tagged to this order.')}
+                  {t('orders.orderDetails.noPaymentsTaggedToThisOrder')}
                 </div>
               )}
             </section>
             <section className="stock-panel order-history">
               <div className="stock-heading">
                 <div>
-                  <h2>{t('Progress history')}</h2>
-                  <p>
-                    {t(
-                      'Every change is retained. Delivered orders are corrected from their sale.',
-                    )}
-                  </p>
+                  <h2>{t('orders.orderDetails.progressHistory')}</h2>
+                  <p>{t('orders.orderDetails.progressHistoryHelp')}</p>
                 </div>
                 <button
                   className="text-button"
                   onClick={() => setRevision((value) => value + 1)}
                 >
-                  {t('Refresh')}
+                  {t('common.actions.refresh')}
                 </button>
               </div>
               <ol className="order-event-list">
@@ -431,10 +446,10 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                         {t(statusTitle[event.status])}
                       </span>
                       <time>
-                        {event.eventDate} {t(' AD')}
+                        {event.eventDate} {' ' + t('common.labels.ad')}
                       </time>
                       <small>
-                        {t('Revision ')}
+                        {t('common.labels.revision') + ' '}
                         {event.version}
                       </small>
                     </div>
@@ -444,7 +459,7 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                         className="text-button"
                         href={`#/sales/${event.saleId}`}
                       >
-                        {t('View linked sale →')}
+                        {t('orders.orderDetails.viewLinkedSale')}
                       </a>
                     )}
                   </li>
@@ -452,9 +467,7 @@ export function OrderDetails({ orderId }: { orderId: string }) {
               </ol>
             </section>
             <p className="account-scope-note">
-              {t(
-                'Booking specifications stay as recorded. For changed specifications, cancel and book a replacement order. Money remains on the customer account until applied or refunded; tagged payments are not reserved to one order.',
-              )}
+              {t('orders.orderDetails.specificationHistoryHelp')}
             </p>
             {action && (
               <OrderAction
@@ -560,8 +573,8 @@ function OrderAction({
     <Dialog
       title={
         action === 'status'
-          ? t('Update order progress')
-          : t('Record order advance')
+          ? t('orders.orderDetails.updateOrderProgress')
+          : t('orders.orderDetails.recordOrderAdvance')
       }
       eyebrow={detail.order.orderCode}
       busy={busy}
@@ -572,7 +585,7 @@ function OrderAction({
           {action === 'status' ? (
             <>
               <label className="full-width">
-                {t('Next status')}
+                {t('orders.orderDetails.nextStatus')}
                 <select
                   value={status}
                   onChange={(event) => setStatus(event.target.value)}
@@ -591,16 +604,14 @@ function OrderAction({
               </label>
               {status === 'CANCELLED' && (
                 <p className="account-scope-note full-width">
-                  {t(
-                    'Cancellation retains the order and payment history. It does not refund money or change stock. Record money actually returned using the customer account’s advance refund action.',
-                  )}
+                  {t('orders.orderDetails.cancellationHelp')}
                 </p>
               )}
             </>
           ) : (
             <>
               <label>
-                {t('Amount received (NPR)')}
+                {t('orders.orderDetails.amountReceivedNpr')}
                 <input
                   inputMode="decimal"
                   required
@@ -609,18 +620,20 @@ function OrderAction({
                 />
               </label>
               <label>
-                {t('Method')}
+                {t('common.labels.method')}
                 <select
                   value={method}
                   onChange={(event) => setMethod(event.target.value)}
                 >
-                  <option value="CASH">{t('Cash')}</option>
-                  <option value="BANK">{t('Bank')}</option>
-                  <option value="DIGITAL_WALLET">{t('Digital wallet')}</option>
+                  <option value="CASH">{t('common.labels.cash')}</option>
+                  <option value="BANK">{t('common.labels.bank')}</option>
+                  <option value="DIGITAL_WALLET">
+                    {t('common.labels.digitalWallet')}
+                  </option>
                 </select>
               </label>
               <label className="full-width">
-                {t('Payment reference (optional)')}
+                {t('common.labels.paymentReferenceOptional')}
                 <input
                   maxLength={160}
                   value={reference}
@@ -631,8 +644,8 @@ function OrderAction({
           )}
           <label className="full-width">
             {action === 'status'
-              ? t('Progress date (AD)')
-              : t('Payment date (AD)')}
+              ? t('orders.orderDetails.progressDateAd')
+              : t('orders.orderDetails.paymentDateAd')}
             <input
               required
               type="date"
@@ -644,8 +657,8 @@ function OrderAction({
           </label>
           <label className="full-width">
             {action === 'status'
-              ? t('Reason / progress note')
-              : t('Notes (optional)')}
+              ? t('orders.orderDetails.reasonProgressNote')
+              : t('common.labels.notesOptional')}
             <textarea
               required={action === 'status'}
               minLength={action === 'status' ? 5 : undefined}
@@ -658,9 +671,7 @@ function OrderAction({
         </fieldset>
         {action === 'payment' && (
           <p className="account-scope-note">
-            {t(
-              'This credits the customer’s overall account once. Correct a mistaken payment from the customer account, where its order link is retained.',
-            )}
+            {t('orders.orderDetails.thisCreditsTheCustomerSOverallAccountOnce')}
           </p>
         )}
         {error && (
@@ -675,17 +686,17 @@ function OrderAction({
             disabled={busy}
             onClick={onClose}
           >
-            {t('Keep order')}
+            {t('orders.orderDetails.keepOrder')}
           </button>
           <button
             className={`button ${action === 'status' && status === 'CANCELLED' ? 'danger' : 'primary'}`}
             disabled={busy}
           >
             {busy
-              ? t('Saving…')
+              ? t('common.actions.saving')
               : action === 'status'
-                ? t('Save progress')
-                : t('Record advance')}
+                ? t('orders.orderDetails.saveProgress')
+                : t('orders.orderDetails.recordAdvance')}
           </button>
         </div>
       </form>

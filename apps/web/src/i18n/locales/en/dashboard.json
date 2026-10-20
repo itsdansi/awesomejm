@@ -1,0 +1,40 @@
+{
+  "dashboard": {
+    "availableMetal": "Available metal",
+    "customerAccounts": "CUSTOMER ACCOUNTS",
+    "fine": "Fine",
+    "loadingShopOverview": "Loading shop overview…",
+    "monthToDate": "MONTH TO DATE",
+    "netOfCorrectionsRecordedToday": "Net of corrections recorded today",
+    "netPurchases": "Net purchases",
+    "noMetalInStockYet": "No metal in stock yet",
+    "openOrderBook": "Open order book →",
+    "openReports": "Open reports →",
+    "orderDesk": "Order desk",
+    "physicalNetWeightHeldGroupedByPurity": "Physical net weight held, grouped by purity.",
+    "readyMadeJewellery": "Ready-made jewellery",
+    "receiveJewelleryOrRecordAnOldMetalPurchase": "Receive jewellery or record an old-metal purchase.",
+    "recentTradeRecords": "Recent trade records",
+    "reconciliation": "Reconciliation →",
+    "recordDateAd": "Record / date (AD)",
+    "refreshOverview": "Refresh overview",
+    "salesAndOldMetalPurchasesExchangesAppearAs": "Sales and old-metal purchases. Exchanges appear as their linked purchase and sale.",
+    "shopOverview": "Shop overview",
+    "startWithACustomerStockAndTodayS": "Start with a customer, stock and today’s metal rates.",
+    "theOverviewCouldnTLoad": "The overview couldn’t load",
+    "todaySActivity": "Today’s activity",
+    "todaySTradeStockAndCustomerBalances": "Today’s trade, stock and customer balances.",
+    "trackThePromisesStillInProgress": "Track the promises still in progress.",
+    "type": "Type",
+    "valueNpr": "Value (NPR)",
+    "viewCustomerAccounts": "View customer accounts →",
+    "yourShopAtAGlance": "YOUR SHOP, AT A GLANCE",
+    "yourNextTransactionWillAppearHere": "Your next transaction will appear here",
+    "ordersArePastTheirPromisedDate": "orders are past their promised date →",
+    "stockMetalPurityCombinationsNeedTodaySRate": "stock metal/purity combinations need today’s rate →"
+  },
+  "overview": {
+    "asOfDate": "{date} AD · Nepal time",
+    "moneyMovementHelp": "Money movement is recorded receipts minus payouts, including corrections. Sales value is not profit or cash received. Old-metal lots remain separate from ready-made jewellery."
+  }
+}

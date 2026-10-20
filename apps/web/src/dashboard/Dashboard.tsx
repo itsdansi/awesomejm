@@ -17,54 +17,56 @@ export function Dashboard() {
     <AppShell section="Dashboard">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">{t('YOUR SHOP, AT A GLANCE')}</p>
+          <p className="eyebrow">
+            {t('dashboard.dashboard.yourShopAtAGlance')}
+          </p>
           <h1>
-            {t('Shop overview')}
+            {t('dashboard.dashboard.shopOverview')}
             <span>.</span>
           </h1>
           <p className="description">
             {data
-              ? t('{value0} AD · Nepal time', { value0: data.date })
-              : t('Today’s trade, stock and customer balances.')}
+              ? t('dashboard.overview.asOfDate', { date: data.date })
+              : t('dashboard.dashboard.todaySTradeStockAndCustomerBalances')}
           </p>
         </div>
         <button
           className="button secondary"
           onClick={() => setRevision((v) => v + 1)}
         >
-          {t('Refresh overview')}
+          {t('dashboard.dashboard.refreshOverview')}
         </button>
       </div>
       <div className="dashboard-quick-actions">
         <Permission name="sales.write">
           <a className="button primary" href="#/sales/new">
             <Icon name="plus" size={17} />
-            {t('Record a sale')}
+            {t('common.labels.recordASale')}
           </a>
         </Permission>
         <Permission name="purchases.write">
           <a className="button secondary" href="#/purchases/new">
-            {t('Buy / exchange metal')}
+            {t('common.labels.buyExchangeMetal')}
             <Icon name="arrow" size={17} />
           </a>
         </Permission>
         <Permission name="orders.write">
           <a className="button secondary" href="#/orders/new">
-            {t('Book an order')}
+            {t('common.labels.bookAnOrder')}
             <Icon name="arrow" size={17} />
           </a>
         </Permission>
         <a className="text-button" href="#/reports">
-          {t('Open reports →')}
+          {t('dashboard.dashboard.openReports')}
         </a>
       </div>
       {result.loading ? (
         <div className="empty-state" role="status">
-          {t('Loading shop overview…')}
+          {t('dashboard.dashboard.loadingShopOverview')}
         </div>
       ) : result.error ? (
         <div className="empty-state">
-          <h2>{t('The overview couldn’t load')}</h2>
+          <h2>{t('dashboard.dashboard.theOverviewCouldnTLoad')}</h2>
           <p className="error" role="alert">
             {message(result.error)}
           </p>
@@ -72,7 +74,7 @@ export function Dashboard() {
             className="button secondary"
             onClick={() => setRevision((v) => v + 1)}
           >
-            {t('Try again')}
+            {t('common.actions.tryAgain')}
           </button>
         </div>
       ) : (
@@ -84,46 +86,54 @@ export function Dashboard() {
                   <a href="#/rates">
                     <Icon name="diamond" size={17} />
                     {data.missingRates}{' '}
-                    {t(' stock metal/purity combinations need today’s rate →')}
+                    {' ' +
+                      t(
+                        'dashboard.dashboard.stockMetalPurityCombinationsNeedTodaySRate',
+                      )}
                   </a>
                 )}
                 {data.orders.overdue > 0 && (
                   <a href="#/orders">
                     <Icon name="history" size={17} />
                     {data.orders.overdue}{' '}
-                    {t(' orders are past their promised date →')}
+                    {' ' +
+                      t('dashboard.dashboard.ordersArePastTheirPromisedDate')}
                   </a>
                 )}
               </div>
             )}
             <div className="section-caption">
-              <h2>{t('Today’s activity')}</h2>
-              <span>{t('Net of corrections recorded today')}</span>
+              <h2>{t('dashboard.dashboard.todaySActivity')}</h2>
+              <span>
+                {t('dashboard.dashboard.netOfCorrectionsRecordedToday')}
+              </span>
             </div>
             <ActivityCards totals={data.today} />
             <section className="dashboard-month stock-panel">
               <div>
-                <p className="eyebrow">{t('MONTH TO DATE')}</p>
+                <p className="eyebrow">
+                  {t('dashboard.dashboard.monthToDate')}
+                </p>
                 <h2>{data.date.slice(0, 7)}</h2>
               </div>
               <div>
-                <small>{t('Net sales')}</small>
+                <small>{t('common.labels.netSales')}</small>
                 <strong>
-                  {t('NPR ')}
+                  {t('common.money.currency') + ' '}
                   {money(data.month.netSalesNpr)}
                 </strong>
               </div>
               <div>
-                <small>{t('Net purchases')}</small>
+                <small>{t('dashboard.dashboard.netPurchases')}</small>
                 <strong>
-                  {t('NPR ')}
+                  {t('common.money.currency') + ' '}
                   {money(data.month.netPurchasesNpr)}
                 </strong>
               </div>
               <div>
-                <small>{t('Net money movement')}</small>
+                <small>{t('common.labels.netMoneyMovement')}</small>
                 <strong>
-                  {t('NPR ')}
+                  {t('common.money.currency') + ' '}
                   {money(data.month.netCashNpr)}
                 </strong>
               </div>
@@ -132,11 +142,15 @@ export function Dashboard() {
               <section className="stock-panel">
                 <div className="stock-heading">
                   <div>
-                    <h2>{t('Available metal')}</h2>
-                    <p>{t('Physical net weight held, grouped by purity.')}</p>
+                    <h2>{t('dashboard.dashboard.availableMetal')}</h2>
+                    <p>
+                      {t(
+                        'dashboard.dashboard.physicalNetWeightHeldGroupedByPurity',
+                      )}
+                    </p>
                   </div>
                   <a className="text-button" href="#/reports">
-                    {t('Reconciliation →')}
+                    {t('dashboard.dashboard.reconciliation')}
                   </a>
                 </div>
                 {data.stock.some((row) => row.closingCount > 0) ? (
@@ -154,23 +168,28 @@ export function Dashboard() {
                           </span>
                           <div>
                             <strong>
-                              {row.metal === 'GOLD' ? t('Gold') : t('Silver')} ·{' '}
-                              {row.fineness}‰
+                              {row.metal === 'GOLD'
+                                ? t('common.metals.gold')
+                                : t('common.metals.silver')}{' '}
+                              · {row.fineness}‰
                             </strong>
                             <small>
                               {row.stockClass === 'JEWELLERY'
-                                ? t('Ready-made jewellery')
-                                : t('Old-metal lots')}{' '}
-                              · {row.closingCount} {t(' pieces/lots')}
+                                ? t('dashboard.dashboard.readyMadeJewellery')
+                                : t('common.labels.oldMetalLots')}{' '}
+                              · {row.closingCount}{' '}
+                              {' ' + t('common.labels.piecesLots')}
                             </small>
                           </div>
                           <span className="dashboard-weight">
                             <strong>
-                              {row.closingGrams} <small>{t('g')}</small>
+                              {row.closingGrams}{' '}
+                              <small>{t('common.units.grams')}</small>
                             </strong>
                             <small>
-                              {t('Fine ')}
-                              {row.closingFineGrams} {t(' g')}
+                              {t('dashboard.dashboard.fine') + ' '}
+                              {row.closingFineGrams}{' '}
+                              {' ' + t('common.units.grams')}
                             </small>
                           </span>
                         </div>
@@ -178,51 +197,59 @@ export function Dashboard() {
                   </div>
                 ) : (
                   <div className="empty-state">
-                    <h3>{t('No metal in stock yet')}</h3>
+                    <h3>{t('dashboard.dashboard.noMetalInStockYet')}</h3>
                     <p>
-                      {t('Receive jewellery or record an old-metal purchase.')}
+                      {t(
+                        'dashboard.dashboard.receiveJewelleryOrRecordAnOldMetalPurchase',
+                      )}
                     </p>
                   </div>
                 )}
               </section>
               <div className="dashboard-right">
                 <section className="stock-panel dashboard-accounts">
-                  <p className="eyebrow">{t('CUSTOMER ACCOUNTS')}</p>
+                  <p className="eyebrow">
+                    {t('dashboard.dashboard.customerAccounts')}
+                  </p>
                   <dl>
                     <div>
-                      <dt>{t('Customer dues')}</dt>
+                      <dt>{t('common.labels.customerDues')}</dt>
                       <dd className="due">
-                        {t('NPR ')}
+                        {t('common.money.currency') + ' '}
                         {money(data.accounts.duesNpr)}
                       </dd>
                     </div>
                     <div>
-                      <dt>{t('Advances / credit held')}</dt>
+                      <dt>{t('common.labels.advancesCreditHeld')}</dt>
                       <dd className="advance">
-                        {t('NPR ')}
+                        {t('common.money.currency') + ' '}
                         {money(data.accounts.advancesNpr)}
                       </dd>
                     </div>
                   </dl>
                   <a className="text-button" href="#/customers">
-                    {t('View customer accounts →')}
+                    {t('dashboard.dashboard.viewCustomerAccounts')}
                   </a>
                 </section>
                 <section className="stock-panel dashboard-orders">
                   <div className="stock-heading">
                     <div>
-                      <h2>{t('Order desk')}</h2>
-                      <p>{t('Track the promises still in progress.')}</p>
+                      <h2>{t('dashboard.dashboard.orderDesk')}</h2>
+                      <p>
+                        {t(
+                          'dashboard.dashboard.trackThePromisesStillInProgress',
+                        )}
+                      </p>
                     </div>
                   </div>
                   <div className="dashboard-order-counts">
                     <div>
                       <strong>{data.orders.active}</strong>
-                      <small>{t('Active')}</small>
+                      <small>{t('common.labels.active')}</small>
                     </div>
                     <div>
                       <strong>{data.orders.ready}</strong>
-                      <small>{t('Ready')}</small>
+                      <small>{t('common.labels.ready')}</small>
                     </div>
                     <div>
                       <strong
@@ -230,11 +257,11 @@ export function Dashboard() {
                       >
                         {data.orders.overdue}
                       </strong>
-                      <small>{t('Overdue')}</small>
+                      <small>{t('common.labels.overdue')}</small>
                     </div>
                   </div>
                   <a className="text-button" href="#/orders">
-                    {t('Open order book →')}
+                    {t('dashboard.dashboard.openOrderBook')}
                   </a>
                 </section>
               </div>
@@ -242,10 +269,10 @@ export function Dashboard() {
             <section className="stock-panel dashboard-recent">
               <div className="stock-heading">
                 <div>
-                  <h2>{t('Recent trade records')}</h2>
+                  <h2>{t('dashboard.dashboard.recentTradeRecords')}</h2>
                   <p>
                     {t(
-                      'Sales and old-metal purchases. Exchanges appear as their linked purchase and sale.',
+                      'dashboard.dashboard.salesAndOldMetalPurchasesExchangesAppearAs',
                     )}
                   </p>
                 </div>
@@ -255,11 +282,13 @@ export function Dashboard() {
                   <table>
                     <thead>
                       <tr>
-                        <th>{t('Record / date (AD)')}</th>
-                        <th>{t('Customer at posting')}</th>
-                        <th>{t('Type')}</th>
-                        <th className="numeric">{t('Value (NPR)')}</th>
-                        <th>{t('Status')}</th>
+                        <th>{t('dashboard.dashboard.recordDateAd')}</th>
+                        <th>{t('common.labels.customerAtPosting')}</th>
+                        <th>{t('dashboard.dashboard.type')}</th>
+                        <th className="numeric">
+                          {t('dashboard.dashboard.valueNpr')}
+                        </th>
+                        <th>{t('common.labels.status')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -277,8 +306,8 @@ export function Dashboard() {
                           <td>{row.customerName}</td>
                           <td>
                             {row.kind === 'SALE'
-                              ? t('Sale')
-                              : t('Old-metal purchase')}
+                              ? t('common.labels.sale')
+                              : t('common.labels.oldMetalPurchase')}
                           </td>
                           <td className="numeric">
                             <strong>{money(row.totalNpr)}</strong>
@@ -287,7 +316,9 @@ export function Dashboard() {
                             <span
                               className={`status ${row.cancelled ? 'voided' : ''}`}
                             >
-                              {row.cancelled ? t('Cancelled') : t('Posted')}
+                              {row.cancelled
+                                ? t('common.status.cancelled')
+                                : t('common.labels.posted')}
                             </span>
                           </td>
                         </tr>
@@ -297,17 +328,17 @@ export function Dashboard() {
                 </div>
               ) : (
                 <div className="empty-state">
-                  <h3>{t('Your next transaction will appear here')}</h3>
+                  <h3>
+                    {t('dashboard.dashboard.yourNextTransactionWillAppearHere')}
+                  </h3>
                   <p>
-                    {t('Start with a customer, stock and today’s metal rates.')}
+                    {t('dashboard.dashboard.startWithACustomerStockAndTodayS')}
                   </p>
                 </div>
               )}
             </section>
             <p className="account-scope-note">
-              {t(
-                'Money movement is recorded receipts minus payouts, including corrections. Sales value is not profit or cash received. Old-metal lots remain separate from ready-made jewellery.',
-              )}
+              {t('dashboard.overview.moneyMovementHelp')}
             </p>
           </>
         )

@@ -4,52 +4,125 @@ import { readFile, readdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
 import {
+  catalogs,
   translate,
-  translateMessage,
-  translationCatalog,
   resolveLanguage,
   hasTranslation,
+  interpolate,
+  supportedLanguages,
 } from '../src/i18n/core.mjs';
+import { translateMessage } from '../src/i18n/messages.mjs';
+import { resources } from '../src/i18n/resources.mjs';
+import { flattenCatalog, schemaSource } from '../scripts/i18n-schema.mjs';
+
 const params = (text) =>
   [...text.matchAll(/\{([a-zA-Z]\w*)\}/g)].map((match) => match[1]).sort();
-test('the complete Nepali catalog preserves all interpolation parameters', () => {
-  assert(Object.keys(translationCatalog).length > 1000);
-  for (const [key, value] of Object.entries(translationCatalog)) {
-    assert.equal(typeof value, 'string', key);
-    assert(value.trim(), key);
-    assert.deepEqual(params(value), params(key), key);
+const sortedKeys = (value) => Object.keys(value).sort();
+
+test('every registered locale has matching domain namespaces, semantic keys and placeholders', async () => {
+  const english = catalogs.en;
+  assert(Object.keys(english).length > 1000);
+  assert.deepEqual(supportedLanguages, ['en', 'ne']);
+  for (const language of supportedLanguages) {
+    const files = (
+      await readdir(
+        new URL(`../src/i18n/locales/${language}/`, import.meta.url),
+      )
+    )
+      .filter((file) => file.endsWith('.json'))
+      .map((file) => file.slice(0, -5))
+      .sort();
+    assert.deepEqual(
+      files,
+      sortedKeys(resources[language]),
+      `${language}: register every locale file`,
+    );
+    assert.deepEqual(sortedKeys(resources[language]), sortedKeys(resources.en));
+    assert.deepEqual(
+      sortedKeys(catalogs[language]),
+      sortedKeys(english),
+      `${language}: locale keys must match English`,
+    );
+    for (const [key, value] of Object.entries(catalogs[language])) {
+      assert(
+        key.split('.').every((part) => /^[a-z][a-zA-Z0-9]*$/.test(part)),
+        `Use semantic camelCase key segments: ${key}`,
+      );
+      assert.equal(typeof value, 'string', key);
+      assert(value.trim(), key);
+      assert.deepEqual(params(value), params(english[key]), key);
+      assert(!/\{value\d+\}/.test(value), `Use named parameters: ${key}`);
+    }
   }
 });
-test('languages resolve safely and labels have English fallbacks', () => {
+
+test('the generated TypeScript key and parameter contract matches English resources', async () => {
+  assert.equal(
+    await readFile(new URL('../src/i18n/schema.d.ts', import.meta.url), 'utf8'),
+    await schemaSource(),
+  );
+});
+
+test('language selection, English fallback and unknown keys resolve safely', () => {
   assert.equal(resolveLanguage('ne', 'en-US'), 'ne');
   assert.equal(resolveLanguage('en', 'ne-NP'), 'en');
   assert.equal(resolveLanguage('invalid', 'ne-NP'), 'ne');
   assert.equal(resolveLanguage(null, 'fr-FR'), 'en');
-  assert.equal(translate('Gold', {}, 'ne'), 'सुन');
-  assert.equal(translate('Gold', {}, 'en'), 'Gold');
-  assert.equal(translate('OWNER', {}, 'en'), 'Owner');
-  assert.equal(translate('OWNER', {}, 'ne'), 'सञ्चालक');
-  assert.equal(translate('Future label', {}, 'ne'), 'Future label');
-  assert.equal(translate('__proto__', {}, 'ne'), '__proto__');
-  assert.equal(translate('constructor', {}, 'en'), 'constructor');
-});
-test('interpolation preserves customer text, codes, exact decimals and Unicode literally', () => {
-  const name = 'Gold {value0} $& <b>सीता</b>';
+  assert.equal(translate('common.metals.gold', {}, 'ne'), 'सुन');
+  assert.equal(translate('common.metals.gold', {}, 'en'), 'Gold');
+  assert.equal(translate('common.roles.owner', {}, 'en'), 'Owner');
+  assert.equal(translate('common.roles.owner', {}, 'ne'), 'सञ्चालक');
+  assert.equal(translate('common.navigation.inventory', {}, 'fr'), 'Inventory');
+  // Simulate an incomplete new locale: an individual missing message falls back to English.
+  const key = 'inventory.receiveForm.title',
+    saved = catalogs.ne[key];
+  try {
+    delete catalogs.ne[key];
+    assert.equal(translate(key, {}, 'ne'), 'Receive a piece');
+  } finally {
+    catalogs.ne[key] = saved;
+  }
+  for (const key of [
+    'future.feature.title',
+    '__proto__',
+    'constructor',
+    'common.__proto__.name',
+  ]) {
+    assert.equal(translate(key, {}, 'ne'), key);
+    assert.equal(hasTranslation(key), false);
+  }
   assert.equal(
-    translate('Signed {name} out on all devices.', { name }, 'ne'),
+    translate('Gold', {}, 'ne'),
+    'Gold',
+    'UI lookup must not translate English copy as a key',
+  );
+});
+
+test('named interpolation preserves names, codes, decimals and Unicode literally', () => {
+  const name = 'Gold {amount} $& <b>सीता</b>';
+  assert.equal(
+    translate('staff.notices.sessionsRevoked', { name }, 'ne'),
     `${name} लाई सबै उपकरणबाट बाहिर निकालियो।`,
   );
   assert.equal(
-    translate('NPR {value0} / tola', { value0: '123456789.01' }, 'ne'),
+    translate('common.money.perTola', { amount: '123456789.01' }, 'ne'),
     'रु. 123456789.01 / तोला',
   );
   assert.equal(
-    translate('View {value0}', { value0: 'GLD-001' }, 'ne'),
+    translate('common.actions.viewRecord', { code: 'GLD-001' }, 'ne'),
     'GLD-001 हेर्नुहोस्',
   );
-  assert.equal(translate(' g ', {}, 'ne'), ' ग्रा. ');
+  assert.equal(
+    interpolate(' {weight} {unit} ', { weight: '11.664', unit: 'ग्रा.' }),
+    ' 11.664 ग्रा. ',
+  );
+  assert.equal(
+    translate('common.actions.viewRecord', {}, 'ne'),
+    '{code} हेर्नुहोस्',
+  );
 });
-test('validation, network and staff notices follow the selected language', () => {
+
+test('the API/validation compatibility boundary translates known English messages independently of UI lookup', () => {
   const english =
     'Enter a customer name.\nEnter NPR with up to 2 decimal places.';
   assert.equal(translateMessage(english, 'en'), english);
@@ -80,7 +153,16 @@ test('validation, network and staff notices follow the selected language', () =>
     translateMessage('Failed to fetch', 'ne'),
     'जडान हुन सकेन। कृपया फेरि प्रयास गर्नुहोस्।',
   );
+  assert.equal(
+    translateMessage('Choose a purchase date on or after 2026-10-20.', 'ne'),
+    'खरिद मिति 2026-10-20 वा त्यसपछि छान्नुहोस्।',
+  );
+  assert.equal(
+    translateMessage('Unexpected response from a future API.', 'ne'),
+    'Unexpected response from a future API.',
+  );
 });
+
 async function files(path) {
   return (
     await Promise.all(
@@ -92,11 +174,10 @@ async function files(path) {
     )
   ).flat();
 }
-test('every explicit UI translation and dynamic label has a Nepali catalog entry', async () => {
+test('every UI translation uses a registered semantic key and no visible JSX copy is left untranslated', async () => {
   const missing = [];
   for (const path of await files(new URL('../src/', import.meta.url))) {
-    if (!/\.tsx?$/.test(path.pathname) || path.pathname.includes('/i18n/'))
-      continue;
+    if (!/\.tsx?$/.test(path.pathname)) continue;
     const text = await readFile(path, 'utf8'),
       source = ts.createSourceFile(
         path.pathname,
@@ -108,7 +189,7 @@ test('every explicit UI translation and dynamic label has a Nepali catalog entry
     function visit(node) {
       if (ts.isJsxText(node) && /\p{L}/u.test(node.text))
         missing.push(
-          `${fileURLToPath(path)}: unlocalized JSX text ${node.text.trim()}`,
+          `${fileURLToPath(path)}: untranslated JSX ${node.text.trim()}`,
         );
       if (
         ts.isCallExpression(node) &&
@@ -127,43 +208,41 @@ test('every explicit UI translation and dynamic label has a Nepali catalog entry
           'actions',
           'resources',
           'roleDescriptions',
-        ].includes(node.name.getText(source)) &&
-        node.initializer &&
-        ts.isObjectLiteralExpression(node.initializer)
+          'roleKeys',
+          'navigationKeys',
+        ].includes(node.name.getText(source))
       ) {
-        for (const property of node.initializer.properties)
-          if (
-            ts.isPropertyAssignment(property) &&
-            ts.isStringLiteral(property.initializer) &&
-            !hasTranslation(property.initializer.text)
-          )
-            missing.push(
-              `${fileURLToPath(path)}: ${property.initializer.text}`,
-            );
+        const initializer = node.initializer;
+        if (initializer) {
+          const visitLabel = (child) => {
+            if (
+              ts.isPropertyAssignment(child) &&
+              ts.isStringLiteral(child.initializer) &&
+              !hasTranslation(child.initializer.text)
+            )
+              missing.push(
+                `${fileURLToPath(path)}: label ${child.initializer.text}`,
+              );
+            ts.forEachChild(child, visitLabel);
+          };
+          visitLabel(initializer);
+        }
       }
       ts.forEachChild(node, visit);
     }
     visit(source);
   }
-  for (const label of [
-    'Dashboard',
-    'Inventory',
-    'Metal rates',
-    'Customers',
-    'Sales',
-    'Orders',
-    'Purchases',
-    'Reports',
-    'Staff & recovery',
-    'OWNER',
-    'MANAGER',
-    'CASHIER',
-    'VIEWER',
-  ])
-    if (!hasTranslation(label)) missing.push(label);
   assert.deepEqual(missing, []);
+  // Catalog English copy is a value: changing it does not require changing component IDs.
+  assert.equal(
+    flattenCatalog({ title: 'Changed English copy' }, 'example')[
+      'example.title'
+    ],
+    'Changed English copy',
+  );
 });
-test('translated select labels retain explicit backend values and customer data bindings stay literal', async () => {
+
+test('translated options keep backend values and business text bindings remain literal', async () => {
   const missing = [];
   for (const path of await files(new URL('../src/', import.meta.url))) {
     if (!path.pathname.endsWith('.tsx')) continue;
@@ -201,6 +280,6 @@ test('translated select labels retain explicit backend values and customer data 
   );
   assert(
     dialog.includes('{title}'),
-    'A user-entered item name supplied as a dialog title must remain literal.',
+    'User-entered dialog titles must remain literal.',
   );
 });

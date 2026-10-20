@@ -17,23 +17,18 @@ export function FormValidation() {
       if (!input) return;
       input.setCustomValidity('');
       const validity = input.validity;
-      let text = 'Please enter a valid value.',
-        values: Record<string, string | number> = {};
-      if (validity.valueMissing) text = 'Please complete this field.';
+      let text = t('validation.native.invalidValue');
+      if (validity.valueMissing) text = t('validation.native.required');
       else if ('minLength' in input && validity.tooShort) {
-        text = 'Use at least {count} characters.';
-        values = { count: input.minLength };
+        text = t('validation.length.minimum', { count: input.minLength });
       } else if ('maxLength' in input && validity.tooLong) {
-        text = 'Use no more than {count} characters.';
-        values = { count: input.maxLength };
+        text = t('validation.length.maximum', { count: input.maxLength });
       } else if (input instanceof HTMLInputElement && validity.rangeUnderflow) {
-        text = 'Enter a value of at least {count}.';
-        values = { count: input.min };
+        text = t('validation.range.minimum', { count: input.min });
       } else if (input instanceof HTMLInputElement && validity.rangeOverflow) {
-        text = 'Enter a value no greater than {count}.';
-        values = { count: input.max };
+        text = t('validation.range.maximum', { count: input.max });
       }
-      input.setCustomValidity(t(text, values));
+      input.setCustomValidity(text);
       touched.add(input);
     };
     const clear = (event: Event) => {

@@ -1,3 +1,4 @@
+import { roleKeys, navigationKeys } from '../i18n/labels';
 import { LanguageSwitch } from '../i18n/LanguageSwitch';
 import { t, useLanguage } from '../i18n/language';
 import { useAuth } from '../auth/AuthContext';
@@ -30,28 +31,28 @@ export function AppShell({
         <a
           className="brand"
           href="#/dashboard"
-          aria-label={t('AwesomeJM home')}
+          aria-label={t('common.labels.awesomejmHome')}
         >
           <span className="brand-mark">
             <Icon name="diamond" size={23} />
           </span>
           <span>
-            {t('awesome')}
-            <span className="brand-light">{t('jm')}</span>
-            <small>{t('JEWELLERY MANAGER')}</small>
+            {t('common.labels.awesome')}
+            <span className="brand-light">{t('common.labels.jm')}</span>
+            <small>{t('common.labels.jewelleryManager')}</small>
           </span>
         </a>
         <div className="shop-switch">
-          <span className="shop-avatar">{t('S')}</span>
+          <span className="shop-avatar">{t('common.labels.s')}</span>
           <div>
             <strong>{user.shopName}</strong>
             <small>
-              {t(user.role)} {t(' access')}
+              {t(roleKeys[user.role])} {' ' + t('common.labels.access')}
             </small>
           </div>
         </div>
-        <p className="nav-label">{t('WORKSPACE')}</p>
-        <nav aria-label={t('Main navigation')}>
+        <p className="nav-label">{t('common.labels.workspace')}</p>
+        <nav aria-label={t('common.labels.mainNavigation')}>
           {(
             [
               {
@@ -96,7 +97,7 @@ export function AppShell({
               aria-current={section === item.name ? 'page' : undefined}
             >
               <Icon name={item.icon} />
-              {t(item.name)}
+              {t(navigationKeys[item.name])}
               <span>{item.index}</span>
             </a>
           ))}
@@ -106,7 +107,7 @@ export function AppShell({
               href="#/staff"
             >
               <Icon name="users" />
-              {t('Staff & recovery')}
+              {t('common.navigation.staff')}
               <span>08</span>
             </a>
           )}
@@ -114,25 +115,25 @@ export function AppShell({
         <div className="sidebar-bottom">
           <span className="tiny-diamond">◇</span>
           <p>
-            {t('Made for your everyday craft.')}
-            <small>{t('For gold and silver businesses')}</small>
+            {t('common.labels.madeForYourEverydayCraft')}
+            <small>{t('common.labels.forGoldAndSilverBusinesses')}</small>
           </p>
         </div>
       </aside>
       <div className="main-shell">
         <header className="topbar">
           <span>
-            {t('Workspace ')}
+            {t('common.navigation.workspace') + ' '}
             <span className="breadcrumb-separator">/</span>
-            <strong>{t(section)}</strong>
+            <strong>{t(navigationKeys[section])}</strong>
           </span>
           <div className="staff-topbar">
             <LanguageSwitch />
             <a className="text-button" href="#/account">
-              {user.name} · {t(user.role)}
+              {user.name} · {t(roleKeys[user.role])}
             </a>
             <button className="text-button" onClick={() => void logout()}>
-              {t('Sign out')}
+              {t('common.actions.signOut')}
             </button>
           </div>
         </header>
@@ -140,11 +141,11 @@ export function AppShell({
           {children}
           <footer>
             <span>
-              {t('AWESOMEJM ')}
+              {t('common.labels.awesomejm') + ' '}
               <span className="footer-dot">·</span>{' '}
-              {t(' Care in every detail.')}
+              {' ' + t('common.labels.careInEveryDetail')}
             </span>
-            <span>{t('NPR · Nepal time (NPT)')}</span>
+            <span>{t('common.labels.nprNepalTimeNpt')}</span>
           </footer>
         </main>
       </div>

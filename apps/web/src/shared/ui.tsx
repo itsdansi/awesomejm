@@ -98,7 +98,7 @@ export function Dialog({
   title,
   onClose,
   busy = false,
-  eyebrow = t('Jewellery inventory'),
+  eyebrow = t('inventory.title'),
   children,
 }: {
   title: string;
@@ -135,7 +135,7 @@ export function Dialog({
           <button
             type="button"
             className="icon-button"
-            aria-label={t('Close dialog')}
+            aria-label={t('common.labels.closeDialog')}
             onClick={onClose}
             disabled={busy}
           >

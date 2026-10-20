@@ -54,7 +54,7 @@ export function PasswordForm({ onChanged }: { onChanged: () => void }) {
         </p>
       )}
       <label>
-        {t('Current password')}
+        {t('auth.fields.currentPassword')}
         <input
           type="password"
           autoComplete="current-password"
@@ -65,7 +65,7 @@ export function PasswordForm({ onChanged }: { onChanged: () => void }) {
         />
       </label>
       <label>
-        {t('New password')}
+        {t('auth.passwordForm.newPassword')}
         <input
           type="password"
           autoComplete="new-password"
@@ -76,11 +76,11 @@ export function PasswordForm({ onChanged }: { onChanged: () => void }) {
           onChange={(e) => setPassword(e.target.value)}
         />
         <small>
-          {t('Use 15–128 characters. A long, unique passphrase works well.')}
+          {t('auth.passwordForm.use15128CharactersALongUniquePassphrase')}
         </small>
       </label>
       <label>
-        {t('Confirm new password')}
+        {t('auth.passwordForm.confirmNewPassword')}
         <input
           type="password"
           autoComplete="new-password"
@@ -89,9 +89,11 @@ export function PasswordForm({ onChanged }: { onChanged: () => void }) {
           onChange={(e) => setConfirmation(e.target.value)}
         />
       </label>
-      <p>{t('Changing your password signs you out on every device.')}</p>
+      <p>{t('auth.passwordForm.changingYourPasswordSignsYouOutOnEvery')}</p>
       <button className="button primary" disabled={busy}>
-        {busy ? t('Updating…') : t('Change password and sign out')}
+        {busy
+          ? t('auth.passwordForm.updating')
+          : t('auth.passwordForm.changePasswordAndSignOut')}
       </button>
     </form>
   );

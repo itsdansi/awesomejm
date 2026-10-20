@@ -1,0 +1,40 @@
+{
+  "dashboard": {
+    "availableMetal": "उपलब्ध धातु",
+    "customerAccounts": "ग्राहक खाताहरू",
+    "fine": "शुद्ध धातु",
+    "loadingShopOverview": "पसलको सारांश लोड हुँदै…",
+    "monthToDate": "यस महिनाको हालसम्म",
+    "netOfCorrectionsRecordedToday": "आज अभिलेखित सुधार मिलाएर",
+    "netPurchases": "खुद खरिद",
+    "noMetalInStockYet": "मौज्दातमा धातु छैन",
+    "openOrderBook": "अर्डर सूची खोल्नुहोस् →",
+    "openReports": "प्रतिवेदन खोल्नुहोस् →",
+    "orderDesk": "अर्डर व्यवस्थापन",
+    "physicalNetWeightHeldGroupedByPurity": "राखिएको वास्तविक खुद तौल, शुद्धताअनुसार छुट्याइएको।",
+    "readyMadeJewellery": "तयार गहना",
+    "receiveJewelleryOrRecordAnOldMetalPurchase": "गहना प्राप्त गर्नुहोस् वा पुरानो धातु खरिद अभिलेखित गर्नुहोस्।",
+    "recentTradeRecords": "पछिल्ला कारोबार अभिलेख",
+    "reconciliation": "मौज्दात मिलान →",
+    "recordDateAd": "अभिलेख / मिति (ई.सं.)",
+    "refreshOverview": "सारांश पुनः लोड गर्नुहोस्",
+    "salesAndOldMetalPurchasesExchangesAppearAs": "बिक्री र पुरानो धातु खरिद। सटहीमा जोडिएको खरिद र बिक्री दुवै देखिन्छन्।",
+    "shopOverview": "पसलको सारांश",
+    "startWithACustomerStockAndTodayS": "ग्राहक, मौज्दात र आजको धातु दरबाट सुरु गर्नुहोस्।",
+    "theOverviewCouldnTLoad": "सारांश लोड हुन सकेन",
+    "todaySActivity": "आजको कारोबार",
+    "todaySTradeStockAndCustomerBalances": "आजको कारोबार, मौज्दात र ग्राहक मौज्दात।",
+    "trackThePromisesStillInProgress": "अझै पूरा गर्न बाँकी वाचाहरू नियाल्नुहोस्।",
+    "type": "प्रकार",
+    "valueNpr": "मूल्य (रु.)",
+    "viewCustomerAccounts": "ग्राहक खाताहरू हेर्नुहोस् →",
+    "yourShopAtAGlance": "तपाईंको पसलको सारांश",
+    "yourNextTransactionWillAppearHere": "अर्को कारोबार यहाँ देखिन्छ",
+    "ordersArePastTheirPromisedDate": "अर्डरको कबुल मिति नाघेको छ →",
+    "stockMetalPurityCombinationsNeedTodaySRate": "मौज्दातका धातु/शुद्धतामा आजको दर चाहिन्छ →"
+  },
+  "overview": {
+    "asOfDate": "{date} ई.सं. · नेपाल समय",
+    "moneyMovementHelp": "रकमको आवागमन भनेको सुधारसहित प्राप्त रकमबाट दिइएको रकम घटाउँदाको हिसाब हो। बिक्री मूल्य नाफा वा प्राप्त नगद होइन। पुरानो धातुको लट तयार गहनाबाट छुट्टै रहन्छ।"
+  }
+}

@@ -67,7 +67,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
   if (loading)
     return (
       <div className="app-loading" role="status">
-        {t('Checking your session…')}
+        {t('auth.signIn.checkingYourSession')}
       </div>
     );
   if (!user)
@@ -94,13 +94,11 @@ export function AuthGate({ children }: { children: ReactNode }) {
           </div>
           <section className="auth-card">
             <p className="eyebrow">
-              {t('Welcome, ')}
+              {t('auth.signIn.welcome') + ' '}
               {user.name}
             </p>
-            <h1>{t('Make this account yours.')}</h1>
-            <p>
-              {t('Choose a personal password before opening the workspace.')}
-            </p>
+            <h1>{t('auth.signIn.makeThisAccountYours')}</h1>
+            <p>{t('auth.signIn.passwordChangeHelp')}</p>
             <PasswordForm
               onChanged={() => {
                 setUser(null);
@@ -108,7 +106,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
               }}
             />
             <button className="text-button" onClick={() => void logout()}>
-              {t('Sign out')}
+              {t('common.actions.signOut')}
             </button>
           </section>
         </div>
@@ -162,13 +160,13 @@ function Login({
         <span className="brand-mark">
           <Icon name="diamond" size={30} />
         </span>
-        <p className="eyebrow">{t('AWESOMEJM · JEWELLERY MANAGER')}</p>
+        <p className="eyebrow">{t('auth.signIn.awesomejmJewelleryManager')}</p>
         <h1>
-          {t('Your shop.')}
+          {t('auth.signIn.yourShop')}
           <br />
-          {t('Your workspace.')}
+          {t('auth.signIn.yourWorkspace')}
         </h1>
-        <p>{t('Sign in with your staff account to continue.')}</p>
+        <p>{t('auth.signIn.signInWithYourStaffAccountToContinue')}</p>
         {(error || connectionError) && (
           <p className="error-banner" role="alert">
             {message(error) || message(connectionError)}
@@ -176,7 +174,7 @@ function Login({
         )}
         <form className="access-form" onSubmit={(e) => void submit(e)}>
           <label>
-            {t('Username')}
+            {t('auth.fields.username')}
             <input
               autoComplete="username"
               value={username}
@@ -188,7 +186,7 @@ function Login({
             />
           </label>
           <label>
-            {t('Password')}
+            {t('auth.fields.password')}
             <input
               type="password"
               autoComplete="current-password"
@@ -199,21 +197,21 @@ function Login({
             />
           </label>
           <button className="button primary" disabled={busy}>
-            {busy ? t('Signing in…') : t('Sign in')}
+            {busy ? t('auth.signIn.signingIn') : t('auth.signIn.title')}
             <Icon name="arrow" />
           </button>
         </form>
         <p className="auth-help">
-          {t(
-            'First-time setup and owner recovery are handled by your server administrator. Ask the shop owner if you need a staff account.',
-          )}
+          {t('auth.signIn.firstTimeSetupAndOwnerRecoveryAreHandled')}
         </p>
       </section>
       <div className="auth-note">
         <span>◇</span>
-        <h2>{t('Care in every detail.')}</h2>
-        <p>{t('For gold and silver businesses')}</p>
-        <small>{t('Individual access. A clear record of every change.')}</small>
+        <h2>{t('common.labels.careInEveryDetail')}</h2>
+        <p>{t('common.labels.forGoldAndSilverBusinesses')}</p>
+        <small>
+          {t('auth.signIn.individualAccessAClearRecordOfEveryChange')}
+        </small>
       </div>
     </div>
   );

@@ -1,3 +1,5 @@
+import type { StaticTranslationKey } from '../i18n/schema';
+import { roleKeys } from '../i18n/labels';
 import { locale, t, message, useLanguage } from '../i18n/language';
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import {
@@ -18,51 +20,48 @@ import { AppShell } from '../shared/AppShell';
 import { Dialog } from '../shared/ui';
 import { errorMessage, request } from '../shared/api';
 const roles = ['OWNER', 'MANAGER', 'CASHIER', 'VIEWER'] as const;
-const roleDescriptions: Record<StaffRole, string> = {
-  OWNER: 'Full shop access, staff administration and recovery status.',
-  MANAGER:
-    'All shop operations, including metal purchases, opening balances, refunds and corrections.',
-  CASHIER:
-    'Customers, incoming payments, sales and orders. Read access to shop records and reports.',
-  VIEWER:
-    'Read shop records and reports. Cannot create or change transactions.',
+const roleDescriptions: Record<StaffRole, StaticTranslationKey> = {
+  OWNER: 'staff.roles.ownerDescription',
+  MANAGER: 'staff.roles.managerDescription',
+  CASHIER: 'staff.roles.cashierDescription',
+  VIEWER: 'staff.roles.viewerDescription',
 };
-const actions: Record<string, string> = {
-  INSERT: 'Record added',
-  UPDATE: 'Record changed',
-  LOGIN: 'Signed in',
-  LOGOUT: 'Signed out',
-  LOGIN_FAILED: 'Sign-in failed',
-  STAFF_CREATED: 'Staff account created',
-  STAFF_UPDATED: 'Staff access updated',
-  PASSWORD_CHANGED: 'Password changed',
-  PASSWORD_RESET: 'Temporary password set',
-  OPERATOR_PASSWORD_RESET: 'Operator password recovery',
-  OWNER_BOOTSTRAPPED: 'Initial owner setup',
-  SESSIONS_REVOKED: 'Devices signed out',
+const actions: Partial<Record<string, StaticTranslationKey>> = {
+  INSERT: 'staff.access.recordAdded',
+  UPDATE: 'staff.access.recordChanged',
+  LOGIN: 'staff.access.signedIn',
+  LOGOUT: 'staff.access.signedOut',
+  LOGIN_FAILED: 'staff.access.signInFailed',
+  STAFF_CREATED: 'staff.access.staffAccountCreated',
+  STAFF_UPDATED: 'staff.access.staffAccessUpdated',
+  PASSWORD_CHANGED: 'staff.access.passwordChanged',
+  PASSWORD_RESET: 'staff.access.temporaryPasswordSet',
+  OPERATOR_PASSWORD_RESET: 'staff.access.operatorPasswordRecovery',
+  OWNER_BOOTSTRAPPED: 'staff.access.initialOwnerSetup',
+  SESSIONS_REVOKED: 'staff.access.devicesSignedOut',
 };
-const resources: Record<string, string> = {
-  inventory_items: 'Jewellery stock',
-  inventory_movements: 'Stock movement',
-  metal_rates: 'Metal rate',
-  customers: 'Customer',
-  customer_profile_history: 'Customer profile history',
-  customer_account_entries: 'Customer account entry',
-  sales: 'Sale',
-  sale_lines: 'Sale line',
-  sale_cancellations: 'Sale correction',
-  custom_orders: 'Custom order',
-  custom_order_events: 'Order progress',
-  metal_purchases: 'Old-metal purchase',
-  old_metal_lots: 'Old-metal lot',
-  purchase_cancellations: 'Purchase correction',
-  old_metal_movements: 'Old-metal movement',
-  staff: 'Staff account',
+const resources: Partial<Record<string, StaticTranslationKey>> = {
+  inventory_items: 'staff.access.jewelleryStock',
+  inventory_movements: 'staff.access.stockMovement',
+  metal_rates: 'staff.access.metalRate',
+  customers: 'common.labels.customer',
+  customer_profile_history: 'staff.access.customerProfileHistory',
+  customer_account_entries: 'common.labels.customerAccountEntry',
+  sales: 'common.labels.sale',
+  sale_lines: 'staff.access.saleLine',
+  sale_cancellations: 'staff.access.saleCorrection',
+  custom_orders: 'staff.access.customOrder',
+  custom_order_events: 'common.labels.orderProgress',
+  metal_purchases: 'common.labels.oldMetalPurchase',
+  old_metal_lots: 'staff.access.oldMetalLot',
+  purchase_cancellations: 'staff.access.purchaseCorrection',
+  old_metal_movements: 'staff.access.oldMetalMovement',
+  staff: 'staff.access.staffAccount',
 };
 const time = (value: string | null) =>
   value
     ? new Date(value).toLocaleString(locale(), { timeZone: 'Asia/Kathmandu' })
-    : t('Not verified');
+    : t('staff.access.notVerified');
 export function Staff() {
   useLanguage();
 
@@ -119,16 +118,12 @@ export function Staff() {
     <AppShell section="Staff & recovery">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">{t('ACCESS & CONTINUITY')}</p>
-          <h1>{t('People you trust.')}</h1>
-          <p>
-            {t(
-              'Individual staff accounts, a clear audit trail and verified recovery.',
-            )}
-          </p>
+          <p className="eyebrow">{t('staff.access.accessContinuity')}</p>
+          <h1>{t('staff.access.peopleYouTrust')}</h1>
+          <p>{t('staff.access.individualStaffAccountsAClearAuditTrailAnd')}</p>
         </div>
         <button className="button primary" onClick={() => setEdit('new')}>
-          {t('Add staff member')}
+          {t('staff.access.addStaffMember')}
         </button>
       </div>
       {error && (
@@ -143,19 +138,19 @@ export function Staff() {
       )}
       <section className="panel">
         <div className="panel-heading">
-          <h2>{t('Staff access')}</h2>
+          <h2>{t('staff.access.staffAccess')}</h2>
           <button className="text-button" onClick={() => void load()}>
-            {t('Refresh')}
+            {t('common.actions.refresh')}
           </button>
         </div>
         <div className="table-scroll">
           <table>
             <thead>
               <tr>
-                <th>{t('Staff member')}</th>
-                <th>{t('Role')}</th>
-                <th>{t('Access')}</th>
-                <th>{t('Actions')}</th>
+                <th>{t('staff.access.staffMember')}</th>
+                <th>{t('staff.access.role')}</th>
+                <th>{t('staff.access.access')}</th>
+                <th>{t('common.labels.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -165,15 +160,17 @@ export function Staff() {
                     <strong>{member.name}</strong>
                     <small className="cell-subtitle">
                       {member.username}
-                      {member.id === user.id ? t(' · You') : ''}
+                      {member.id === user.id ? ' ' + t('staff.access.you') : ''}
                     </small>
                   </td>
-                  <td>{t(member.role)}</td>
+                  <td>{t(roleKeys[member.role])}</td>
                   <td>
-                    {member.active ? t('Active') : t('Disabled')}
+                    {member.active
+                      ? t('common.labels.active')
+                      : t('staff.access.disabled')}
                     {member.mustChangePassword && (
                       <small className="cell-subtitle">
-                        {t('Personal password required')}
+                        {t('staff.access.personalPasswordRequired')}
                       </small>
                     )}
                   </td>
@@ -183,20 +180,20 @@ export function Staff() {
                         className="text-button"
                         onClick={() => setEdit(member)}
                       >
-                        {t('Edit access')}
+                        {t('staff.access.editAccess')}
                       </button>
                       <button
                         className="text-button"
                         onClick={() => setReset(member)}
                       >
-                        {t('Reset password')}
+                        {t('staff.access.resetPassword')}
                       </button>
                       <button
                         className="text-button"
                         disabled={busy || member.id === user.id}
                         onClick={() => void revoke(member)}
                       >
-                        {t('Sign out devices')}
+                        {t('staff.access.signOutDevices')}
                       </button>
                     </div>
                   </td>
@@ -205,33 +202,25 @@ export function Staff() {
             </tbody>
           </table>
         </div>
-        <p className="section-note">
-          {t(
-            'Owner: all access and staff administration. Manager: all shop operations and corrections. Cashier: customers, sales, orders and incoming payments. Viewer: read-only. All roles can view shop records and reports. Opening balances, refunds and corrections require Manager or Owner.',
-          )}
-        </p>
+        <p className="section-note">{t('staff.access.permissionSummary')}</p>
       </section>
       <section className="panel recovery-panel">
         <div className="panel-heading">
           <div>
-            <p className="eyebrow">{t('RECOVERY CHECKPOINT')}</p>
-            <h2>{t('Backups that have been restored.')}</h2>
+            <p className="eyebrow">{t('staff.access.recoveryCheckpoint')}</p>
+            <h2>{t('staff.access.backupsThatHaveBeenRestored')}</h2>
           </div>
         </div>
-        <p>
-          {t(
-            'Encrypted backups are created by the server operator. Verification restores the archive into a separate database and compares every table against the backup snapshot.',
-          )}
-        </p>
+        <p>{t('staff.access.encryptedBackupsAreCreatedByTheServerOperator')}</p>
         {recovery?.backups.length ? (
           <div className="table-scroll">
             <table>
               <thead>
                 <tr>
-                  <th>{t('Archive')}</th>
-                  <th>{t('Created · Nepal time')}</th>
-                  <th>{t('Restore verified')}</th>
-                  <th>{t('Tables checked')}</th>
+                  <th>{t('staff.access.archive')}</th>
+                  <th>{t('staff.access.createdNepalTime')}</th>
+                  <th>{t('staff.access.restoreVerified')}</th>
+                  <th>{t('staff.access.tablesChecked')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -241,7 +230,8 @@ export function Staff() {
                       {b.fileName}
                       <small className="cell-subtitle">
                         {(Number(b.sizeBytes) / 1024).toFixed(1)}{' '}
-                        {t(' KB · SHA256')} {b.sha256.slice(0, 12)}…
+                        {' ' + t('staff.access.kbSha256')}{' '}
+                        {b.sha256.slice(0, 12)}…
                       </small>
                     </td>
                     <td>{time(b.createdAt)}</td>
@@ -254,33 +244,27 @@ export function Staff() {
           </div>
         ) : (
           <div className="empty-state">
-            <h3>{t('No backup has been recorded yet')}</h3>
-            <p>
-              {t(
-                'Ask your server administrator to configure the backup key, daily backups and regular restore verification before rollout.',
-              )}
-            </p>
+            <h3>{t('staff.access.noBackupHasBeenRecordedYet')}</h3>
+            <p>{t('staff.recovery.setupHelp')}</p>
           </div>
         )}
         <p className="section-note">
-          {t(
-            'Keep an encrypted copy off the application server and the recovery key in a separate secure location. A local archive alone does not protect against losing the server.',
-          )}
+          {t('staff.access.keepAnEncryptedCopyOffTheApplicationServer')}
         </p>
       </section>
       <section className="panel">
         <div className="panel-heading">
-          <h2>{t('Audit trail')}</h2>
-          <span>{t('Latest changes · Nepal time')}</span>
+          <h2>{t('staff.access.auditTrail')}</h2>
+          <span>{t('staff.access.latestChangesNepalTime')}</span>
         </div>
         <div className="table-scroll">
           <table>
             <thead>
               <tr>
-                <th>{t('When')}</th>
-                <th>{t('Staff member')}</th>
-                <th>{t('Action')}</th>
-                <th>{t('Record')}</th>
+                <th>{t('staff.access.when')}</th>
+                <th>{t('staff.access.staffMember')}</th>
+                <th>{t('staff.access.action')}</th>
+                <th>{t('staff.access.record')}</th>
               </tr>
             </thead>
             <tbody>
@@ -288,14 +272,21 @@ export function Staff() {
                 <tr key={event.id}>
                   <td>{time(event.occurredAt)}</td>
                   <td>
-                    {event.actorName ?? t('Server operator / legacy import')}
+                    {event.actorName ??
+                      t('staff.access.serverOperatorLegacyImport')}
                     <small className="cell-subtitle">
                       {event.actorUsername}
                     </small>
                   </td>
-                  <td>{t(actions[event.action] ?? event.action)}</td>
                   <td>
-                    {t(resources[event.resource] ?? event.resource)}
+                    {actions[event.action]
+                      ? t(actions[event.action])
+                      : event.action}
+                  </td>
+                  <td>
+                    {resources[event.resource]
+                      ? t(resources[event.resource])
+                      : event.resource}
                     <small className="cell-subtitle">
                       {event.recordId ?? '—'}
                     </small>
@@ -311,18 +302,18 @@ export function Staff() {
             disabled={page === 1}
             onClick={() => setPage((p) => p - 1)}
           >
-            {t('Previous')}
+            {t('common.actions.previous')}
           </button>
           <span>
-            {t('Page ')}
-            {page} · {audit?.total ?? 0} {t(' events')}
+            {t('common.labels.page') + ' '}
+            {page} · {audit?.total ?? 0} {' ' + t('staff.access.events')}
           </span>
           <button
             className="button secondary"
             disabled={!audit || page * 50 >= audit.total}
             onClick={() => setPage((p) => p + 1)}
           >
-            {t('Next')}
+            {t('common.actions.next')}
           </button>
         </div>
       </section>
@@ -402,8 +393,12 @@ function StaffForm({
   }
   return (
     <Dialog
-      title={existing ? t('Edit staff access') : t('Add staff member')}
-      eyebrow={t('Staff administration')}
+      title={
+        existing
+          ? t('staff.access.editStaffAccess')
+          : t('staff.access.addStaffMember')
+      }
+      eyebrow={t('staff.access.staffAdministration')}
       onClose={onClose}
       busy={busy}
     >
@@ -414,7 +409,7 @@ function StaffForm({
           </p>
         )}
         <label>
-          {t('Name')}
+          {t('staff.access.name')}
           <input
             required
             maxLength={120}
@@ -423,7 +418,7 @@ function StaffForm({
           />
         </label>
         <label>
-          {t('Username')}
+          {t('auth.fields.username')}
           <input
             required
             disabled={!!existing}
@@ -433,14 +428,14 @@ function StaffForm({
           />
         </label>
         <label>
-          {t('Role')}
+          {t('staff.access.role')}
           <select
             value={role}
             onChange={(e) => setRole(e.target.value as StaffRole)}
           >
             {roles.map((r) => (
               <option value={r} key={r}>
-                {t(r)}
+                {t(roleKeys[r])}
               </option>
             ))}
           </select>
@@ -453,11 +448,11 @@ function StaffForm({
               checked={active}
               onChange={(e) => setActive(e.target.checked)}
             />
-            {t('Allow sign-in')}
+            {t('staff.access.allowSignIn')}
           </label>
         ) : (
           <label>
-            {t('Temporary password')}
+            {t('staff.access.temporaryPassword')}
             <input
               required
               type="password"
@@ -468,9 +463,7 @@ function StaffForm({
               onChange={(e) => setPassword(e.target.value)}
             />
             <small>
-              {t(
-                'Share securely with this staff member. They must replace it at first sign-in.',
-              )}
+              {t('staff.access.shareSecurelyWithThisStaffMemberTheyMust')}
             </small>
           </label>
         )}
@@ -481,10 +474,12 @@ function StaffForm({
             onClick={onClose}
             disabled={busy}
           >
-            {t('Cancel')}
+            {t('common.actions.cancel')}
           </button>
           <button className="button primary" disabled={busy}>
-            {busy ? t('Saving…') : t('Save staff access')}
+            {busy
+              ? t('common.actions.saving')
+              : t('staff.access.saveStaffAccess')}
           </button>
         </div>
       </form>
@@ -533,10 +528,10 @@ function ResetForm({
   }
   return (
     <Dialog
-      title={t('Reset password · {value0}', { value0: member.name })}
+      title={t('staff.access.resetPasswordFor', { name: member.name })}
       onClose={onClose}
       busy={busy}
-      eyebrow={t('Staff recovery')}
+      eyebrow={t('staff.access.staffRecovery')}
     >
       <form className="access-form" onSubmit={(e) => void submit(e)}>
         {error && (
@@ -544,13 +539,9 @@ function ResetForm({
             {message(error)}
           </p>
         )}
-        <p>
-          {t(
-            'This signs the staff member out everywhere. They must change this temporary password at next sign-in.',
-          )}
-        </p>
+        <p>{t('staff.access.thisSignsTheStaffMemberOutEverywhereThey')}</p>
         <label>
-          {t('Temporary password')}
+          {t('staff.access.temporaryPassword')}
           <input
             type="password"
             required
@@ -562,7 +553,7 @@ function ResetForm({
           />
         </label>
         <button className="button primary" disabled={busy}>
-          {busy ? t('Resetting…') : t('Reset password')}
+          {busy ? t('staff.access.resetting') : t('staff.access.resetPassword')}
         </button>
       </form>
     </Dialog>

@@ -1,10 +1,12 @@
 import { useSyncExternalStore } from 'react';
-import {
-  translate,
-  translateMessage,
-  resolveLanguage,
-  type Language,
-} from './core.mjs';
+import { translate, resolveLanguage, type Language } from './core.mjs';
+import { translateMessage } from './messages.mjs';
+import type {
+  TranslationArgs,
+  TranslationKey,
+  TranslationValue,
+} from './schema';
+export type { TranslationKey } from './schema';
 const key = 'awesomejm.language';
 function initialLanguage(): Language {
   try {
@@ -55,17 +57,17 @@ globalThis.addEventListener('storage', (event) => {
     for (const listener of listeners) listener();
   }
 });
-export function t(
-  value: string,
-  values?: Record<string, string | number | bigint>,
+export function t<K extends TranslationKey>(
+  value: K,
+  ...args: TranslationArgs<K>
 ): string;
-export function t(
-  value: string | undefined,
-  values?: Record<string, string | number | bigint>,
+export function t<K extends TranslationKey>(
+  value: K | undefined,
+  ...args: TranslationArgs<K>
 ): string | undefined;
 export function t(
-  value: string | undefined,
-  values?: Record<string, string | number | bigint>,
+  value: TranslationKey | undefined,
+  values?: Record<string, TranslationValue>,
 ) {
   return value === undefined ? undefined : translate(value, values, language);
 }

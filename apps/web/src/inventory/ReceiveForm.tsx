@@ -70,72 +70,78 @@ export function ReceiveForm({
     }
   }
   return (
-    <Dialog title={t('Receive a piece')} onClose={onClose} busy={busy}>
+    <Dialog
+      title={t('inventory.receiveForm.title')}
+      onClose={onClose}
+      busy={busy}
+    >
       <p className="dialog-description">
-        {t(
-          'Create one stock record per physical piece. All weights are entered in grams.',
-        )}
+        {t('inventory.receiveForm.description')}
       </p>
       <form onSubmit={(event) => void submit(event)}>
         <fieldset disabled={busy} className="form-grid">
           <label>
-            {t('Item code')}
+            {t('inventory.fields.itemCode')}
             <input
               autoFocus
               required
               maxLength={40}
-              placeholder={t('e.g. GLD-001')}
+              placeholder={t('inventory.receiveForm.itemCodePlaceholder')}
               {...field('itemCode')}
             />
           </label>
           <label>
-            {t('Category')}
+            {t('inventory.labels.category')}
             <input
               required
               maxLength={60}
-              placeholder={t('e.g. Ring')}
+              placeholder={t('inventory.receiveForm.categoryPlaceholder')}
               {...field('category')}
               list="categories"
             />
           </label>
           <datalist id="categories">
-            <option value="Ring">{t('Ring')}</option>
-            <option value="Necklace">{t('Necklace')}</option>
-            <option value="Earrings">{t('Earrings')}</option>
-            <option value="Bangle">{t('Bangle')}</option>
-            <option value="Chain">{t('Chain')}</option>
-            <option value="Coin">{t('Coin')}</option>
+            <option value="Ring">{t('inventory.receiveForm.ring')}</option>
+            <option value="Necklace">
+              {t('inventory.receiveForm.necklace')}
+            </option>
+            <option value="Earrings">
+              {t('inventory.receiveForm.earrings')}
+            </option>
+            <option value="Bangle">{t('inventory.receiveForm.bangle')}</option>
+            <option value="Chain">{t('inventory.receiveForm.chain')}</option>
+            <option value="Coin">{t('inventory.receiveForm.coin')}</option>
           </datalist>
           <label className="full-width">
-            {t('Item name')}
+            {t('inventory.receiveForm.itemName')}
             <input
               required
               maxLength={120}
-              placeholder={t('e.g. Traditional gold ring')}
+              placeholder={t('inventory.receiveForm.namePlaceholder')}
               {...field('name')}
             />
           </label>
           <label>
-            {t('Metal')}
+            {t('common.labels.metal')}
             <select {...field('metal')}>
-              <option value="GOLD">{t('Gold · सुन')}</option>
-              <option value="SILVER">{t('Silver · चाँदी')}</option>
+              <option value="GOLD">{t('common.labels.gold')}</option>
+              <option value="SILVER">{t('common.labels.silver')}</option>
             </select>
           </label>
           <label>
-            {t('Purity / fineness (‰)')}
+            {t('common.labels.purityFineness')}
             <input
               required
               inputMode="decimal"
-              placeholder={t('e.g. 916.667')}
+              placeholder={t('inventory.receiveForm.purityPlaceholder')}
               {...field('fineness')}
             />
             <span className="field-hint">
-              {t('22K ≈ 916.667‰. Use the piece’s actual purity.')}
+              {t('inventory.receiveForm.purityHelp')}
             </span>
           </label>
           <label>
-            {t('Gross weight (g)')}
+            {t('common.labels.grossWeightG')}
             <input
               required
               inputMode="decimal"
@@ -144,7 +150,7 @@ export function ReceiveForm({
             />
           </label>
           <label>
-            {t('Stone / other weight (g)')}
+            {t('common.labels.stoneOtherWeightG')}
             <input
               required
               inputMode="decimal"
@@ -153,28 +159,34 @@ export function ReceiveForm({
           </label>
           <div className="weight-preview full-width">
             <div>
-              <span>{t('Net metal weight')}</span>
+              <span>{t('inventory.labels.netMetalWeight')}</span>
               <strong>
                 {preview
-                  ? t('{value0} g', { value0: preview.netWeightGrams })
+                  ? t('inventory.receiveForm.g', {
+                      weight: preview.netWeightGrams,
+                    })
                   : '—'}
               </strong>
             </div>
             <div>
-              <span>{t('Fine-metal equivalent')}</span>
+              <span>{t('inventory.labels.fineMetalEquivalent')}</span>
               <strong>
                 {preview
-                  ? t('{value0} g', { value0: preview.fineWeightGrams })
+                  ? t('inventory.receiveForm.g', {
+                      weight: preview.fineWeightGrams,
+                    })
                   : '—'}
               </strong>
             </div>
           </div>
           <label className="full-width">
-            {t('Notes (optional)')}
+            {t('common.labels.notesOptional')}
             <textarea
               rows={2}
               maxLength={1000}
-              placeholder={t('Design, size or receipt reference')}
+              placeholder={t(
+                'inventory.receiveForm.designSizeOrReceiptReference',
+              )}
               {...field('notes')}
             />
           </label>
@@ -191,10 +203,12 @@ export function ReceiveForm({
             onClick={onClose}
             disabled={busy}
           >
-            {t('Cancel')}
+            {t('common.actions.cancel')}
           </button>
           <button className="button primary" disabled={busy}>
-            {busy ? t('Saving…') : t('Receive piece')}
+            {busy
+              ? t('common.actions.saving')
+              : t('inventory.receiveForm.receivePiece')}
             <Icon name="arrow" size={18} />
           </button>
         </div>

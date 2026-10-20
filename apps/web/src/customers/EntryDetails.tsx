@@ -69,66 +69,68 @@ export function EntryDetails({
   return (
     <Dialog
       title={entry.entryCode}
-      eyebrow={t('Customer account entry')}
+      eyebrow={t('common.labels.customerAccountEntry')}
       busy={busy}
       onClose={onClose}
     >
       <div className="receipt-print">
         <div className="receipt-brand">
           <span>
-            {t('AWESOMEJM / {shopName}', { shopName: user.shopName })}
+            {t('common.print.shopHeading', { shopName: user.shopName })}
           </span>
           <strong>
-            {printable ? t('Account acknowledgement') : t('Account entry')}
+            {printable
+              ? t('customers.entryDetails.accountAcknowledgement')
+              : t('customers.entryDetails.accountEntry')}
           </strong>
           <small>
-            {entry.entryCode} · {entry.entryDate} {t(' AD')}
+            {entry.entryCode} · {entry.entryDate} {' ' + t('common.labels.ad')}
           </small>
         </div>
         {entry.reversed && (
           <p className="receipt-reversed">
-            {t('REVERSED · This entry has a recorded correction.')}
+            {t(
+              'customers.entryDetails.reversedThisEntryHasARecordedCorrection',
+            )}
           </p>
         )}
         <p className="receipt-kind">{t(entryTitle[entry.kind])}</p>
         <p className="receipt-amount">
-          <small>{t('NPR ')}</small>
+          <small>{t('common.money.currency') + ' '}</small>
           {money(entry.amountNpr.replace(/^-/, ''))}
         </p>
         <dl className="details-grid">
           <div>
-            <dt>{t('Customer at posting')}</dt>
+            <dt>{t('common.labels.customerAtPosting')}</dt>
             <dd>
               {entry.customerSnapshot.name}
               <small>{entry.customerSnapshot.customerCode}</small>
             </dd>
           </div>
           <div>
-            <dt>{t('Phone')}</dt>
+            <dt>{t('common.fields.phone')}</dt>
             <dd>{entry.customerSnapshot.phone || '—'}</dd>
           </div>
           <div>
-            <dt>{t('Address')}</dt>
+            <dt>{t('common.fields.address')}</dt>
             <dd>{entry.customerSnapshot.address || '—'}</dd>
           </div>
           <div>
-            <dt>{t('PAN')}</dt>
+            <dt>{t('common.fields.pan')}</dt>
             <dd>{entry.customerSnapshot.pan || '—'}</dd>
           </div>
           <div>
-            <dt>{t('Method')}</dt>
+            <dt>{t('common.labels.method')}</dt>
             <dd>{entry.method ? t(methodTitle[entry.method]) : '—'}</dd>
           </div>
           <div>
-            <dt>{t('Reference')}</dt>
+            <dt>{t('customers.entryDetails.reference')}</dt>
             <dd>{entry.reference || '—'}</dd>
           </div>
         </dl>
         {entry.notes && <p className="item-notes">{entry.notes}</p>}
         <p className="receipt-disclaimer">
-          {t(
-            'Internal customer account record · NPR · This acknowledgement is not a sales invoice.',
-          )}
+          {t('customers.entryDetails.printDisclaimer')}
         </p>
       </div>
       {printable && (
@@ -137,30 +139,30 @@ export function EntryDetails({
           className="button secondary"
           onClick={() => globalThis.print()}
         >
-          {t('Print acknowledgement')}
+          {t('customers.entryDetails.printAcknowledgement')}
         </button>
       )}
       {entry.saleId && (
         <p className="account-scope-note">
-          {t('This entry is linked to a sale.')}{' '}
+          {t('customers.entryDetails.thisEntryIsLinkedToASale')}{' '}
           <a className="text-button" href={`#/sales/${entry.saleId}`}>
-            {t('View sale →')}
+            {t('common.labels.viewSale')}
           </a>
         </p>
       )}
       {entry.orderId && (
         <p className="account-scope-note">
-          {t('Payment tagged to an order.')}{' '}
+          {t('customers.entryDetails.paymentTaggedToAnOrder')}{' '}
           <a className="text-button" href={`#/orders/${entry.orderId}`}>
-            {t('View order →')}
+            {t('common.labels.viewOrder')}
           </a>
         </p>
       )}
       {entry.purchaseId && (
         <p className="account-scope-note">
-          {t('Linked purchase or exchange.')}{' '}
+          {t('customers.entryDetails.linkedPurchaseOrExchange')}{' '}
           <a className="text-button" href={`#/purchases/${entry.purchaseId}`}>
-            {t('View settlement →')}
+            {t('customers.entryDetails.viewSettlement')}
           </a>
         </p>
       )}
@@ -174,12 +176,10 @@ export function EntryDetails({
             onSubmit={(event) => void reverse(event)}
           >
             <p>
-              {t(
-                'This adds an equal and opposite entry. Use a reversal to correct a recording mistake; record money returned as an advance refund.',
-              )}
+              {t('customers.entryDetails.thisAddsAnEqualAndOppositeEntryUse')}
             </p>
             <label>
-              {t('Reversal date (AD)')}
+              {t('customers.entryDetails.reversalDateAd')}
               <input
                 type="date"
                 required
@@ -191,7 +191,7 @@ export function EntryDetails({
               />
             </label>
             <label>
-              {t('Reason for reversal')}
+              {t('customers.entryDetails.reasonForReversal')}
               <textarea
                 required
                 minLength={5}
@@ -208,22 +208,26 @@ export function EntryDetails({
                 disabled={busy}
                 onClick={() => setCorrecting(false)}
               >
-                {t('Keep entry')}
+                {t('customers.entryDetails.keepEntry')}
               </button>
               <button className="button danger" disabled={busy}>
-                {busy ? t('Saving…') : t('Confirm reversal')}
+                {busy
+                  ? t('common.actions.saving')
+                  : t('customers.entryDetails.confirmReversal')}
               </button>
             </div>
           </form>
         ) : (
           <div className="detail-footer">
-            <span className="muted">{t('Recorded incorrectly?')}</span>
+            <span className="muted">
+              {t('customers.entryDetails.recordedIncorrectly')}
+            </span>
             <Permission name="records.correct">
               <button
                 className="text-button danger-text"
                 onClick={() => setCorrecting(true)}
               >
-                {t('Reverse this entry')}
+                {t('customers.entryDetails.reverseThisEntry')}
               </button>
             </Permission>
           </div>

@@ -1,0 +1,19 @@
+{
+  "value": {
+    "minimum": "The value must be at least {count}.",
+    "maximum": "The value must be at most {count}."
+  },
+  "invalidDetails": "Please check the entered details.",
+  "native": {
+    "required": "Please complete this field.",
+    "invalidValue": "Please enter a valid value."
+  },
+  "length": {
+    "minimum": "Use at least {count} characters.",
+    "maximum": "Use no more than {count} characters."
+  },
+  "range": {
+    "minimum": "Enter a value of at least {count}.",
+    "maximum": "Enter a value no greater than {count}."
+  }
+}

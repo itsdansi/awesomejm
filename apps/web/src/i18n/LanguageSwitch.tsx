@@ -1,11 +1,11 @@
-import { setLanguage, useLanguage } from './language';
+import { setLanguage, useLanguage, t } from './language';
 export function LanguageSwitch() {
   const language = useLanguage();
   return (
     <div
       className="language-switch"
       role="group"
-      aria-label={language === 'ne' ? 'भाषा छान्नुहोस्' : 'Choose language'}
+      aria-label={t('common.language.choose')}
     >
       <button
         type="button"
@@ -13,7 +13,7 @@ export function LanguageSwitch() {
         aria-pressed={language === 'en'}
         onClick={() => setLanguage('en')}
       >
-        English
+        {t('common.language.english')}
       </button>
       <button
         type="button"
@@ -21,7 +21,7 @@ export function LanguageSwitch() {
         aria-pressed={language === 'ne'}
         onClick={() => setLanguage('ne')}
       >
-        नेपाली
+        {t('common.language.nepali')}
       </button>
     </div>
   );

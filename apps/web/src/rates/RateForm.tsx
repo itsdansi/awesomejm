@@ -81,25 +81,26 @@ export function RateForm({
   }
   return (
     <Dialog
-      title={rate ? t('Revise a rate') : t('Set a metal rate')}
-      eyebrow={t('Gold & silver rates')}
+      title={
+        rate
+          ? t('rates.rateForm.reviseARate')
+          : t('rates.rateForm.setAMetalRate')
+      }
+      eyebrow={t('rates.labels.goldSilverRates')}
       onClose={onClose}
       busy={busy}
     >
       <p className="dialog-description">
         {rate
-          ? t(
-              'This saves revision {value0}. The previous rate stays in history.',
-              { value0: rate.revision + 1 },
-            )
-          : t(
-              'Record your shop’s quote for one metal and purity. Rates are entered manually in NPR per tola.',
-            )}
+          ? t('rates.rateForm.thisSavesRevisionThePreviousRateStaysIn', {
+              revision: rate.revision + 1,
+            })
+          : t('rates.rateForm.recordYourShopSQuoteForOneMetal')}
       </p>
       <form onSubmit={(event) => void submit(event)}>
         <fieldset className="form-grid" disabled={busy}>
           <label className="full-width">
-            {t('Rate date (AD)')}
+            {t('rates.labels.rateDateAd')}
             <input
               type="date"
               value={fields.rateDate}
@@ -108,7 +109,7 @@ export function RateForm({
             />
           </label>
           <label>
-            {t('Metal')}
+            {t('common.labels.metal')}
             <select
               {...field('metal')}
               disabled={Boolean(rate)}
@@ -120,12 +121,12 @@ export function RateForm({
                 })
               }
             >
-              <option value="GOLD">{t('Gold · सुन')}</option>
-              <option value="SILVER">{t('Silver · चाँदी')}</option>
+              <option value="GOLD">{t('common.labels.gold')}</option>
+              <option value="SILVER">{t('common.labels.silver')}</option>
             </select>
           </label>
           <label>
-            {t('Purity / fineness (‰)')}
+            {t('common.labels.purityFineness')}
             <input
               required
               inputMode="decimal"
@@ -134,57 +135,61 @@ export function RateForm({
             />
             <span className="field-hint">
               {fields.metal === 'GOLD'
-                ? t('22K ≈ 916.667‰ · 24K nominally 1000‰.')
-                : t('Sterling silver is 925‰.')}{' '}
-              {t('Enter actual quoted purity.')}
+                ? t('rates.rateForm.purityHelp')
+                : t('rates.rateForm.sterlingSilverIs925')}{' '}
+              {t('rates.rateForm.enterActualQuotedPurity')}
             </span>
           </label>
           <label>
-            {t('Buying rate (NPR / tola)')}
+            {t('rates.rateForm.buyingRateNprTola')}
             <input
               required
               inputMode="decimal"
               placeholder="0.00"
               {...field('buyRatePerTola')}
             />
-            <span className="field-hint">{t('The shop’s buying quote.')}</span>
+            <span className="field-hint">
+              {t('rates.rateForm.theShopSBuyingQuote')}
+            </span>
           </label>
           <label>
-            {t('Selling rate (NPR / tola)')}
+            {t('rates.rateForm.sellingRateNprTola')}
             <input
               required
               inputMode="decimal"
               placeholder="0.00"
               {...field('sellRatePerTola')}
             />
-            <span className="field-hint">{t('The shop’s selling quote.')}</span>
+            <span className="field-hint">
+              {t('rates.rateForm.theShopSSellingQuote')}
+            </span>
           </label>
           <div className="weight-preview full-width">
             <div>
-              <span>{t('Buying / gram ≈')}</span>
+              <span>{t('rates.rateForm.buyingGram')}</span>
               <strong>{buyPreview}</strong>
             </div>
             <div>
-              <span>{t('Selling / gram ≈')}</span>
+              <span>{t('rates.rateForm.sellingGram')}</span>
               <strong>{sellPreview}</strong>
             </div>
           </div>
           <p className="field-hint full-width rate-form-note">
-            {t(
-              '1 tola = 11.664 g. Per-gram values are rounded previews. The quote already applies to the stated purity.',
-            )}
+            {t('rates.rateForm.perGramPreviewHelp')}
           </p>
           <label className="full-width">
-            {t('Rate source / reference')}
+            {t('rates.rateForm.rateSourceReference')}
             <input
               required
               maxLength={160}
               {...field('source')}
-              placeholder={t('Shop-set rate or source reference')}
+              placeholder={t('rates.rateForm.shopSetRateOrSourceReference')}
             />
           </label>
           <label className="full-width">
-            {rate ? t('Reason for revision') : t('Notes (optional)')}
+            {rate
+              ? t('rates.rateForm.reasonForRevision')
+              : t('common.labels.notesOptional')}
             <textarea
               required={Boolean(rate)}
               minLength={rate ? 5 : undefined}
@@ -206,10 +211,14 @@ export function RateForm({
             disabled={busy}
             onClick={onClose}
           >
-            {t('Cancel')}
+            {t('common.actions.cancel')}
           </button>
           <button className="button primary" disabled={busy}>
-            {busy ? t('Saving…') : rate ? t('Save revision') : t('Save rate')}
+            {busy
+              ? t('common.actions.saving')
+              : rate
+                ? t('rates.rateForm.saveRevision')
+                : t('rates.rateForm.saveRate')}
             <Icon name="arrow" size={18} />
           </button>
         </div>
