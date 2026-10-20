@@ -27,6 +27,9 @@ export interface TranslationSchema {
   'auth.signIn.welcome': never;
   'auth.signIn.yourShop': never;
   'auth.signIn.yourWorkspace': never;
+  'auth.userMenu.account': never;
+  'auth.userMenu.label': never;
+  'auth.userMenu.open': { name: TranslationValue };
   'common.actions.cancel': never;
   'common.actions.next': never;
   'common.actions.previous': never;

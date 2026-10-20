@@ -17,6 +17,8 @@ export function Icon({
     | 'diamond'
     | 'history'
     | 'users'
+    | 'user'
+    | 'logout'
     | 'receipt'
     | 'overview'
     | 'exchange'
@@ -24,6 +26,13 @@ export function Icon({
   size?: number;
 }) {
   const paths = {
+    user: (
+      <>
+        <circle cx="12" cy="8" r="4" />
+        <path d="M5 21v-2a7 7 0 0 1 14 0v2" />
+      </>
+    ),
+    logout: <path d="M9 4H4v16h5M10 12h11m-4-4 4 4-4 4" />,
     overview: (
       <>
         <rect x="3" y="3" width="7" height="7" rx="1" />

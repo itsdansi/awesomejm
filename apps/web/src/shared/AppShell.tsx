@@ -4,6 +4,7 @@ import { t, useLanguage } from '../i18n/language';
 import { useAuth } from '../auth/AuthContext';
 import type { ReactNode } from 'react';
 import { Icon } from './ui';
+import { UserMenu } from './UserMenu';
 
 export function AppShell({
   section,
@@ -24,7 +25,7 @@ export function AppShell({
 }) {
   useLanguage();
 
-  const { user, can, logout } = useAuth();
+  const { user, can } = useAuth();
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -109,12 +110,7 @@ export function AppShell({
           <span className="current-section">{t(navigationKeys[section])}</span>
           <div className="staff-topbar">
             <LanguageSwitch />
-            <a className="text-button" href="#/account">
-              {user.name}
-            </a>
-            <button className="text-button" onClick={() => void logout()}>
-              {t('common.actions.signOut')}
-            </button>
+            <UserMenu />
           </div>
         </header>
         <main className="workspace">{children}</main>

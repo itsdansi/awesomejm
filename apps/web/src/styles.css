@@ -3013,12 +3013,6 @@ button.sale-picker-row:hover {
   .staff-topbar {
     gap: 8px;
   }
-  .staff-topbar a {
-    max-width: 160px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
   .auth-card h1 {
     font-size: 36px;
   }
@@ -3175,6 +3169,82 @@ button.sale-picker-row:hover {
   border-radius: 8px;
   padding: 3px;
   flex-shrink: 0;
+}
+.user-menu {
+  position: relative;
+  flex-shrink: 0;
+}
+.user-avatar {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #dbe3d5;
+  border-radius: 50%;
+  background: #edf2ea;
+  color: #345740;
+  font-size: 13px;
+  font-weight: 650;
+}
+.user-avatar:hover {
+  background: #e3ebdd;
+}
+.user-avatar[aria-expanded='true'] {
+  background: #2d493b;
+  border-color: #2d493b;
+  color: #fff;
+}
+.user-menu-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 50;
+  width: 256px;
+  max-width: calc(100vw - 32px);
+  padding: 6px;
+  border: 1px solid #e1e6da;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 12px 36px #203b331f;
+}
+.user-menu-identity {
+  display: grid;
+  gap: 3px;
+  padding: 12px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid #edf0e7;
+  overflow-wrap: anywhere;
+}
+.user-menu-identity strong {
+  color: #263b34;
+  font-size: 14px;
+  font-weight: 600;
+}
+.user-menu-identity span {
+  color: #7d8778;
+  font-size: 11px;
+}
+.user-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #435d49;
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: left;
+}
+.user-menu-item:hover,
+.user-menu-item:focus-visible {
+  background: #f0f4ec;
+}
+.user-menu-item:focus-visible {
+  outline-offset: -2px;
 }
 .language-switch button {
   border: 0;
