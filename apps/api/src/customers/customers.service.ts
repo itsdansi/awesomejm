@@ -4,6 +4,7 @@ import {
   customerSnapshot,
   loadCustomer,
 } from './accounting.js';
+import { loadOrder } from '../orders/order-posting.js';
 import { nextShopNumber } from '../shop/counters.js';
 import { createHash, randomUUID } from 'node:crypto';
 import {
@@ -274,7 +275,7 @@ export class CustomersService {
       const replay = await this.replay(client, customer, input.requestId, hash);
       if (replay) return replay;
       const result = await client.query(
-        'SELECT kind,amount_npr::text,entry_code,sale_id FROM customer_account_entries WHERE shop_id=$1 AND customer_id=$2 AND id=$3',
+        'SELECT kind,amount_npr::text,entry_code,sale_id,order_id FROM customer_account_entries WHERE shop_id=$1 AND customer_id=$2 AND id=$3',
         [SHOP_ID, id, entryId],
       );
       if (!result.rowCount)
@@ -283,6 +284,13 @@ export class CustomersService {
         throw new ConflictException(
           'Correct sale-linked entries from Sales to keep stock and accounts consistent.',
         );
+      if (result.rows[0].order_id) {
+        const order = await loadOrder(client, result.rows[0].order_id, true);
+        if (input.entryDate < order.latestActivityDate)
+          throw new BadRequestException(
+            `Choose a reversal date on or after ${order.latestActivityDate}.`,
+          );
+      }
       if (result.rows[0].kind === 'REVERSAL')
         throw new BadRequestException(
           'A reversal cannot itself be reversed. Record the correct payment as a new entry.',
@@ -300,7 +308,7 @@ export class CustomersService {
       const entry = await nextShopNumber(client, 'ACCOUNT_ENTRY');
       const reversalId = randomUUID();
       await client.query(
-        `INSERT INTO customer_account_entries(id,shop_id,customer_id,entry_number,entry_code,entry_date,kind,amount_npr,reference,notes,reversal_of,customer_snapshot,request_id,request_fingerprint) VALUES($1,$2,$3,$4,$5,$6,'REVERSAL',-$7::numeric,$8,$9,$10,$11,$12,$13)`,
+        `INSERT INTO customer_account_entries(id,shop_id,customer_id,entry_number,entry_code,entry_date,kind,amount_npr,reference,notes,reversal_of,customer_snapshot,request_id,request_fingerprint,order_id) VALUES($1,$2,$3,$4,$5,$6,'REVERSAL',-$7::numeric,$8,$9,$10,$11,$12,$13,$14)`,
         [
           reversalId,
           SHOP_ID,
@@ -315,6 +323,7 @@ export class CustomersService {
           JSON.stringify(customerSnapshot(customer)),
           input.requestId,
           hash,
+          result.rows[0].order_id,
         ],
       );
       return accountMutationSchema.parse({
@@ -332,7 +341,7 @@ export class CustomersService {
       const customer = await loadCustomer(client, id);
       const result = await client.query(
         `WITH ledger AS (SELECT *, sum(amount_npr) OVER(ORDER BY entry_date,entry_number ROWS UNBOUNDED PRECEDING) AS running_balance FROM customer_account_entries WHERE shop_id=$1 AND customer_id=$2)
-        SELECT e.id,e.entry_code AS "entryCode",e.entry_date::text AS "entryDate",e.kind,e.amount_npr::text AS "amountNpr",e.method,e.reference,e.notes,e.reversal_of AS "reversalOf",e.sale_id AS "saleId",e.customer_snapshot AS "customerSnapshot",e.running_balance::text AS "runningBalanceNpr",
+        SELECT e.id,e.entry_code AS "entryCode",e.entry_date::text AS "entryDate",e.kind,e.amount_npr::text AS "amountNpr",e.method,e.reference,e.notes,e.reversal_of AS "reversalOf",e.sale_id AS "saleId",e.order_id AS "orderId",e.customer_snapshot AS "customerSnapshot",e.running_balance::text AS "runningBalanceNpr",
         EXISTS(SELECT 1 FROM customer_account_entries r WHERE r.shop_id=e.shop_id AND r.reversal_of=e.id) AS reversed,
         to_char(e.created_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') AS "createdAt"
         FROM ledger e WHERE ($3::date IS NULL OR e.entry_date >= $3) AND ($4::date IS NULL OR e.entry_date <= $4) ORDER BY e.entry_date DESC,e.entry_number DESC LIMIT $5 OFFSET $6`,

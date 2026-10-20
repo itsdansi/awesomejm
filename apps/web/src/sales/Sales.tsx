@@ -11,8 +11,15 @@ import { money } from '../customers/format';
 import { SaleBuilder } from './SaleBuilder';
 import { SaleDetails } from './SaleDetails';
 
-export function Sales({ saleId }: { saleId: string | undefined }) {
-  if (saleId === 'new') return <SaleBuilder />;
+export function Sales({
+  saleId,
+  orderId,
+}: {
+  saleId: string | undefined;
+  orderId: string | null;
+}) {
+  if (saleId === 'new')
+    return <SaleBuilder key={orderId ?? 'ready-made'} orderId={orderId} />;
   if (saleId) return <SaleDetails key={saleId} saleId={saleId} />;
   return <SalesRegister />;
 }

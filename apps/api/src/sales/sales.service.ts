@@ -26,6 +26,11 @@ import { loadCustomer, customerSnapshot } from '../customers/accounting.js';
 import { nextShopNumber } from '../shop/counters.js';
 import { SHOP_ID } from '../shop/shop.js';
 import { inventoryColumns } from '../inventory/inventory-row.js';
+import {
+  appendOrderEvent,
+  loadOrder,
+  validateOrderDelivery,
+} from '../orders/order-posting.js';
 import { rateColumns } from '../rates/rate-row.js';
 
 const hash = (value: unknown) =>
@@ -37,7 +42,7 @@ function cents(value: string) {
     (value.startsWith('-') ? -1n : 1n)
   );
 }
-const columns = `s.id,s.sale_code AS "saleCode",s.sale_date::text AS "saleDate",s.customer_id AS "customerId",s.customer_snapshot AS "customerSnapshot",
+const columns = `s.id,s.sale_code AS "saleCode",s.order_id AS "orderId",s.sale_date::text AS "saleDate",s.customer_id AS "customerId",s.customer_snapshot AS "customerSnapshot",
   s.subtotal_npr AS "subtotalNpr",s.discount_npr AS "discountNpr",s.tax_npr AS "taxNpr",s.total_npr AS "totalNpr",s.payment_npr AS "paymentNpr",s.advance_applied_npr AS "advanceAppliedNpr",s.due_at_posting_npr AS "dueAtPostingNpr",s.balance_before_npr AS "balanceBeforeNpr",s.balance_after_npr AS "balanceAfterNpr",
   s.payment_method AS "paymentMethod",s.payment_reference AS "paymentReference",s.bill_reference AS "billReference",s.notes,
   CASE WHEN x.sale_id IS NULL THEN 'POSTED' ELSE 'CANCELLED' END AS status,
@@ -120,6 +125,7 @@ export class SalesService {
       throw new BadRequestException(
         `Sale date must be on or after ${customer.latestEntryDate}, the customer’s latest account date.`,
       );
+    if (draft.orderId && lock) await loadOrder(client, draft.orderId, true);
     const result = await client.query(
       `SELECT ${inventoryColumns},to_char(received_at AT TIME ZONE 'Asia/Kathmandu','YYYY-MM-DD') AS "receivedOn" FROM inventory_items WHERE shop_id=$1 AND id=ANY($2::uuid[]) ORDER BY id ${lock ? 'FOR UPDATE' : ''}`,
       [SHOP_ID, draft.lines.map((line) => line.itemId)],
@@ -138,6 +144,16 @@ export class SalesService {
         );
       return item;
     });
+    const order = draft.orderId
+      ? await validateOrderDelivery(
+          client,
+          draft.orderId,
+          draft.customerId,
+          items,
+          draft.saleDate,
+          false,
+        )
+      : null;
     const keys = [
       ...new Set(items.map((item) => `${item.metal}:${item.fineness}`)),
     ].sort();
@@ -185,6 +201,9 @@ export class SalesService {
       return salePreviewSchema.parse({
         ...pricing,
         customer,
+        order: order
+          ? { id: order.id, orderCode: order.orderCode, version: order.version }
+          : null,
         saleDate: draft.saleDate,
         lines: rated.map((line, index) => ({
           ...line,
@@ -208,7 +227,11 @@ export class SalesService {
 
   async post(input: PostSale) {
     return this.database.run(async (client) => {
-      const fingerprint = hash(input);
+      // Keep the fingerprints of ready-made sales posted before order support compatible.
+      const { orderId, expectedOrderVersion, ...legacyInput } = input;
+      const fingerprint = hash(
+        orderId === null && expectedOrderVersion === null ? legacyInput : input,
+      );
       await client.query(
         'SELECT pg_advisory_xact_lock(hashtextextended($1,0))',
         [`sale-create:${SHOP_ID}:${input.requestId}`],
@@ -228,16 +251,17 @@ export class SalesService {
       if (
         cents(quote.totalNpr) !== cents(input.expectedTotalNpr) ||
         cents(quote.balanceBeforeNpr) !== cents(input.expectedBalanceNpr) ||
-        quote.customer.version !== input.expectedCustomerVersion
+        quote.customer.version !== input.expectedCustomerVersion ||
+        (quote.order?.version ?? null) !== input.expectedOrderVersion
       )
         throw new ConflictException(
-          'The customer account or sale total has changed. Review the sale again before posting.',
+          'The customer account, order or sale total has changed. Review the sale again before posting.',
         );
       const id = randomUUID();
       const code = await nextShopNumber(client, 'SALE');
       const customer = customerSnapshot(quote.customer);
       await client.query(
-        `INSERT INTO sales(id,shop_id,customer_id,sale_code,sale_date,customer_snapshot,subtotal_npr,discount_npr,tax_npr,total_npr,payment_npr,advance_applied_npr,due_at_posting_npr,balance_before_npr,balance_after_npr,payment_method,payment_reference,bill_reference,notes,request_id,request_fingerprint) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)`,
+        `INSERT INTO sales(id,shop_id,customer_id,sale_code,sale_date,customer_snapshot,subtotal_npr,discount_npr,tax_npr,total_npr,payment_npr,advance_applied_npr,due_at_posting_npr,balance_before_npr,balance_after_npr,payment_method,payment_reference,bill_reference,notes,request_id,request_fingerprint,order_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)`,
         [
           id,
           SHOP_ID,
@@ -260,6 +284,7 @@ export class SalesService {
           input.notes,
           input.requestId,
           fingerprint,
+          input.orderId,
         ],
       );
       for (const [index, line] of quote.lines.entries()) {
@@ -338,6 +363,16 @@ export class SalesService {
           ],
         );
       }
+      if (quote.order)
+        await appendOrderEvent(client, quote.order, {
+          kind: 'SALE_DELIVERED',
+          status: 'DELIVERED',
+          eventDate: input.saleDate,
+          reason: `Delivered through ${code.code}`,
+          saleId: id,
+          requestId: randomUUID(),
+          fingerprint,
+        });
       return this.detail(client, id);
     }, true);
   }
@@ -379,6 +414,17 @@ export class SalesService {
       if (input.cancellationDate < customer.latestEntryDate)
         throw new BadRequestException(
           `Cancellation date must be on or after ${customer.latestEntryDate}.`,
+        );
+      const order = detail.sale.orderId
+        ? await loadOrder(client, detail.sale.orderId, true)
+        : null;
+      if (order && (order.status !== 'DELIVERED' || order.activeSaleId !== id))
+        throw new ConflictException(
+          'The linked order no longer matches this sale. Refresh before correcting.',
+        );
+      if (order && input.cancellationDate < order.latestActivityDate)
+        throw new BadRequestException(
+          `Correction date must be on or after ${order.latestActivityDate}.`,
         );
       const stock = await client.query(
         'SELECT id,status,active_sale_id FROM inventory_items WHERE shop_id=$1 AND id=ANY($2::uuid[]) ORDER BY id FOR UPDATE',
@@ -448,6 +494,20 @@ export class SalesService {
           ],
         );
       }
+      if (order)
+        await appendOrderEvent(client, order, {
+          kind: 'SALE_REOPENED',
+          status: 'READY',
+          eventDate: input.cancellationDate,
+          reason:
+            `Sale ${detail.sale.saleCode} corrected: ${input.reason}`.slice(
+              0,
+              500,
+            ),
+          saleId: id,
+          requestId: randomUUID(),
+          fingerprint,
+        });
       return this.detail(client, id);
     }, true);
   }

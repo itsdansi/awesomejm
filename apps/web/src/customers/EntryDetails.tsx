@@ -136,6 +136,14 @@ export function EntryDetails({
           </a>
         </p>
       )}
+      {entry.orderId && (
+        <p className="account-scope-note">
+          Payment tagged to an order.{' '}
+          <a className="text-button" href={`#/orders/${entry.orderId}`}>
+            View order →
+          </a>
+        </p>
+      )}
       {!entry.saleId &&
         !entry.reversed &&
         entry.kind !== 'REVERSAL' &&

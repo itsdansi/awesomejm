@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import {
   customerListSchema,
+  orderDetailSchema,
   inventoryListSchema,
   nepalToday,
   postSaleSchema,
@@ -26,13 +27,13 @@ type SelectedLine = {
   makingNpr: string;
   stonesNpr: string;
 };
-export function SaleBuilder() {
+export function SaleBuilder({ orderId }: { orderId: string | null }) {
   const [requestId] = useState(() => globalThis.crypto.randomUUID());
   const [customerSearch, setCustomerSearch] = useState('');
   const [stockSearch, setStockSearch] = useState('');
   const customerTerm = useDebounced(customerSearch),
     stockTerm = useDebounced(stockSearch);
-  const [customer, setCustomer] = useState<Customer | null>(null);
+  const [pickedCustomer, setCustomer] = useState<Customer | null>(null);
   const [date, setDate] = useState(() => nepalToday());
   const [lines, setLines] = useState<SelectedLine[]>([]);
   const [discount, setDiscount] = useState('0'),
@@ -64,6 +65,15 @@ export function SaleBuilder() {
     rateBookSchema,
     revision,
   );
+  const linkedOrder = useResource(
+    `/orders/${encodeURIComponent(orderId ?? '')}`,
+    orderDetailSchema,
+    revision,
+    orderId !== null,
+  );
+  const customer = orderId
+    ? (linkedOrder.data?.customer ?? null)
+    : pickedCustomer;
   const matchingRate = (item: InventoryItem) =>
     rates.data?.rates.find(
       (rate) => rate.metal === item.metal && rate.fineness === item.fineness,
@@ -84,6 +94,7 @@ export function SaleBuilder() {
     setError('');
     const parsed = saleDraftSchema.safeParse({
       customerId: customer?.id,
+      orderId,
       saleDate: date,
       lines: lines.map((line) => ({
         itemId: line.item.id,
@@ -126,6 +137,7 @@ export function SaleBuilder() {
       const input = postSaleSchema.parse({
         ...review.draft,
         requestId,
+        expectedOrderVersion: review.quote.order?.version ?? null,
         expectedTotalNpr: review.quote.totalNpr,
         expectedCustomerVersion: review.quote.customer.version,
         expectedBalanceNpr: review.quote.balanceBeforeNpr,
@@ -141,6 +153,38 @@ export function SaleBuilder() {
       setBusy(false);
     }
   }
+  if (
+    orderId &&
+    (linkedOrder.loading ||
+      linkedOrder.error ||
+      linkedOrder.data?.order.status !== 'READY')
+  )
+    return (
+      <AppShell section="Sales">
+        <a href={`#/orders/${orderId}`} className="back-link">
+          ← Back to order
+        </a>
+        <div className="empty-state">
+          <h2>
+            {linkedOrder.loading
+              ? 'Loading order…'
+              : 'Order is not ready for delivery'}
+          </h2>
+          <p className="error" role="alert">
+            {linkedOrder.error ||
+              (linkedOrder.loading
+                ? ''
+                : 'Refresh the order and mark it ready before recording its delivery.')}
+          </p>
+          <button
+            className="button secondary"
+            onClick={() => setRevision((value) => value + 1)}
+          >
+            Refresh
+          </button>
+        </div>
+      </AppShell>
+    );
   const pickedBalance = customer ? balance(customer.balanceNpr) : null;
   return (
     <AppShell section="Sales">
@@ -149,7 +193,9 @@ export function SaleBuilder() {
       </a>
       <div className="page-heading">
         <div>
-          <p className="eyebrow">READY-MADE JEWELLERY SALE</p>
+          <p className="eyebrow">
+            {orderId ? 'CUSTOM ORDER DELIVERY' : 'READY-MADE JEWELLERY SALE'}
+          </p>
           <h1>
             {review ? 'Review this sale' : 'Record a sale'}
             <span>.</span>
@@ -157,13 +203,49 @@ export function SaleBuilder() {
           <p className="description">
             {review
               ? 'Check the pieces, charges and settlement before posting.'
-              : 'Choose a customer and available pieces, then review the final amounts.'}
+              : orderId
+                ? 'Choose the finished pieces, then review delivery pricing and settlement.'
+                : 'Choose a customer and available pieces, then review the final amounts.'}
           </p>
         </div>
         <span className="manual-badge">
           {review ? '02 / REVIEW' : '01 / DETAILS'}
         </span>
       </div>
+      {linkedOrder.data && (
+        <p className="order-delivery-banner">
+          Delivering{' '}
+          <a href={`#/orders/${orderId}`}>{linkedOrder.data.order.orderCode}</a>{' '}
+          · Select all {linkedOrder.data.order.pieceCount} ordered pieces. Check
+          their design and size against the order. Final prices use actual stock
+          weights and the sale date’s rates. Recorded advances are already in
+          the customer account.
+        </p>
+      )}
+      {linkedOrder.data && (
+        <details className="stock-panel order-delivery-specs">
+          <summary>Ordered designs and planned charges</summary>
+          <ul>
+            {linkedOrder.data.order.lines.map((line, index) => (
+              <li key={index}>
+                <strong>
+                  {line.name} × {line.quantity}
+                </strong>{' '}
+                · {line.metal === 'GOLD' ? 'Gold' : 'Silver'} {line.fineness}‰ ·
+                Size: {line.size || 'not specified'}
+                <br />
+                {line.design}
+                <br />
+                Per piece: expected {line.expectedNetWeightGrams} g net ·
+                planned wastage {line.plannedWastageGrams} g · making NPR{' '}
+                {money(line.plannedMakingNpr)} · stones NPR{' '}
+                {money(line.plannedStonesNpr)}
+              </li>
+            ))}
+          </ul>
+          <p>Enter the final agreed charges below for each finished piece.</p>
+        </details>
+      )}
       {review ? (
         <>
           <section className="stock-panel">
@@ -254,6 +336,7 @@ export function SaleBuilder() {
                     <button
                       className="text-button"
                       type="button"
+                      disabled={orderId !== null}
                       onClick={() => setCustomer(null)}
                     >
                       Change customer

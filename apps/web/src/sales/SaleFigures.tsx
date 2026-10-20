@@ -6,7 +6,7 @@ export function SaleFigures({
   totals,
 }: {
   lines: SalePreview['lines'];
-  totals: Omit<SalePreview, 'lines' | 'customer' | 'saleDate'>;
+  totals: Omit<SalePreview, 'lines' | 'customer' | 'saleDate' | 'order'>;
 }) {
   const account = balance(totals.balanceAfterNpr);
   return (

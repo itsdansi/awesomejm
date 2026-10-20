@@ -1,6 +1,6 @@
 # AwesomeJM
 
-A SaaS application for Nepali gold and silver shops. The workspace contains a React/Vite frontend, a NestJS API, PostgreSQL inventory, metal-rate, customer-account and sales storage, shared public contracts and decimal calculation utilities.
+A SaaS application for Nepali gold and silver shops. The workspace contains a React/Vite frontend, a NestJS API, PostgreSQL inventory, metal-rate, customer-account, sales and custom-order storage, shared public contracts and decimal calculation utilities.
 
 ## Requirements
 
@@ -40,7 +40,7 @@ The frontend proxies `/api` to the API during development. If the API port chang
 ```sh
 pnpm check       # Lint, type checks, calculation tests, builds, formatting
 pnpm smoke       # Start temporary API/web servers and verify their connection
-pnpm test:integration # Inventory/rates/customer/sales APIs + real PostgreSQL; database must be running
+pnpm test:integration # Inventory/rates/customer/sales/orders APIs + real PostgreSQL; database must be running
 pnpm format      # Format source and configuration
 ```
 
@@ -129,11 +129,11 @@ Open **Customers** in the sidebar (`/#/customers`). A customer has a generated s
 | POST   | `/:id/payments`                                                | Record `PAYMENT` or `ADVANCE_REFUND`             |
 | POST   | `/:id/entries/:entryId/reverse`                                | Append a reversal with a reason                  |
 
-There is no general manual-charge endpoint. Sales add linked charges, payments and transaction snapshots. Orders and exchanges will add their own linked postings in future modules. Sale-linked entries must be corrected through Sales, so stock and accounts remain consistent. Posted financial history has no update or delete API.
+There is no general manual-charge endpoint. Sales add linked charges, payments and transaction snapshots. Order advances credit the same customer account; exchanges will add their own linked postings in a future module. Sale-linked entries must be corrected through Sales, so stock and accounts remain consistent. Posted financial history has no update or delete API.
 
 ## Sales module
 
-Open **Sales** in the sidebar (`/#/sales`). Ready-made pieces can be sold to an existing customer, using the latest rate for each piece’s exact metal, fineness and sale date. Set the rate and receive the piece before starting a sale. Up to 20 individually tracked pieces can be posted together. Custom orders, old-metal exchanges and returns after delivery are separate future workflows.
+Open **Sales** in the sidebar (`/#/sales`). Ready-made pieces can be sold to an existing customer, using the latest rate for each piece’s exact metal, fineness and sale date. Set the rate and receive the piece before starting a sale. Up to 20 individually tracked pieces can be posted together. Custom orders use the linked delivery workflow below; old-metal exchanges and returns after delivery remain future workflows.
 
 - Choose the customer, AD sale date and available pieces; enter billed wastage in grams, making and stone charges, discount, any tax/fees copied from the official bill, and money received now. An optional official bill reference connects the internal record to the shop’s existing billing process. No tax rate is inferred or automatically calculated, and this module does not issue official invoices.
 - Review the server-calculated amounts and customer balance before posting. Metal value is `net grams × quoted selling rate per tola ÷ that rate’s grams per tola`. The quoted purity rate is used once. Billed wastage uses the same formula with billed wastage grams; it does not reduce physical stock. Stone/other weight is excluded from physical net metal weight, while stone price is a separate charge.
@@ -155,9 +155,33 @@ Open **Sales** in the sidebar (`/#/sales`). Ready-made pieces can be sold to an 
 
 Posting includes the preview’s `expectedTotalNpr`, `expectedCustomerVersion` and `expectedBalanceNpr`. Cancellation requires `requestId`, `cancellationDate`, `reason` and `confirmStockInShop: true`.
 
+## Custom orders module
+
+Open **Orders** (`/#/orders`) to book customer designs and track them through **Booked → In progress → Ready → Delivered**. Orders can be cancelled before delivery; ready pieces can return to in-progress for rework with a recorded reason.
+
+- Book an existing customer with an AD order date, promised delivery date, optional estimated total and notes. Each design records name, reference/details, size, metal, purity, quantity, expected net grams per piece, and planned billed wastage, making and stone charges per piece. Up to 20 pieces can be delivered together. Expected grams also display in tola using the initial 11.664 g convention.
+- Booking specifications and the customer snapshot remain immutable. For different specifications, cancel and book a replacement. Text design references are supported; image uploads, artisan assignment, raw-metal custody and production costing are future work.
+- An optional advance at booking and later order payments create normal customer-account credits, each once. The estimate is not an account charge. Tagged payments are net of recorded corrections and are **not a reserved balance or an invoice allocation**: they may settle earlier dues or other sales. Refunds recorded in Customers affect the overall account, while the order’s tagged-payment history remains visible. Do not infer an order’s current refundable amount from tagged payments.
+- Update progress with an effective date and reason. Expected versions reject stale updates, stable request keys prevent duplicate booking/payment/status changes, and append-only events retain every revision. Updates and payments post in activity-date order; financial entries also follow customer-account date order. Due dates may be in the future, while actual event/payment dates cannot be future-dated.
+- The order book searches code, customer, piece name and design; filters active/all or individual statuses and overdue orders; and paginates results with earliest due dates first. Overdue means the promised date has passed in Nepal and the order is still active. Closed orders remain searchable. Print an internal order slip with original specifications and planned charges; it is not an official invoice.
+- Receive finished shop-owned pieces in Inventory, mark the order Ready, then choose **Deliver through Sales**. The customer is fixed to the order, and the order’s specifications and planned charges are available for reference. Select all finished pieces and enter the final agreed charges. The API validates the full quantity for each metal/purity and the current order version. Staff must confirm design/size matches; those attributes are not individually assigned to inventory pieces in this version. Actual stock weights, delivery-date rates and received payment determine the final sale.
+- Posting the sale marks the order Delivered in the same transaction as stock movements, account charge and payment. The existing customer advance is applied once through Sales; order payments are not credited a second time. Concurrent delivery attempts cannot deliver one order twice. Partial deliveries are not supported.
+- Correcting an erroneous linked sale while its pieces remain in the shop restores stock, reverses the sale’s charge/payment and reopens the order as Ready atomically. Earlier order advances remain in the customer account. Cancelling an undelivered order preserves its history and does not transfer or refund money; record an actual refund using Customers, subject to advance available.
+
+| Method | Route under `/api/v1/orders`                              | Purpose                                                                        |
+| ------ | --------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| GET    | `?search=&status=ACTIVE&overdue=false&page=1&pageSize=20` | Filtered order book                                                            |
+| GET    | `/summary`                                                | Active, ready and overdue counts                                               |
+| GET    | `/:id`                                                    | Specifications, progress history, tagged payments and current customer balance |
+| POST   | `/`                                                       | Book order and optional advance atomically                                     |
+| POST   | `/:id/status`                                             | Append a dated status event with reason and expected version                   |
+| POST   | `/:id/payments`                                           | Record a received advance linked to the customer account                       |
+
+For linked sales, include `orderId` in the preview and posting request and copy the returned `order.version` into `expectedOrderVersion`. The sale retains its order link; account payment corrections retain their original order link.
+
 ## Scope and deployment
 
-The health endpoint confirms application startup, not database readiness. These are local, single-shop development modules: authentication, staff attribution, authorization and production tenant isolation are still required before hosting customer data. Inventory, rates, sales and customer queries are scoped to a server-selected shop, but authenticated shop selection and PostgreSQL row-level security are not implemented. Keep the API on loopback while developing. Custom orders, delivered-item returns, exchanges, suppliers, cost valuation, barcode printing, stocktaking and official billing remain future modules.
+The health endpoint confirms application startup, not database readiness. These are local, single-shop development modules: authentication, staff attribution, authorization and production tenant isolation are still required before hosting customer data. Inventory, rates, sales, order and customer queries are scoped to a server-selected shop, but authenticated shop selection and PostgreSQL row-level security are not implemented. Keep the API on loopback while developing. Delivered-item returns, exchanges, customer-metal custody, artisan job work, suppliers, cost valuation, barcode printing, stocktaking and official billing remain future modules.
 
 The conversion uses the first client's stated **11.664 grams per tola**, retained on every piece. Confirm that convention before importing business stock. The first receive form accepts grams; alternate unit entry and shop-specific conversion settings can follow. Physical stone/other weight is distinct from a commercial wastage charge.
 

@@ -135,6 +135,17 @@ export function SaleDetails({ saleId }: { saleId: string }) {
                   <dd>{detail.sale.paymentReference || '—'}</dd>
                 </div>
               </dl>
+              {detail.sale.orderId && (
+                <p className="sale-review-reference">
+                  Linked custom order:{' '}
+                  <a
+                    className="text-button"
+                    href={`#/orders/${detail.sale.orderId}`}
+                  >
+                    View order →
+                  </a>
+                </p>
+              )}
               <SaleFigures lines={detail.lines} totals={detail.sale} />
               {detail.sale.notes && (
                 <p className="sale-review-reference">{detail.sale.notes}</p>
@@ -235,8 +246,9 @@ function CancelSale({
           received payment together. The original record remains visible.
         </p>
         <p>
-          This records a correction. For a customer return after delivery or
-          money actually refunded, a separate return or refund record is needed.
+          {sale.orderId && 'The linked order returns to Ready. '}This records a
+          correction. For a customer return after delivery or money actually
+          refunded, a separate return or refund record is needed.
         </p>
         <label>
           Correction date (AD)

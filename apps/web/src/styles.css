@@ -2152,3 +2152,340 @@ button.sale-picker-row:hover {
     gap: 24px;
   }
 }
+
+/* Custom orders */
+.order-heading-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.orders-toolbar {
+  flex-wrap: wrap;
+}
+.overdue-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #7b8c69;
+  white-space: nowrap;
+}
+.overdue-toggle input {
+  accent-color: #78875e;
+}
+.order-status.in_progress {
+  background: #f6f0df;
+  color: #9c8651;
+}
+.order-status.ready {
+  background: #e6f1df;
+  color: #587941;
+}
+.order-status.cancelled {
+  background: #fff0e8;
+  color: #a45d45;
+}
+.order-status.delivered {
+  background: #e9efec;
+  color: #476858;
+}
+.order-dates {
+  margin-bottom: 23px;
+}
+.order-spec-editor {
+  padding: 20px;
+  border: 1px solid #e3e9dc;
+  border-radius: 7px;
+  background: #fbfcf8;
+  margin-bottom: 20px;
+}
+.order-spec-editor > .sale-line-heading {
+  margin-bottom: 18px;
+}
+.order-spec-editor > .sale-line-heading strong {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+.order-progress {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 23px 28px;
+  margin: 0;
+  border-block: 1px solid #e6ebdf;
+  background: #fafbf7;
+}
+.order-progress li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #a0aa92;
+  font-size: 12px;
+}
+.order-progress li > span {
+  display: flex;
+  width: 29px;
+  height: 29px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #eff2e9;
+  font-size: 10px;
+}
+.order-progress li.reached {
+  color: #607647;
+  font-weight: 500;
+}
+.order-progress li.reached > span {
+  color: #f8fbf4;
+  background: #7d8c62;
+}
+.order-specs {
+  padding: 25px 28px;
+}
+.order-spec {
+  border: 1px solid #e5eadc;
+  border-radius: 6px;
+  padding: 20px;
+  margin-top: 16px;
+  background: #fcfdf9;
+}
+.order-spec-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.order-spec-title h3 {
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0;
+  color: #536746;
+}
+.order-spec-title .muted {
+  margin-left: auto;
+  font-size: 12px;
+}
+.order-spec > p {
+  font-size: 12px;
+  line-height: 1.8;
+  color: #7e8d6b;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.order-spec dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 18px;
+  margin: 20px 0 0;
+}
+.order-spec dt {
+  font-size: 10px;
+  color: #95a182;
+  margin-bottom: 7px;
+}
+.order-spec dd {
+  margin: 0;
+  font-size: 12px;
+  color: #586c46;
+  overflow-wrap: anywhere;
+}
+.order-spec dd small {
+  display: block;
+  margin-top: 6px;
+  font-size: 10px;
+  color: #8d9c79;
+}
+.order-finances {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid #e6ebdf;
+  padding: 25px 28px;
+  gap: 25px;
+}
+.order-finances strong {
+  color: #687d4e;
+  font-size: 23px;
+  font-weight: 500;
+}
+.order-finances small {
+  display: block;
+  margin-top: 11px;
+  font-size: 10px;
+  line-height: 1.7;
+  color: #8c997a;
+}
+.order-followup {
+  margin: 22px 0;
+  border: 1px solid #e2e8d8;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+  padding: 25px 28px;
+  background: #f4f7ee;
+}
+.order-followup strong {
+  font-size: 22px;
+  font-weight: 500;
+}
+.order-followup p:not(.eyebrow) {
+  font-size: 11px;
+  color: #84936f;
+}
+.order-followup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 13px;
+  justify-content: flex-end;
+  max-width: 470px;
+}
+.order-followup-actions small {
+  width: 100%;
+  text-align: right;
+  font-size: 10px;
+  line-height: 1.7;
+  color: #8c9b78;
+}
+.order-no-payments {
+  padding: 28px;
+  color: #8c987d;
+  font-size: 12px;
+}
+.order-history {
+  margin-top: 22px;
+}
+.order-event-list {
+  list-style: none;
+  padding: 0 28px;
+  margin: 0;
+}
+.order-event-list > li {
+  padding: 22px 0;
+  border-bottom: 1px solid #e7ebdf;
+}
+.order-event-list > li:last-child {
+  border-bottom: 0;
+}
+.order-event-list > li > div {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.order-event-list time {
+  font-size: 11px;
+  color: #80916b;
+}
+.order-event-list small {
+  font-size: 10px;
+  color: #a0ab91;
+  margin-left: auto;
+}
+.order-event-list p {
+  font-size: 12px;
+  color: #778a62;
+  line-height: 1.8;
+  margin-bottom: 0;
+  overflow-wrap: anywhere;
+}
+.order-delivery-banner {
+  font-size: 12px;
+  line-height: 1.8;
+  padding: 18px 23px;
+  border: 1px solid #dfdfbd;
+  color: #8a855a;
+  background: #fbfaed;
+  border-radius: 7px;
+  margin: 0 0 23px;
+}
+@media (max-width: 800px) {
+  .order-followup {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .order-followup-actions {
+    justify-content: flex-start;
+  }
+  .order-followup-actions small {
+    text-align: left;
+  }
+  .order-progress {
+    gap: 8px;
+  }
+  .order-progress li {
+    gap: 6px;
+    font-size: 10px;
+  }
+}
+@media (max-width: 540px) {
+  .sidebar nav {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  .nav-item {
+    flex: 0 1 auto;
+    padding: 9px 8px;
+  }
+  .order-progress {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 18px;
+  }
+  .order-specs,
+  .order-finances,
+  .order-followup {
+    padding: 18px;
+  }
+  .order-spec {
+    padding: 15px;
+  }
+  .order-spec-title {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .order-spec-title h3 {
+    font-size: 13px;
+  }
+  .order-spec dl {
+    grid-template-columns: 1fr 1fr;
+  }
+  .order-finances {
+    grid-template-columns: 1fr;
+  }
+  .order-event-list {
+    padding-inline: 18px;
+  }
+  .order-heading-actions {
+    width: 100%;
+  }
+  .order-heading-actions .button {
+    flex: 1;
+    font-size: 10px;
+  }
+}
+@media print {
+  .print-document :is(.order-specs, .order-progress, .order-finances) {
+    padding: 15px;
+  }
+  .print-document :is(.order-spec, .order-finances) {
+    break-inside: avoid;
+  }
+}
+.order-delivery-specs {
+  padding: 19px 24px;
+  margin-bottom: 23px;
+  color: #80906a;
+  font-size: 11px;
+  line-height: 1.8;
+}
+.order-delivery-specs summary {
+  cursor: pointer;
+  color: #61764b;
+  font-size: 12px;
+}
+.order-delivery-specs li {
+  margin-block: 14px;
+  overflow-wrap: anywhere;
+}

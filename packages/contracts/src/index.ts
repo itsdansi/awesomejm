@@ -3,6 +3,7 @@ export * from './inventory.js';
 export * from './rates.js';
 export * from './customers.js';
 export * from './sales.js';
+export * from './orders.js';
 
 export const healthResponseSchema = z.object({
   status: z.literal('ok'),

@@ -1,3 +1,5 @@
+import { OrdersController } from './orders/orders.controller.js';
+import { OrdersService } from './orders/orders.service.js';
 import { Module } from '@nestjs/common';
 import { HealthController } from './health/health.controller.js';
 import { DatabaseService } from './database/database.service.js';
@@ -17,6 +19,7 @@ import { SalesService } from './sales/sales.service.js';
     RatesController,
     CustomersController,
     SalesController,
+    OrdersController,
   ],
   providers: [
     DatabaseService,
@@ -24,6 +27,7 @@ import { SalesService } from './sales/sales.service.js';
     RatesService,
     CustomersService,
     SalesService,
+    OrdersService,
   ],
 })
 export class AppModule {}

@@ -207,6 +207,7 @@ export const accountEntrySchema = z.object({
   reversalOf: z.uuid().nullable(),
   reversed: z.boolean(),
   saleId: z.uuid().nullable(),
+  orderId: z.uuid().nullable(),
   runningBalanceNpr: z.string(),
   customerSnapshot: customerSnapshotSchema,
   createdAt: z.iso.datetime(),

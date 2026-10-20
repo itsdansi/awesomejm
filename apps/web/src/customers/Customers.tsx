@@ -120,8 +120,8 @@ function CustomerRegister() {
         </article>
       </section>
       <p className="account-scope-note">
-        Opening balances, recorded sales and payments appear here. Orders and
-        exchanges will post into these accounts as those modules are added.
+        Opening balances, recorded sales, order advances and payments appear
+        here. Exchanges will post into these accounts as that module is added.
       </p>
       <section
         className="stock-panel"

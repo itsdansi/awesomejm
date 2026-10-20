@@ -25,6 +25,7 @@ const lineInput = z
   .strict();
 const draftFields = {
   customerId: z.uuid(),
+  orderId: z.uuid().nullable().default(null),
   saleDate: accountDateSchema,
   lines: z.array(lineInput).min(1).max(20),
   discountNpr: money,
@@ -55,6 +56,7 @@ export const postSaleSchema = z
   .object({
     ...draftFields,
     requestId: z.uuid(),
+    expectedOrderVersion: z.number().int().positive().nullable().default(null),
     expectedTotalNpr: money,
     expectedCustomerVersion: z.number().int().positive(),
     expectedBalanceNpr: z.string().regex(/^-?(0|[1-9]\d{0,29})(\.\d{1,2})?$/),
@@ -117,6 +119,13 @@ const totals = {
 };
 export const salePreviewSchema = z.object({
   customer: customerSchema,
+  order: z
+    .object({
+      id: z.uuid(),
+      orderCode: z.string(),
+      version: z.number().int().positive(),
+    })
+    .nullable(),
   saleDate: z.iso.date(),
   lines: z.array(saleLineSchema),
   ...totals,
@@ -125,6 +134,7 @@ export type SalePreview = z.infer<typeof salePreviewSchema>;
 export const saleRecordSchema = z.object({
   id: z.uuid(),
   saleCode: z.string(),
+  orderId: z.uuid().nullable(),
   saleDate: z.iso.date(),
   customerId: z.uuid(),
   customerSnapshot: z.object({
