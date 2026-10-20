@@ -188,5 +188,12 @@
   },
   "feedback": {
     "loadingWorkspace": "Loading workspace…"
+  },
+  "pagination": {
+    "label": "Pagination",
+    "previous": "Previous page",
+    "next": "Next page",
+    "page": "Page {page}",
+    "pageOf": "Page {page} of {pages}"
   }
 }

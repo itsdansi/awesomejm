@@ -1,3 +1,4 @@
+import { Pagination } from '../shared/Pagination';
 import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { AppShell } from '../shared/AppShell';
@@ -97,7 +98,6 @@ export function Inventory() {
     <AppShell section="Inventory">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">{t('inventory.list.yourStockAtAGlance')}</p>
           <h1>
             {t('inventory.title')}
             <span>.</span>
@@ -197,9 +197,6 @@ export function Inventory() {
               {t('inventory.list.individualPiecesWithAPermanentReceiptHistory')}
             </p>
           </div>
-          <span className="register-label">
-            {t('inventory.list.inventory01')}
-          </span>
         </div>
         <div className="toolbar">
           <label className="search">
@@ -376,28 +373,13 @@ export function Inventory() {
                 })
               : t('inventory.list.stockRegister')}
           </span>
-          <div className="pagination">
-            <button
-              aria-label={t('inventory.list.previousPage')}
-              disabled={page === 1 || loading}
-              onClick={() => setPage((value) => value - 1)}
-            >
-              ‹
-            </button>
-            <span>
-              {t('common.labels.page') + ' '}
-              {page}
-            </span>
-            <button
-              aria-label={t('inventory.list.nextPage')}
-              disabled={
-                !data || page * data.list.pageSize >= data.list.total || loading
-              }
-              onClick={() => setPage((value) => value + 1)}
-            >
-              ›
-            </button>
-          </div>
+          <Pagination
+            page={page}
+            pageSize={data?.list.pageSize ?? 15}
+            total={data?.list.total}
+            loading={loading}
+            onPageChange={setPage}
+          />
         </div>
       </section>
       {receiving && (

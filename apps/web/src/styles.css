@@ -136,6 +136,9 @@ button svg {
   padding: 13px 12px;
   border-radius: 7px;
 }
+.sidebar nav {
+  margin-top: 20px;
+}
 .nav-item.active {
   background: #edf2ea;
   color: #345740;
@@ -184,7 +187,8 @@ button svg {
   color: #838e7b;
   background: #fafbf8;
 }
-.topbar strong {
+.topbar strong,
+.current-section {
   color: #5b6a5e;
   font-weight: 500;
 }
@@ -573,27 +577,51 @@ td code {
 }
 .table-footer {
   display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
   justify-content: space-between;
   align-items: center;
   border-top: 1px solid #edf0e7;
   min-height: 56px;
   padding: 11px 25px;
-  color: #81936b;
-  font-size: 9px;
+  color: #6f7e66;
+  font-size: 11px;
+}
+.table-footer > span {
+  flex: 1 1 140px;
+  min-width: 0;
+  line-height: 1.6;
 }
 .pagination {
   display: flex;
-  gap: 13px;
+  flex: 0 0 auto;
+  margin-left: auto;
+  gap: 8px;
   align-items: center;
 }
 .pagination button {
-  width: 25px;
-  height: 26px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 8px;
   background: #fff;
   border: 1px solid #e5eadc;
-  border-radius: 4px;
-  font-size: 16px;
-  color: #6b8055;
+  border-radius: 6px;
+  color: #526b45;
+}
+.pagination button:not(:disabled):hover {
+  background: #edf2ea;
+  border-color: #b8c7af;
+}
+.pagination-status {
+  min-width: 86px;
+  text-align: center;
+  white-space: nowrap;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
 }
 footer {
   display: flex;
@@ -938,6 +966,7 @@ footer {
   }
   .sidebar nav {
     margin-left: auto;
+    margin-top: 0;
   }
   .nav-item {
     padding: 9px 12px;
@@ -1088,8 +1117,11 @@ footer {
     font-size: 11px;
   }
   .table-footer > span {
-    max-width: 130px;
-    line-height: 1.7;
+    flex-basis: 100%;
+  }
+  .pagination button {
+    min-width: 44px;
+    min-height: 44px;
   }
   footer {
     flex-direction: column;
@@ -3044,8 +3076,9 @@ button.sale-picker-row:hover {
 .panel .table-scroll {
   margin: 0 -24px;
 }
-.panel .pagination {
+.panel > .table-footer {
   padding: 18px 0 0;
+  border-top: 0;
 }
 .access-form {
   display: grid;
@@ -3217,6 +3250,15 @@ html[lang='ne'] .auth-card h1 {
   }
   .staff-topbar {
     justify-content: flex-end;
+    margin-left: auto;
+    max-width: 100%;
+  }
+  .topbar {
+    height: auto;
+    min-height: 60px;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 20px;
   }
   .dialog-tools {
     gap: 5px;

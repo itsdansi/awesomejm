@@ -1,3 +1,4 @@
+import { Pagination } from '../shared/Pagination';
 import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useState } from 'react';
@@ -38,9 +39,6 @@ function PurchaseRegister() {
     <AppShell section="Purchases">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">
-            {t('purchases.purchases.oldMetalClearlyAccountedFor')}
-          </p>
           <h1>
             {t('purchases.purchases.purchasesExchanges')}
             <span>.</span>
@@ -216,30 +214,13 @@ function PurchaseRegister() {
             {data.data?.total ?? '—'}{' '}
             {' ' + t('purchases.purchases.purchaseRecords')}
           </span>
-          <div className="pagination">
-            <button
-              aria-label={t('purchases.purchases.previousPurchasePage')}
-              disabled={page === 1 || data.loading}
-              onClick={() => setPage((v) => v - 1)}
-            >
-              ‹
-            </button>
-            <span>
-              {t('common.labels.page') + ' '}
-              {page}
-            </span>
-            <button
-              aria-label={t('purchases.purchases.nextPurchasePage')}
-              disabled={
-                !data.data ||
-                page * data.data.pageSize >= data.data.total ||
-                data.loading
-              }
-              onClick={() => setPage((v) => v + 1)}
-            >
-              ›
-            </button>
-          </div>
+          <Pagination
+            page={page}
+            pageSize={data.data?.pageSize ?? 15}
+            total={data.data?.total}
+            loading={data.loading}
+            onPageChange={setPage}
+          />
         </div>
       </section>
     </AppShell>

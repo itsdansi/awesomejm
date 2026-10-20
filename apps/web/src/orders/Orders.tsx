@@ -1,3 +1,4 @@
+import { Pagination } from '../shared/Pagination';
 import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useState } from 'react';
@@ -37,7 +38,6 @@ function OrderRegister() {
     <AppShell section="Orders">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">{t('orders.list.madeToOrderKeptOnTrack')}</p>
           <h1>
             {t('orders.title')}
             <span>.</span>
@@ -273,30 +273,13 @@ function OrderRegister() {
             {list.data?.total ?? '—'}{' '}
             {' ' + t('orders.list.orderRecordsAdDates')}
           </span>
-          <div className="pagination">
-            <button
-              aria-label={t('orders.list.previousOrdersPage')}
-              disabled={page === 1 || list.loading}
-              onClick={() => setPage((value) => value - 1)}
-            >
-              ‹
-            </button>
-            <span>
-              {t('common.labels.page') + ' '}
-              {page}
-            </span>
-            <button
-              aria-label={t('orders.list.nextOrdersPage')}
-              disabled={
-                !list.data ||
-                page * list.data.pageSize >= list.data.total ||
-                list.loading
-              }
-              onClick={() => setPage((value) => value + 1)}
-            >
-              ›
-            </button>
-          </div>
+          <Pagination
+            page={page}
+            pageSize={list.data?.pageSize ?? 15}
+            total={list.data?.total}
+            loading={list.loading}
+            onPageChange={setPage}
+          />
         </div>
       </section>
       <p className="account-scope-note">

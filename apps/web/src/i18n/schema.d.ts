@@ -171,6 +171,14 @@ export interface TranslationSchema {
   'common.navigation.sales': never;
   'common.navigation.staff': never;
   'common.navigation.workspace': never;
+  'common.pagination.label': never;
+  'common.pagination.next': never;
+  'common.pagination.page': { page: TranslationValue };
+  'common.pagination.pageOf': {
+    page: TranslationValue;
+    pages: TranslationValue;
+  };
+  'common.pagination.previous': never;
   'common.paymentMethods.bank': never;
   'common.paymentMethods.cash': never;
   'common.paymentMethods.digitalWallet': never;

@@ -11,6 +11,8 @@ export function Icon({
     | 'plus'
     | 'search'
     | 'arrow'
+    | 'chevronLeft'
+    | 'chevronRight'
     | 'close'
     | 'diamond'
     | 'history'
@@ -65,6 +67,8 @@ export function Icon({
       </>
     ),
     arrow: <path d="M5 12h14m-5-5 5 5-5 5" />,
+    chevronLeft: <path d="m15 6-6 6 6 6" />,
+    chevronRight: <path d="m9 6 6 6-6 6" />,
     close: <path d="m6 6 12 12M6 18 18 6" />,
     diamond: (
       <>

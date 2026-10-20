@@ -222,9 +222,6 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
       </a>
       <div className="page-heading">
         <div>
-          <p className="eyebrow">
-            {t('purchases.purchaseBuilder.weighValueSettle')}
-          </p>
           <h1>
             {review
               ? t('purchases.purchaseBuilder.reviewSettlement')
@@ -330,7 +327,6 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                   <h2>{t('common.labels.customerDate')}</h2>
                   <p>{t('purchases.purchaseBuilder.accountCreditHelp')}</p>
                 </div>
-                <span className="register-label">01</span>
               </div>
               <div className="sale-form-content">
                 <label className="date-filter">
@@ -935,7 +931,6 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                     )}
                   </p>
                 </div>
-                <span className="register-label">04</span>
               </div>
               <div className="sale-form-content form-grid">
                 {exchange && (

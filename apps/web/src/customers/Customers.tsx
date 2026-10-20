@@ -1,3 +1,4 @@
+import { Pagination } from '../shared/Pagination';
 import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useEffect, useState } from 'react';
@@ -76,9 +77,6 @@ function CustomerRegister() {
     <AppShell section="Customers">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">
-            {t('customers.list.everyRelationshipEveryBalance')}
-          </p>
           <h1>
             {t('customers.labels.customerAccounts')}
             <span>.</span>
@@ -308,28 +306,13 @@ function CustomerRegister() {
               ? t('customers.list.customerRecords', { count: data.list.total })
               : t('customers.list.customerRegister')}
           </span>
-          <div className="pagination">
-            <button
-              aria-label={t('customers.list.previousCustomerPage')}
-              disabled={page === 1 || loading}
-              onClick={() => setPage((value) => value - 1)}
-            >
-              ‹
-            </button>
-            <span>
-              {t('common.labels.page') + ' '}
-              {page}
-            </span>
-            <button
-              aria-label={t('customers.list.nextCustomerPage')}
-              disabled={
-                !data || page * data.list.pageSize >= data.list.total || loading
-              }
-              onClick={() => setPage((value) => value + 1)}
-            >
-              ›
-            </button>
-          </div>
+          <Pagination
+            page={page}
+            pageSize={data?.list.pageSize ?? 15}
+            total={data?.list.total}
+            loading={loading}
+            onPageChange={setPage}
+          />
         </div>
       </section>
       {creating && (

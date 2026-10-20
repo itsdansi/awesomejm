@@ -1,3 +1,4 @@
+import { Pagination } from '../shared/Pagination';
 import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useState } from 'react';
@@ -49,9 +50,6 @@ function SalesRegister() {
     <AppShell section="Sales">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">
-            {t('sales.list.fromYourCounterToTheirCollection')}
-          </p>
           <h1>
             {t('sales.list.salesRegister')}
             <span>.</span>
@@ -290,30 +288,13 @@ function SalesRegister() {
               : t('sales.list.salesRegister')}{' '}
             {' ' + t('sales.list.adDates')}
           </span>
-          <div className="pagination">
-            <button
-              aria-label={t('sales.list.previousSalesPage')}
-              disabled={page === 1 || list.loading}
-              onClick={() => setPage((value) => value - 1)}
-            >
-              ‹
-            </button>
-            <span>
-              {t('common.labels.page') + ' '}
-              {page}
-            </span>
-            <button
-              aria-label={t('sales.list.nextSalesPage')}
-              disabled={
-                !list.data ||
-                page * list.data.pageSize >= list.data.total ||
-                list.loading
-              }
-              onClick={() => setPage((value) => value + 1)}
-            >
-              ›
-            </button>
-          </div>
+          <Pagination
+            page={page}
+            pageSize={list.data?.pageSize ?? 15}
+            total={list.data?.total}
+            loading={list.loading}
+            onPageChange={setPage}
+          />
         </div>
       </section>
     </AppShell>

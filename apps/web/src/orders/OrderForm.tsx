@@ -104,9 +104,6 @@ export function OrderForm() {
       </a>
       <div className="page-heading">
         <div>
-          <p className="eyebrow">
-            {t('orders.orderForm.customJewelleryBooking')}
-          </p>
           <h1>
             {t('common.labels.bookAnOrder')}
             <span>.</span>
@@ -125,7 +122,6 @@ export function OrderForm() {
                   {t('orders.orderForm.searchExistingCustomersBeforeBooking')}
                 </p>
               </div>
-              <span className="register-label">01</span>
             </div>
             <div className="sale-form-content">
               <div className="form-grid order-dates">
@@ -240,7 +236,6 @@ export function OrderForm() {
                   )}
                 </p>
               </div>
-              <span className="register-label">02</span>
             </div>
             <div className="sale-form-content">
               {lines.map((line, index) => (
@@ -453,7 +448,6 @@ export function OrderForm() {
                   {t('orders.orderForm.theEstimateIsAGuideActualWeightsAnd')}
                 </p>
               </div>
-              <span className="register-label">03</span>
             </div>
             <div className="sale-form-content form-grid">
               <label>

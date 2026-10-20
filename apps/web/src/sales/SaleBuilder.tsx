@@ -196,11 +196,6 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
       </a>
       <div className="page-heading">
         <div>
-          <p className="eyebrow">
-            {orderId
-              ? t('sales.saleBuilder.customOrderDelivery')
-              : t('sales.saleBuilder.readyMadeJewellerySale')}
-          </p>
           <h1>
             {review
               ? t('sales.saleBuilder.reviewThisSale')
@@ -336,7 +331,6 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                     )}
                   </p>
                 </div>
-                <span className="register-label">01</span>
               </div>
               <div className="sale-form-content">
                 <label className="date-filter">
@@ -652,7 +646,6 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                     )}
                   </p>
                 </div>
-                <span className="register-label">03</span>
               </div>
               <div className="sale-form-content form-grid">
                 <label>

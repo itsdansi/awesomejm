@@ -1,7 +1,14 @@
+import { Pagination } from '../shared/Pagination';
 import type { StaticTranslationKey } from '../i18n/schema';
 import { roleKeys } from '../i18n/labels';
 import { locale, t, message, useLanguage } from '../i18n/language';
-import { useCallback, useEffect, useState, type FormEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from 'react';
 import {
   staffListSchema,
   type AuditList,
@@ -75,24 +82,38 @@ export function Staff() {
     [reset, setReset] = useState<StaffUser | null>(null),
     [page, setPage] = useState(1),
     [busy, setBusy] = useState(false);
-  const load = useCallback(
-    () =>
-      Promise.all([
-        request('/auth/staff', staffListSchema),
-        request(`/auth/audit?page=${page}`, auditListSchema),
-        request('/auth/recovery', recoveryStatusSchema),
-      ])
-        .then(([s, a, r]) => {
-          setStaff(s);
-          setAudit(a);
-          setRecovery(r);
-          setError('');
-        })
-        .catch((e) => setError(errorMessage(e))),
-    [page],
-  );
+  const [loadedPage, setLoadedPage] = useState<number | null>(null);
+  const loading = loadedPage !== page;
+  const loadRequest = useRef(0);
+  const load = useCallback(() => {
+    const requestId = ++loadRequest.current;
+    return Promise.all([
+      request('/auth/staff', staffListSchema),
+      request(`/auth/audit?page=${page}`, auditListSchema),
+      request('/auth/recovery', recoveryStatusSchema),
+    ])
+      .then(([s, a, r]) => {
+        if (requestId !== loadRequest.current) return;
+        setStaff(s);
+        setAudit(a);
+        setRecovery(r);
+        setError('');
+      })
+      .catch((e) => {
+        if (requestId === loadRequest.current) {
+          setAudit(null);
+          setError(errorMessage(e));
+        }
+      })
+      .finally(() => {
+        if (requestId === loadRequest.current) setLoadedPage(page);
+      });
+  }, [page]);
   useEffect(() => {
     void load();
+    return () => {
+      loadRequest.current += 1;
+    };
   }, [load]);
   async function revoke(member: StaffUser) {
     setBusy(true);
@@ -118,7 +139,6 @@ export function Staff() {
     <AppShell section="Staff & recovery">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">{t('staff.access.accessContinuity')}</p>
           <h1>{t('staff.access.peopleYouTrust')}</h1>
           <p>{t('staff.access.individualStaffAccountsAClearAuditTrailAnd')}</p>
         </div>
@@ -257,7 +277,7 @@ export function Staff() {
           <h2>{t('staff.access.auditTrail')}</h2>
           <span>{t('staff.access.latestChangesNepalTime')}</span>
         </div>
-        <div className="table-scroll">
+        <div className="table-scroll" aria-busy={loading}>
           <table>
             <thead>
               <tr>
@@ -296,25 +316,17 @@ export function Staff() {
             </tbody>
           </table>
         </div>
-        <div className="pagination">
-          <button
-            className="button secondary"
-            disabled={page === 1}
-            onClick={() => setPage((p) => p - 1)}
-          >
-            {t('common.actions.previous')}
-          </button>
+        <div className="table-footer">
           <span>
-            {t('common.labels.page') + ' '}
-            {page} · {audit?.total ?? 0} {' ' + t('staff.access.events')}
+            {audit?.total ?? '—'} {t('staff.access.events')}
           </span>
-          <button
-            className="button secondary"
-            disabled={!audit || page * 50 >= audit.total}
-            onClick={() => setPage((p) => p + 1)}
-          >
-            {t('common.actions.next')}
-          </button>
+          <Pagination
+            page={page}
+            pageSize={50}
+            total={audit?.total}
+            loading={loading || busy}
+            onPageChange={setPage}
+          />
         </div>
       </section>
       {edit && (

@@ -188,5 +188,12 @@
   },
   "feedback": {
     "loadingWorkspace": "कार्यस्थल लोड हुँदै…"
+  },
+  "pagination": {
+    "label": "पृष्ठ नेभिगेसन",
+    "previous": "अघिल्लो पृष्ठ",
+    "next": "अर्को पृष्ठ",
+    "page": "पृष्ठ {page}",
+    "pageOf": "पृष्ठ {page} / {pages}"
   }
 }

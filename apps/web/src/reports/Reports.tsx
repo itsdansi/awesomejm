@@ -104,9 +104,6 @@ export function Reports() {
     <AppShell section="Reports">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">
-            {t('reports.overview.theDaySWorkInClearNumbers')}
-          </p>
           <h1>
             {t('reports.title')}
             <span>.</span>

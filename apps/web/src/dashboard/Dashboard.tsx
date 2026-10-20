@@ -17,9 +17,6 @@ export function Dashboard() {
     <AppShell section="Dashboard">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">
-            {t('dashboard.dashboard.yourShopAtAGlance')}
-          </p>
           <h1>
             {t('dashboard.dashboard.shopOverview')}
             <span>.</span>

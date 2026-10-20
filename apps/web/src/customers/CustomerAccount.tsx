@@ -1,3 +1,4 @@
+import { Pagination } from '../shared/Pagination';
 import { locale, t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useEffect, useState } from 'react';
@@ -388,31 +389,13 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
                 {data.statement.total}{' '}
                 {' ' + t('customers.customerAccount.entriesNewestFirst')}
               </span>
-              <div className="pagination">
-                <button
-                  aria-label={t(
-                    'customers.customerAccount.previousStatementPage',
-                  )}
-                  disabled={page === 1 || loading}
-                  onClick={() => setPage((value) => value - 1)}
-                >
-                  ‹
-                </button>
-                <span>
-                  {t('common.labels.page') + ' '}
-                  {page}
-                </span>
-                <button
-                  aria-label={t('customers.customerAccount.nextStatementPage')}
-                  disabled={
-                    page * data.statement.pageSize >= data.statement.total ||
-                    loading
-                  }
-                  onClick={() => setPage((value) => value + 1)}
-                >
-                  ›
-                </button>
-              </div>
+              <Pagination
+                page={page}
+                pageSize={data.statement.pageSize}
+                total={data.statement.total}
+                loading={loading}
+                onPageChange={setPage}
+              />
             </div>
           </section>
           <details className="profile-history">

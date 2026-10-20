@@ -1,3 +1,4 @@
+import { Pagination } from '../shared/Pagination';
 import { locale, t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useEffect, useState } from 'react';
@@ -112,7 +113,6 @@ export function Rates() {
     <AppShell section="Metal rates">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">{t('rates.book.aClearRecordOfEveryQuote')}</p>
           <h1>
             {t('rates.labels.goldSilverRates')}
             <span>.</span>
@@ -459,30 +459,13 @@ export function Rates() {
                 })
               : t('rates.book.rateHistory')}
           </span>
-          <div className="pagination">
-            <button
-              aria-label={t('rates.book.previousHistoryPage')}
-              disabled={page === 1 || historyLoading}
-              onClick={() => setPage((value) => value - 1)}
-            >
-              ‹
-            </button>
-            <span>
-              {t('common.labels.page') + ' '}
-              {page}
-            </span>
-            <button
-              aria-label={t('rates.book.nextHistoryPage')}
-              disabled={
-                !history ||
-                page * history.pageSize >= history.total ||
-                historyLoading
-              }
-              onClick={() => setPage((value) => value + 1)}
-            >
-              ›
-            </button>
-          </div>
+          <Pagination
+            page={page}
+            pageSize={history?.pageSize ?? 15}
+            total={history?.total}
+            loading={historyLoading}
+            onPageChange={setPage}
+          />
         </div>
       </section>
       {form && (
