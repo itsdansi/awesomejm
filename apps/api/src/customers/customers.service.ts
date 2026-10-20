@@ -275,11 +275,15 @@ export class CustomersService {
       const replay = await this.replay(client, customer, input.requestId, hash);
       if (replay) return replay;
       const result = await client.query(
-        'SELECT kind,amount_npr::text,entry_code,sale_id,order_id FROM customer_account_entries WHERE shop_id=$1 AND customer_id=$2 AND id=$3',
+        'SELECT kind,amount_npr::text,entry_code,sale_id,order_id,purchase_id FROM customer_account_entries WHERE shop_id=$1 AND customer_id=$2 AND id=$3',
         [SHOP_ID, id, entryId],
       );
       if (!result.rowCount)
         throw new NotFoundException('Account entry not found.');
+      if (result.rows[0].purchase_id)
+        throw new ConflictException(
+          'Correct purchase-linked entries from Purchases to keep metal and settlement consistent.',
+        );
       if (result.rows[0].sale_id)
         throw new ConflictException(
           'Correct sale-linked entries from Sales to keep stock and accounts consistent.',
@@ -341,7 +345,7 @@ export class CustomersService {
       const customer = await loadCustomer(client, id);
       const result = await client.query(
         `WITH ledger AS (SELECT *, sum(amount_npr) OVER(ORDER BY entry_date,entry_number ROWS UNBOUNDED PRECEDING) AS running_balance FROM customer_account_entries WHERE shop_id=$1 AND customer_id=$2)
-        SELECT e.id,e.entry_code AS "entryCode",e.entry_date::text AS "entryDate",e.kind,e.amount_npr::text AS "amountNpr",e.method,e.reference,e.notes,e.reversal_of AS "reversalOf",e.sale_id AS "saleId",e.order_id AS "orderId",e.customer_snapshot AS "customerSnapshot",e.running_balance::text AS "runningBalanceNpr",
+        SELECT e.id,e.entry_code AS "entryCode",e.entry_date::text AS "entryDate",e.kind,e.amount_npr::text AS "amountNpr",e.method,e.reference,e.notes,e.reversal_of AS "reversalOf",e.sale_id AS "saleId",e.order_id AS "orderId",e.purchase_id AS "purchaseId",e.customer_snapshot AS "customerSnapshot",e.running_balance::text AS "runningBalanceNpr",
         EXISTS(SELECT 1 FROM customer_account_entries r WHERE r.shop_id=e.shop_id AND r.reversal_of=e.id) AS reversed,
         to_char(e.created_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') AS "createdAt"
         FROM ledger e WHERE ($3::date IS NULL OR e.entry_date >= $3) AND ($4::date IS NULL OR e.entry_date <= $4) ORDER BY e.entry_date DESC,e.entry_number DESC LIMIT $5 OFFSET $6`,

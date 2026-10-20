@@ -42,7 +42,7 @@ function cents(value: string) {
     (value.startsWith('-') ? -1n : 1n)
   );
 }
-const columns = `s.id,s.sale_code AS "saleCode",s.order_id AS "orderId",s.sale_date::text AS "saleDate",s.customer_id AS "customerId",s.customer_snapshot AS "customerSnapshot",
+const columns = `s.id,s.sale_code AS "saleCode",s.order_id AS "orderId",(SELECT id FROM metal_purchases p WHERE p.shop_id=s.shop_id AND p.sale_id=s.id) AS "purchaseId",s.sale_date::text AS "saleDate",s.customer_id AS "customerId",s.customer_snapshot AS "customerSnapshot",
   s.subtotal_npr AS "subtotalNpr",s.discount_npr AS "discountNpr",s.tax_npr AS "taxNpr",s.total_npr AS "totalNpr",s.payment_npr AS "paymentNpr",s.advance_applied_npr AS "advanceAppliedNpr",s.due_at_posting_npr AS "dueAtPostingNpr",s.balance_before_npr AS "balanceBeforeNpr",s.balance_after_npr AS "balanceAfterNpr",
   s.payment_method AS "paymentMethod",s.payment_reference AS "paymentReference",s.bill_reference AS "billReference",s.notes,
   CASE WHEN x.sale_id IS NULL THEN 'POSTED' ELSE 'CANCELLED' END AS status,
@@ -55,7 +55,7 @@ const from =
 export class SalesService {
   constructor(private readonly database: DatabaseService) {}
 
-  private async detail(client: pg.PoolClient, id: string) {
+  async detail(client: pg.PoolClient, id: string) {
     const result = await client.query(
       `SELECT ${columns} FROM ${from} WHERE s.shop_id=$1 AND s.id=$2`,
       [SHOP_ID, id],
@@ -115,12 +115,18 @@ export class SalesService {
     });
   }
 
-  private async quote(
+  async quote(
     client: pg.PoolClient,
     draft: SaleDraft,
     lock: boolean,
+    balanceOverride?: string,
+    extraRateKeys: string[] = [],
   ): Promise<SalePreview> {
-    const customer = await loadCustomer(client, draft.customerId, lock);
+    const loaded = await loadCustomer(client, draft.customerId, lock);
+    const customer =
+      balanceOverride === undefined
+        ? loaded
+        : { ...loaded, balanceNpr: balanceOverride };
     if (draft.saleDate < customer.latestEntryDate)
       throw new BadRequestException(
         `Sale date must be on or after ${customer.latestEntryDate}, the customer’s latest account date.`,
@@ -155,7 +161,10 @@ export class SalesService {
         )
       : null;
     const keys = [
-      ...new Set(items.map((item) => `${item.metal}:${item.fineness}`)),
+      ...new Set([
+        ...items.map((item) => `${item.metal}:${item.fineness}`),
+        ...extraRateKeys,
+      ]),
     ].sort();
     if (lock)
       for (const key of keys)
@@ -226,289 +235,313 @@ export class SalesService {
   }
 
   async post(input: PostSale) {
-    return this.database.run(async (client) => {
-      // Keep the fingerprints of ready-made sales posted before order support compatible.
-      const { orderId, expectedOrderVersion, ...legacyInput } = input;
-      const fingerprint = hash(
-        orderId === null && expectedOrderVersion === null ? legacyInput : input,
-      );
-      await client.query(
-        'SELECT pg_advisory_xact_lock(hashtextextended($1,0))',
-        [`sale-create:${SHOP_ID}:${input.requestId}`],
-      );
-      const existing = await client.query(
-        'SELECT id,request_fingerprint FROM sales WHERE shop_id=$1 AND request_id=$2',
-        [SHOP_ID, input.requestId],
-      );
-      if (existing.rowCount) {
-        if (existing.rows[0].request_fingerprint !== fingerprint)
-          throw new ConflictException(
-            'This request was already used for a different sale. Check the sales register before creating another record.',
-          );
-        return this.detail(client, existing.rows[0].id);
-      }
-      const quote = await this.quote(client, input, true);
-      if (
-        cents(quote.totalNpr) !== cents(input.expectedTotalNpr) ||
-        cents(quote.balanceBeforeNpr) !== cents(input.expectedBalanceNpr) ||
-        quote.customer.version !== input.expectedCustomerVersion ||
-        (quote.order?.version ?? null) !== input.expectedOrderVersion
-      )
+    return this.database.run(
+      (client) => this.postWithClient(client, input),
+      true,
+    );
+  }
+  async postWithClient(
+    client: pg.PoolClient,
+    input: PostSale,
+    saleId?: string,
+    reservedCode?: Awaited<ReturnType<typeof nextShopNumber>>,
+  ) {
+    // Keep the fingerprints of ready-made sales posted before order support compatible.
+    const { orderId, expectedOrderVersion, ...legacyInput } = input;
+    const fingerprint = hash(
+      orderId === null && expectedOrderVersion === null ? legacyInput : input,
+    );
+    await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))', [
+      `sale-create:${SHOP_ID}:${input.requestId}`,
+    ]);
+    const existing = await client.query(
+      'SELECT id,request_fingerprint FROM sales WHERE shop_id=$1 AND request_id=$2',
+      [SHOP_ID, input.requestId],
+    );
+    if (existing.rowCount) {
+      if (existing.rows[0].request_fingerprint !== fingerprint)
         throw new ConflictException(
-          'The customer account, order or sale total has changed. Review the sale again before posting.',
+          'This request was already used for a different sale. Check the sales register before creating another record.',
         );
-      const id = randomUUID();
-      const code = await nextShopNumber(client, 'SALE');
-      const customer = customerSnapshot(quote.customer);
+      return this.detail(client, existing.rows[0].id);
+    }
+    const quote = await this.quote(client, input, true);
+    if (
+      cents(quote.totalNpr) !== cents(input.expectedTotalNpr) ||
+      cents(quote.balanceBeforeNpr) !== cents(input.expectedBalanceNpr) ||
+      quote.customer.version !== input.expectedCustomerVersion ||
+      (quote.order?.version ?? null) !== input.expectedOrderVersion
+    )
+      throw new ConflictException(
+        'The customer account, order or sale total has changed. Review the sale again before posting.',
+      );
+    const id = saleId ?? randomUUID();
+    const code = reservedCode ?? (await nextShopNumber(client, 'SALE'));
+    const customer = customerSnapshot(quote.customer);
+    await client.query(
+      `INSERT INTO sales(id,shop_id,customer_id,sale_code,sale_date,customer_snapshot,subtotal_npr,discount_npr,tax_npr,total_npr,payment_npr,advance_applied_npr,due_at_posting_npr,balance_before_npr,balance_after_npr,payment_method,payment_reference,bill_reference,notes,request_id,request_fingerprint,order_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)`,
+      [
+        id,
+        SHOP_ID,
+        input.customerId,
+        code.code,
+        input.saleDate,
+        JSON.stringify(customer),
+        quote.subtotalNpr,
+        quote.discountNpr,
+        quote.taxNpr,
+        quote.totalNpr,
+        quote.paymentNpr,
+        quote.advanceAppliedNpr,
+        quote.dueAtPostingNpr,
+        quote.balanceBeforeNpr,
+        quote.balanceAfterNpr,
+        input.paymentMethod,
+        input.paymentReference,
+        input.billReference,
+        input.notes,
+        input.requestId,
+        fingerprint,
+        input.orderId,
+      ],
+    );
+    for (const [index, line] of quote.lines.entries()) {
       await client.query(
-        `INSERT INTO sales(id,shop_id,customer_id,sale_code,sale_date,customer_snapshot,subtotal_npr,discount_npr,tax_npr,total_npr,payment_npr,advance_applied_npr,due_at_posting_npr,balance_before_npr,balance_after_npr,payment_method,payment_reference,bill_reference,notes,request_id,request_fingerprint,order_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)`,
+        `INSERT INTO sale_lines(shop_id,sale_id,line_number,item_id,rate_id,item_snapshot,rate_snapshot,wastage_grams,metal_npr,wastage_npr,making_npr,stones_npr,line_total_npr) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
         [
+          SHOP_ID,
           id,
+          index + 1,
+          line.item.id,
+          line.rate.id,
+          JSON.stringify(line.item),
+          JSON.stringify(line.rate),
+          line.wastageGrams,
+          line.metalNpr,
+          line.wastageNpr,
+          line.makingNpr,
+          line.stonesNpr,
+          line.lineTotalNpr,
+        ],
+      );
+      await client.query(
+        "UPDATE inventory_items SET status='SOLD',active_sale_id=$3 WHERE shop_id=$1 AND id=$2",
+        [SHOP_ID, line.item.id, id],
+      );
+      await client.query(
+        `INSERT INTO inventory_movements(id,shop_id,item_id,kind,net_weight_grams,reason,sale_id) VALUES($1,$2,$3,'SALE',-$4::numeric,$5,$6)`,
+        [
+          randomUUID(),
+          SHOP_ID,
+          line.item.id,
+          line.item.netWeightGrams,
+          `Sold on ${code.code}`,
+          id,
+        ],
+      );
+    }
+    const charge = await nextShopNumber(client, 'ACCOUNT_ENTRY');
+    await client.query(
+      `INSERT INTO customer_account_entries(id,shop_id,customer_id,entry_number,entry_code,entry_date,kind,amount_npr,reference,notes,customer_snapshot,request_id,request_fingerprint,sale_id) VALUES($1,$2,$3,$4,$5,$6,'SALE_CHARGE',$7,$8,$9,$10,$11,$12,$13)`,
+      [
+        randomUUID(),
+        SHOP_ID,
+        input.customerId,
+        charge.number,
+        charge.code,
+        input.saleDate,
+        quote.totalNpr,
+        code.code,
+        'Sale posted',
+        JSON.stringify(customer),
+        randomUUID(),
+        fingerprint,
+        id,
+      ],
+    );
+    if (cents(quote.paymentNpr) > 0n) {
+      const payment = await nextShopNumber(client, 'ACCOUNT_ENTRY');
+      await client.query(
+        `INSERT INTO customer_account_entries(id,shop_id,customer_id,entry_number,entry_code,entry_date,kind,amount_npr,method,reference,notes,customer_snapshot,request_id,request_fingerprint,sale_id) VALUES($1,$2,$3,$4,$5,$6,'PAYMENT',-$7::numeric,$8,$9,$10,$11,$12,$13,$14)`,
+        [
+          randomUUID(),
           SHOP_ID,
           input.customerId,
-          code.code,
+          payment.number,
+          payment.code,
           input.saleDate,
-          JSON.stringify(customer),
-          quote.subtotalNpr,
-          quote.discountNpr,
-          quote.taxNpr,
-          quote.totalNpr,
           quote.paymentNpr,
-          quote.advanceAppliedNpr,
-          quote.dueAtPostingNpr,
-          quote.balanceBeforeNpr,
-          quote.balanceAfterNpr,
           input.paymentMethod,
-          input.paymentReference,
-          input.billReference,
-          input.notes,
-          input.requestId,
-          fingerprint,
-          input.orderId,
-        ],
-      );
-      for (const [index, line] of quote.lines.entries()) {
-        await client.query(
-          `INSERT INTO sale_lines(shop_id,sale_id,line_number,item_id,rate_id,item_snapshot,rate_snapshot,wastage_grams,metal_npr,wastage_npr,making_npr,stones_npr,line_total_npr) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
-          [
-            SHOP_ID,
-            id,
-            index + 1,
-            line.item.id,
-            line.rate.id,
-            JSON.stringify(line.item),
-            JSON.stringify(line.rate),
-            line.wastageGrams,
-            line.metalNpr,
-            line.wastageNpr,
-            line.makingNpr,
-            line.stonesNpr,
-            line.lineTotalNpr,
-          ],
-        );
-        await client.query(
-          "UPDATE inventory_items SET status='SOLD',active_sale_id=$3 WHERE shop_id=$1 AND id=$2",
-          [SHOP_ID, line.item.id, id],
-        );
-        await client.query(
-          `INSERT INTO inventory_movements(id,shop_id,item_id,kind,net_weight_grams,reason,sale_id) VALUES($1,$2,$3,'SALE',-$4::numeric,$5,$6)`,
-          [
-            randomUUID(),
-            SHOP_ID,
-            line.item.id,
-            line.item.netWeightGrams,
-            `Sold on ${code.code}`,
-            id,
-          ],
-        );
-      }
-      const charge = await nextShopNumber(client, 'ACCOUNT_ENTRY');
-      await client.query(
-        `INSERT INTO customer_account_entries(id,shop_id,customer_id,entry_number,entry_code,entry_date,kind,amount_npr,reference,notes,customer_snapshot,request_id,request_fingerprint,sale_id) VALUES($1,$2,$3,$4,$5,$6,'SALE_CHARGE',$7,$8,$9,$10,$11,$12,$13)`,
-        [
-          randomUUID(),
-          SHOP_ID,
-          input.customerId,
-          charge.number,
-          charge.code,
-          input.saleDate,
-          quote.totalNpr,
-          code.code,
-          'Sale posted',
+          input.paymentReference || code.code,
+          `Received with ${code.code}`,
           JSON.stringify(customer),
           randomUUID(),
           fingerprint,
           id,
         ],
       );
-      if (cents(quote.paymentNpr) > 0n) {
-        const payment = await nextShopNumber(client, 'ACCOUNT_ENTRY');
-        await client.query(
-          `INSERT INTO customer_account_entries(id,shop_id,customer_id,entry_number,entry_code,entry_date,kind,amount_npr,method,reference,notes,customer_snapshot,request_id,request_fingerprint,sale_id) VALUES($1,$2,$3,$4,$5,$6,'PAYMENT',-$7::numeric,$8,$9,$10,$11,$12,$13,$14)`,
-          [
-            randomUUID(),
-            SHOP_ID,
-            input.customerId,
-            payment.number,
-            payment.code,
-            input.saleDate,
-            quote.paymentNpr,
-            input.paymentMethod,
-            input.paymentReference || code.code,
-            `Received with ${code.code}`,
-            JSON.stringify(customer),
-            randomUUID(),
-            fingerprint,
-            id,
-          ],
-        );
-      }
-      if (quote.order)
-        await appendOrderEvent(client, quote.order, {
-          kind: 'SALE_DELIVERED',
-          status: 'DELIVERED',
-          eventDate: input.saleDate,
-          reason: `Delivered through ${code.code}`,
-          saleId: id,
-          requestId: randomUUID(),
-          fingerprint,
-        });
-      return this.detail(client, id);
-    }, true);
+    }
+    if (quote.order)
+      await appendOrderEvent(client, quote.order, {
+        kind: 'SALE_DELIVERED',
+        status: 'DELIVERED',
+        eventDate: input.saleDate,
+        reason: `Delivered through ${code.code}`,
+        saleId: id,
+        requestId: randomUUID(),
+        fingerprint,
+      });
+    return this.detail(client, id);
   }
 
   async cancel(id: string, input: CancelSale) {
-    return this.database.run(async (client) => {
-      const first = await client.query(
-        'SELECT customer_id FROM sales WHERE shop_id=$1 AND id=$2',
-        [SHOP_ID, id],
-      );
-      if (!first.rowCount) throw new NotFoundException('Sale not found.');
-      const customer = await loadCustomer(
-        client,
-        first.rows[0].customer_id,
-        true,
-      );
-      await client.query(
-        'SELECT id FROM sales WHERE shop_id=$1 AND id=$2 FOR UPDATE',
-        [SHOP_ID, id],
-      );
-      const fingerprint = hash([id, input]);
-      const existing = await client.query(
-        'SELECT sale_id,request_fingerprint FROM sale_cancellations WHERE shop_id=$1 AND request_id=$2',
-        [SHOP_ID, input.requestId],
-      );
-      if (existing.rowCount) {
-        if (
-          existing.rows[0].sale_id !== id ||
-          existing.rows[0].request_fingerprint !== fingerprint
-        )
-          throw new ConflictException(
-            'This request was already used for a different cancellation.',
-          );
-        return this.detail(client, id);
-      }
-      const detail = await this.detail(client, id);
-      if (detail.sale.status !== 'POSTED')
-        throw new ConflictException('This sale has already been cancelled.');
-      if (input.cancellationDate < customer.latestEntryDate)
-        throw new BadRequestException(
-          `Cancellation date must be on or after ${customer.latestEntryDate}.`,
-        );
-      const order = detail.sale.orderId
-        ? await loadOrder(client, detail.sale.orderId, true)
-        : null;
-      if (order && (order.status !== 'DELIVERED' || order.activeSaleId !== id))
-        throw new ConflictException(
-          'The linked order no longer matches this sale. Refresh before correcting.',
-        );
-      if (order && input.cancellationDate < order.latestActivityDate)
-        throw new BadRequestException(
-          `Correction date must be on or after ${order.latestActivityDate}.`,
-        );
-      const stock = await client.query(
-        'SELECT id,status,active_sale_id FROM inventory_items WHERE shop_id=$1 AND id=ANY($2::uuid[]) ORDER BY id FOR UPDATE',
-        [SHOP_ID, detail.lines.map((line) => line.item.id)],
-      );
+    return this.database.run(
+      (client) => this.cancelWithClient(client, id, input),
+      true,
+    );
+  }
+  async cancelWithClient(
+    client: pg.PoolClient,
+    id: string,
+    input: CancelSale,
+    allowedPurchaseId?: string,
+  ) {
+    const first = await client.query(
+      'SELECT customer_id FROM sales WHERE shop_id=$1 AND id=$2',
+      [SHOP_ID, id],
+    );
+    if (!first.rowCount) throw new NotFoundException('Sale not found.');
+    const customer = await loadCustomer(
+      client,
+      first.rows[0].customer_id,
+      true,
+    );
+    await client.query(
+      'SELECT id FROM sales WHERE shop_id=$1 AND id=$2 FOR UPDATE',
+      [SHOP_ID, id],
+    );
+    const fingerprint = hash([id, input]);
+    const existing = await client.query(
+      'SELECT sale_id,request_fingerprint FROM sale_cancellations WHERE shop_id=$1 AND request_id=$2',
+      [SHOP_ID, input.requestId],
+    );
+    if (existing.rowCount) {
       if (
-        stock.rows.length !== detail.lines.length ||
-        stock.rows.some(
-          (item) => item.status !== 'SOLD' || item.active_sale_id !== id,
-        )
+        existing.rows[0].sale_id !== id ||
+        existing.rows[0].request_fingerprint !== fingerprint
       )
         throw new ConflictException(
-          'The stock no longer matches this sale. Refresh before correcting it.',
+          'This request was already used for a different cancellation.',
         );
+      return this.detail(client, id);
+    }
+    const linked = await client.query(
+      'SELECT id FROM metal_purchases WHERE shop_id=$1 AND sale_id=$2',
+      [SHOP_ID, id],
+    );
+    if (linked.rowCount && linked.rows[0].id !== allowedPurchaseId)
+      throw new ConflictException(
+        'Correct this exchange from Purchases so incoming metal, outgoing pieces and settlement reverse together.',
+      );
+    const detail = await this.detail(client, id);
+    if (detail.sale.status !== 'POSTED')
+      throw new ConflictException('This sale has already been cancelled.');
+    if (input.cancellationDate < customer.latestEntryDate)
+      throw new BadRequestException(
+        `Cancellation date must be on or after ${customer.latestEntryDate}.`,
+      );
+    const order = detail.sale.orderId
+      ? await loadOrder(client, detail.sale.orderId, true)
+      : null;
+    if (order && (order.status !== 'DELIVERED' || order.activeSaleId !== id))
+      throw new ConflictException(
+        'The linked order no longer matches this sale. Refresh before correcting.',
+      );
+    if (order && input.cancellationDate < order.latestActivityDate)
+      throw new BadRequestException(
+        `Correction date must be on or after ${order.latestActivityDate}.`,
+      );
+    const stock = await client.query(
+      'SELECT id,status,active_sale_id FROM inventory_items WHERE shop_id=$1 AND id=ANY($2::uuid[]) ORDER BY id FOR UPDATE',
+      [SHOP_ID, detail.lines.map((line) => line.item.id)],
+    );
+    if (
+      stock.rows.length !== detail.lines.length ||
+      stock.rows.some(
+        (item) => item.status !== 'SOLD' || item.active_sale_id !== id,
+      )
+    )
+      throw new ConflictException(
+        'The stock no longer matches this sale. Refresh before correcting it.',
+      );
+    await client.query(
+      'INSERT INTO sale_cancellations(id,shop_id,sale_id,cancellation_date,reason,request_id,request_fingerprint) VALUES($1,$2,$3,$4,$5,$6,$7)',
+      [
+        randomUUID(),
+        SHOP_ID,
+        id,
+        input.cancellationDate,
+        input.reason,
+        input.requestId,
+        fingerprint,
+      ],
+    );
+    for (const line of detail.lines) {
       await client.query(
-        'INSERT INTO sale_cancellations(id,shop_id,sale_id,cancellation_date,reason,request_id,request_fingerprint) VALUES($1,$2,$3,$4,$5,$6,$7)',
+        "UPDATE inventory_items SET status='AVAILABLE',active_sale_id=NULL WHERE shop_id=$1 AND id=$2",
+        [SHOP_ID, line.item.id],
+      );
+      await client.query(
+        `INSERT INTO inventory_movements(id,shop_id,item_id,kind,net_weight_grams,reason,sale_id) VALUES($1,$2,$3,'SALE_CANCEL',$4,$5,$6)`,
         [
           randomUUID(),
           SHOP_ID,
+          line.item.id,
+          line.item.netWeightGrams,
+          `${detail.sale.saleCode}: ${input.reason}`,
           id,
-          input.cancellationDate,
-          input.reason,
-          input.requestId,
-          fingerprint,
         ],
       );
-      for (const line of detail.lines) {
-        await client.query(
-          "UPDATE inventory_items SET status='AVAILABLE',active_sale_id=NULL WHERE shop_id=$1 AND id=$2",
-          [SHOP_ID, line.item.id],
-        );
-        await client.query(
-          `INSERT INTO inventory_movements(id,shop_id,item_id,kind,net_weight_grams,reason,sale_id) VALUES($1,$2,$3,'SALE_CANCEL',$4,$5,$6)`,
-          [
-            randomUUID(),
-            SHOP_ID,
-            line.item.id,
-            line.item.netWeightGrams,
-            `${detail.sale.saleCode}: ${input.reason}`,
-            id,
-          ],
-        );
-      }
-      const originals = await client.query(
-        "SELECT id,entry_code,amount_npr::text FROM customer_account_entries WHERE shop_id=$1 AND sale_id=$2 AND kind IN ('SALE_CHARGE','PAYMENT') ORDER BY entry_number",
-        [SHOP_ID, id],
-      );
-      for (const original of originals.rows) {
-        const entry = await nextShopNumber(client, 'ACCOUNT_ENTRY');
-        await client.query(
-          `INSERT INTO customer_account_entries(id,shop_id,customer_id,entry_number,entry_code,entry_date,kind,amount_npr,reference,notes,reversal_of,customer_snapshot,request_id,request_fingerprint,sale_id) VALUES($1,$2,$3,$4,$5,$6,'REVERSAL',-$7::numeric,$8,$9,$10,$11,$12,$13,$14)`,
-          [
-            randomUUID(),
-            SHOP_ID,
-            customer.id,
-            entry.number,
-            entry.code,
-            input.cancellationDate,
-            original.amount_npr,
-            original.entry_code,
-            input.reason,
-            original.id,
-            JSON.stringify(customerSnapshot(customer)),
-            randomUUID(),
-            fingerprint,
-            id,
-          ],
-        );
-      }
-      if (order)
-        await appendOrderEvent(client, order, {
-          kind: 'SALE_REOPENED',
-          status: 'READY',
-          eventDate: input.cancellationDate,
-          reason:
-            `Sale ${detail.sale.saleCode} corrected: ${input.reason}`.slice(
-              0,
-              500,
-            ),
-          saleId: id,
-          requestId: randomUUID(),
+    }
+    const originals = await client.query(
+      "SELECT id,entry_code,amount_npr::text FROM customer_account_entries WHERE shop_id=$1 AND sale_id=$2 AND kind IN ('SALE_CHARGE','PAYMENT') ORDER BY entry_number",
+      [SHOP_ID, id],
+    );
+    for (const original of originals.rows) {
+      const entry = await nextShopNumber(client, 'ACCOUNT_ENTRY');
+      await client.query(
+        `INSERT INTO customer_account_entries(id,shop_id,customer_id,entry_number,entry_code,entry_date,kind,amount_npr,reference,notes,reversal_of,customer_snapshot,request_id,request_fingerprint,sale_id) VALUES($1,$2,$3,$4,$5,$6,'REVERSAL',-$7::numeric,$8,$9,$10,$11,$12,$13,$14)`,
+        [
+          randomUUID(),
+          SHOP_ID,
+          customer.id,
+          entry.number,
+          entry.code,
+          input.cancellationDate,
+          original.amount_npr,
+          original.entry_code,
+          input.reason,
+          original.id,
+          JSON.stringify(customerSnapshot(customer)),
+          randomUUID(),
           fingerprint,
-        });
-      return this.detail(client, id);
-    }, true);
+          id,
+        ],
+      );
+    }
+    if (order)
+      await appendOrderEvent(client, order, {
+        kind: 'SALE_REOPENED',
+        status: 'READY',
+        eventDate: input.cancellationDate,
+        reason: `Sale ${detail.sale.saleCode} corrected: ${input.reason}`.slice(
+          0,
+          500,
+        ),
+        saleId: id,
+        requestId: randomUUID(),
+        fingerprint,
+      });
+    return this.detail(client, id);
   }
 }

@@ -13,10 +13,31 @@ export function Icon({
     | 'diamond'
     | 'history'
     | 'users'
-    | 'receipt';
+    | 'receipt'
+    | 'overview'
+    | 'exchange'
+    | 'chart';
   size?: number;
 }) {
   const paths = {
+    overview: (
+      <>
+        <rect x="3" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="3" width="7" height="7" rx="1" />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <rect x="14" y="14" width="7" height="7" rx="1" />
+      </>
+    ),
+    exchange: (
+      <>
+        <path d="M3 7h17m-5-4 5 4-5 4M21 17H4m5-4-5 4 5 4" />
+      </>
+    ),
+    chart: (
+      <>
+        <path d="M4 3v17h17M8 16v-5m5 5V7m5 9V4" />
+      </>
+    ),
     receipt: (
       <>
         <path d="M5 3h14v19l-3-2-4 2-4-2-3 2V3ZM8 8h8M8 12h8M8 16h4" />

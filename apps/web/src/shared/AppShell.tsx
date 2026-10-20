@@ -5,13 +5,21 @@ export function AppShell({
   section,
   children,
 }: {
-  section: 'Inventory' | 'Metal rates' | 'Customers' | 'Sales' | 'Orders';
+  section:
+    | 'Inventory'
+    | 'Metal rates'
+    | 'Customers'
+    | 'Sales'
+    | 'Orders'
+    | 'Purchases'
+    | 'Reports'
+    | 'Dashboard';
   children: ReactNode;
 }) {
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <a className="brand" href="#/inventory" aria-label="AwesomeJM home">
+        <a className="brand" href="#/dashboard" aria-label="AwesomeJM home">
           <span className="brand-mark">
             <Icon name="diamond" size={23} />
           </span>
@@ -32,6 +40,12 @@ export function AppShell({
           {(
             [
               {
+                name: 'Dashboard',
+                path: 'dashboard',
+                icon: 'overview',
+                index: '00',
+              },
+              {
                 name: 'Inventory',
                 path: 'inventory',
                 icon: 'box',
@@ -51,6 +65,13 @@ export function AppShell({
               },
               { name: 'Sales', path: 'sales', icon: 'receipt', index: '04' },
               { name: 'Orders', path: 'orders', icon: 'box', index: '05' },
+              {
+                name: 'Purchases',
+                path: 'purchases',
+                icon: 'exchange',
+                index: '06',
+              },
+              { name: 'Reports', path: 'reports', icon: 'chart', index: '07' },
             ] as const
           ).map((item) => (
             <a

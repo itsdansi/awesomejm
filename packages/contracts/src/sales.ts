@@ -134,6 +134,7 @@ export type SalePreview = z.infer<typeof salePreviewSchema>;
 export const saleRecordSchema = z.object({
   id: z.uuid(),
   saleCode: z.string(),
+  purchaseId: z.uuid().nullable(),
   orderId: z.uuid().nullable(),
   saleDate: z.iso.date(),
   customerId: z.uuid(),

@@ -1,6 +1,6 @@
 # AwesomeJM
 
-A SaaS application for Nepali gold and silver shops. The workspace contains a React/Vite frontend, a NestJS API, PostgreSQL inventory, metal-rate, customer-account, sales and custom-order storage, shared public contracts and decimal calculation utilities.
+A SaaS application for Nepali gold and silver shops. The workspace contains a React/Vite frontend, a NestJS API, PostgreSQL inventory, metal-rate, customer-account, sales, custom-order and old-metal purchase storage, shared public contracts and decimal calculation utilities.
 
 ## Requirements
 
@@ -40,7 +40,7 @@ The frontend proxies `/api` to the API during development. If the API port chang
 ```sh
 pnpm check       # Lint, type checks, calculation tests, builds, formatting
 pnpm smoke       # Start temporary API/web servers and verify their connection
-pnpm test:integration # Inventory/rates/customer/sales/orders APIs + real PostgreSQL; database must be running
+pnpm test:integration # Inventory/rates/customer/sales/orders/purchases/reports APIs + real PostgreSQL; database must be running
 pnpm format      # Format source and configuration
 ```
 
@@ -129,11 +129,11 @@ Open **Customers** in the sidebar (`/#/customers`). A customer has a generated s
 | POST   | `/:id/payments`                                                | Record `PAYMENT` or `ADVANCE_REFUND`             |
 | POST   | `/:id/entries/:entryId/reverse`                                | Append a reversal with a reason                  |
 
-There is no general manual-charge endpoint. Sales add linked charges, payments and transaction snapshots. Order advances credit the same customer account; exchanges will add their own linked postings in a future module. Sale-linked entries must be corrected through Sales, so stock and accounts remain consistent. Posted financial history has no update or delete API.
+There is no general manual-charge endpoint. Sales add linked charges, payments and transaction snapshots. Order advances, old-metal purchase credits and exchange settlements post into the same customer account. Sale-linked entries are corrected through Sales; purchase/exchange entries are corrected through Purchases so stock and accounts remain consistent. Posted financial history has no update or delete API.
 
 ## Sales module
 
-Open **Sales** in the sidebar (`/#/sales`). Ready-made pieces can be sold to an existing customer, using the latest rate for each piece’s exact metal, fineness and sale date. Set the rate and receive the piece before starting a sale. Up to 20 individually tracked pieces can be posted together. Custom orders use the linked delivery workflow below; old-metal exchanges and returns after delivery remain future workflows.
+Open **Sales** in the sidebar (`/#/sales`). Ready-made pieces can be sold to an existing customer, using the latest rate for each piece’s exact metal, fineness and sale date. Set the rate and receive the piece before starting a sale. Up to 20 individually tracked pieces can be posted together. Custom orders use the linked delivery workflow below; old-metal exchanges use the purchase workflow below. Returns after delivery remain future work.
 
 - Choose the customer, AD sale date and available pieces; enter billed wastage in grams, making and stone charges, discount, any tax/fees copied from the official bill, and money received now. An optional official bill reference connects the internal record to the shop’s existing billing process. No tax rate is inferred or automatically calculated, and this module does not issue official invoices.
 - Review the server-calculated amounts and customer balance before posting. Metal value is `net grams × quoted selling rate per tola ÷ that rate’s grams per tola`. The quoted purity rate is used once. Billed wastage uses the same formula with billed wastage grams; it does not reduce physical stock. Stone/other weight is excluded from physical net metal weight, while stone price is a separate charge.
@@ -179,9 +179,50 @@ Open **Orders** (`/#/orders`) to book customer designs and track them through **
 
 For linked sales, include `orderId` in the preview and posting request and copy the returned `order.version` into `expectedOrderVersion`. The sale retains its order link; account payment corrections retain their original order link.
 
+## Old-metal purchases and exchanges
+
+Open **Purchases** (`/#/purchases`) to buy gold/silver outright or exchange it for available jewellery. Transactions use an existing customer account and an AD business date on or after that account’s latest posting.
+
+- Each incoming lot records description, gross and stone/other grams, assessed fineness, assay notes, any agreed weight deduction, other NPR deduction and a deduction reason. The exact-purity buying quote must exist for the purchase date. A quote already applies to its stated purity; purity is not multiplied into the price again.
+- Physical net is gross minus stones/other materials. Payable weight is physical net minus the agreed weight deduction. Metal value is payable grams × buying quote per tola ÷ that quote’s grams per tola, rounded half up to two decimals; the other monetary deduction is then subtracted. Positive lot values sum into the purchase credit. Physical net and fine-metal equivalent remain recorded independently of commercial deductions.
+- Incoming metal is held in individually numbered **old-metal lots**, separate from ready-made jewellery. This version does not melt, refine, consume or automatically convert these lots into saleable pieces. Customer-owned metal custody and supplier jewellery invoices are different future workflows.
+- Review before posting. The API rechecks the customer profile/balance and latest exact-date buying and selling quotes. Up to 20 incoming lots and 20 outgoing pieces can be posted together. Post/correction requests require stable UUID keys, and identical retries return the saved record.
+- A purchase credits the customer’s account once. It first reduces earlier dues; the remainder is advance/credit held. Money paid out is limited to the smaller of the purchase value and the credit remaining after earlier dues and any linked sale. For an exchange, enter money received or money paid out, not both; both may be zero to leave the balance on account.
+- Purchase, incoming movements, optional sale, outgoing stock, customer credit and money movements commit in one transaction. Sale and account counter locks are acquired in a consistent order. A failed write rolls back all effects and numbering; competing transactions cannot sell one piece twice.
+- Ready custom orders can use **Deliver with old-metal exchange**. Existing order quantity/purity checks and delivery events are posted by Sales inside the same transaction.
+- The complete exchange is corrected from Purchases. Correction requires a date, reason and confirmation that all incoming lots and outgoing pieces remain physically in the shop. It reverses both sides and their recorded money movements, and reopens any delivered order as Ready. It records a mistake correction rather than a money transfer, refund or delivered-item return. Original records and snapshots remain immutable and printable.
+
+| Method | Route under `/api/v1/purchases`                    | Purpose                                                      |
+| ------ | -------------------------------------------------- | ------------------------------------------------------------ |
+| GET    | `?search=&status=ALL&from=&to=&page=1&pageSize=20` | Search/filter/paginate purchases; omit empty dates           |
+| GET    | `/:id`                                             | Purchase, original lot valuations and optional exchange sale |
+| POST   | `/preview`                                         | Read-only valuation and complete settlement preview          |
+| POST   | `/`                                                | Post reviewed purchase/exchange atomically                   |
+| POST   | `/:id/cancel`                                      | Correct the whole settlement with stock confirmation         |
+
+Posting includes `expectedPurchaseNpr`, `expectedSaleNpr` (`0` without an exchange), `expectedCustomerVersion`, `expectedOrderVersion` (or null) and `expectedBalanceNpr` from the preview. A nested `sale` uses the existing sale draft shape, with the same customer and date, or is null for a purchase without outgoing jewellery.
+
+## Dashboard and reports
+
+The default home screen is **Dashboard** (`/#/dashboard`): today and month-to-date net sales, old-metal purchases and recorded money movement; physical stock by metal/purity and stock class; customer dues and advances separately; order counts; overdue orders and missing-rate alerts; and recent trade records with links. An exchange appears as a purchase and sale, while its credit is applied once to the customer account.
+
+Open **Reports** (`/#/reports`) for daily or monthly summaries over an AD range of up to 366 days, payment-method breakdown, historical customer balances and stock reconciliation. Presets select today, this month or the previous month. Activity and stock CSV downloads use exact decimal strings and UTF-8; the current report can be printed.
+
+- Sales/purchases contribute on their recorded business dates. Their cancellations contribute an opposite value on the **correction date**, preserving prior-period activity instead of silently removing it. The totals show both posting/correction counts and net amounts. A correction-only period can have negative net values.
+- Recorded receipts include customer payments, order advances and sale payments. Recorded payouts include purchase payouts and customer advance refunds. Reversals apply signed adjustments to the original payment method on the reversal date. These figures describe recorded money movements net of corrections, not bank-provider reconciliation or an automatic cash drawer.
+- Stock uses `opening + received - sold + corrections = closing`, separately for ready-made jewellery and old-metal lots, grouped by metal and fineness. Counts, physical net grams and closing fine-metal equivalent are shown. Receipt/receipt-void dates come from their Nepal recording timestamps; sales, purchases and their corrections use business dates. Payable-weight deductions never reduce physical stock.
+- Customer dues and advances are summed separately through the report’s end date. Reports and dashboard read a consistent database snapshot. They do not infer profit, acquisition cost, tax liability, supplier purchasing or regulatory returns.
+
+| Method | Route under `/api/v1`                                | Purpose                                                        |
+| ------ | ---------------------------------------------------- | -------------------------------------------------------------- |
+| GET    | `/dashboard`                                         | Current-day and month-to-date shop overview                    |
+| GET    | `/reports?from=2026-10-01&to=2026-10-20&groupBy=DAY` | Activity, payment methods, account balances and physical stock |
+
+Use `groupBy=MONTH` for monthly buckets. CSV exports reflect the successfully loaded report, including its applied period and grouping.
+
 ## Scope and deployment
 
-The health endpoint confirms application startup, not database readiness. These are local, single-shop development modules: authentication, staff attribution, authorization and production tenant isolation are still required before hosting customer data. Inventory, rates, sales, order and customer queries are scoped to a server-selected shop, but authenticated shop selection and PostgreSQL row-level security are not implemented. Keep the API on loopback while developing. Delivered-item returns, exchanges, customer-metal custody, artisan job work, suppliers, cost valuation, barcode printing, stocktaking and official billing remain future modules.
+The health endpoint confirms application startup, not database readiness. These are local, single-shop development modules: authentication, staff attribution, authorization and production tenant isolation are still required before hosting customer data. Inventory, rates, sales, order and customer queries are scoped to a server-selected shop, but authenticated shop selection and PostgreSQL row-level security are not implemented. Keep the API on loopback while developing. Delivered-item returns, customer-metal custody, artisan job work, suppliers, cost valuation, barcode printing, stocktaking and official billing remain future modules.
 
 The conversion uses the first client's stated **11.664 grams per tola**, retained on every piece. Confirm that convention before importing business stock. The first receive form accepts grams; alternate unit entry and shop-specific conversion settings can follow. Physical stone/other weight is distinct from a commercial wastage charge.
 

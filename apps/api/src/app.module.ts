@@ -1,3 +1,7 @@
+import { PurchasesController } from './purchases/purchases.controller.js';
+import { PurchasesService } from './purchases/purchases.service.js';
+import { ReportsController } from './reports/reports.controller.js';
+import { ReportsService } from './reports/reports.service.js';
 import { OrdersController } from './orders/orders.controller.js';
 import { OrdersService } from './orders/orders.service.js';
 import { Module } from '@nestjs/common';
@@ -20,6 +24,8 @@ import { SalesService } from './sales/sales.service.js';
     CustomersController,
     SalesController,
     OrdersController,
+    PurchasesController,
+    ReportsController,
   ],
   providers: [
     DatabaseService,
@@ -28,6 +34,8 @@ import { SalesService } from './sales/sales.service.js';
     CustomersService,
     SalesService,
     OrdersService,
+    PurchasesService,
+    ReportsService,
   ],
 })
 export class AppModule {}

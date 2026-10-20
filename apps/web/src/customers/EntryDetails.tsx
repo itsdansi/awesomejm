@@ -56,7 +56,10 @@ export function EntryDetails({
       setBusy(false);
     }
   }
-  const printable = entry.kind === 'PAYMENT' || entry.kind === 'ADVANCE_REFUND';
+  const printable =
+    entry.kind === 'PAYMENT' ||
+    entry.kind === 'ADVANCE_REFUND' ||
+    entry.kind === 'PURCHASE_PAYOUT';
   return (
     <Dialog
       title={entry.entryCode}
@@ -144,7 +147,16 @@ export function EntryDetails({
           </a>
         </p>
       )}
-      {!entry.saleId &&
+      {entry.purchaseId && (
+        <p className="account-scope-note">
+          Linked purchase or exchange.{' '}
+          <a className="text-button" href={`#/purchases/${entry.purchaseId}`}>
+            View settlement →
+          </a>
+        </p>
+      )}
+      {!entry.purchaseId &&
+        !entry.saleId &&
         !entry.reversed &&
         entry.kind !== 'REVERSAL' &&
         (correcting ? (

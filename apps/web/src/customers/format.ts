@@ -23,6 +23,8 @@ export const entryTitle: Record<AccountEntry['kind'], string> = {
   ADVANCE_REFUND: 'Advance refunded',
   REVERSAL: 'Entry reversed',
   SALE_CHARGE: 'Sale charged',
+  METAL_PURCHASE: 'Old metal purchased',
+  PURCHASE_PAYOUT: 'Purchase paid out',
 };
 export const methodTitle = {
   CASH: 'Cash',

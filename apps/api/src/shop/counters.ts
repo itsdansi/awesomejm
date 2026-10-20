@@ -3,7 +3,7 @@ import { SHOP_ID } from './shop.js';
 
 export async function nextShopNumber(
   client: pg.PoolClient,
-  scope: 'CUSTOMER' | 'ACCOUNT_ENTRY' | 'SALE' | 'ORDER',
+  scope: 'CUSTOMER' | 'ACCOUNT_ENTRY' | 'SALE' | 'ORDER' | 'PURCHASE',
 ) {
   const result = await client.query(
     `INSERT INTO shop_counters(shop_id,scope,last_number) VALUES($1,$2,1) ON CONFLICT(shop_id,scope) DO UPDATE SET last_number=shop_counters.last_number+1 RETURNING last_number::text AS number`,
@@ -12,6 +12,6 @@ export async function nextShopNumber(
   const number: string = result.rows[0].number;
   return {
     number,
-    code: `${scope === 'CUSTOMER' ? 'C' : scope === 'SALE' ? 'S' : scope === 'ORDER' ? 'O' : 'AC'}-${number.padStart(6, '0')}`,
+    code: `${scope === 'CUSTOMER' ? 'C' : scope === 'SALE' ? 'S' : scope === 'ORDER' ? 'O' : scope === 'PURCHASE' ? 'P' : 'AC'}-${number.padStart(6, '0')}`,
   };
 }

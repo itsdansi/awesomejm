@@ -146,6 +146,18 @@ export function SaleDetails({ saleId }: { saleId: string }) {
                   </a>
                 </p>
               )}
+              {detail.sale.purchaseId && (
+                <p className="sale-review-reference">
+                  Linked exchange:{' '}
+                  <a
+                    className="text-button"
+                    href={`#/purchases/${detail.sale.purchaseId}`}
+                  >
+                    View complete settlement / correction →
+                  </a>
+                  . This sale snapshot precedes any purchase payout.
+                </p>
+              )}
               <SaleFigures lines={detail.lines} totals={detail.sale} />
               {detail.sale.notes && (
                 <p className="sale-review-reference">{detail.sale.notes}</p>
@@ -163,7 +175,7 @@ export function SaleDetails({ saleId }: { saleId: string }) {
               >
                 View customer account →
               </a>
-              {detail.sale.status === 'POSTED' && (
+              {detail.sale.status === 'POSTED' && !detail.sale.purchaseId && (
                 <button
                   className="text-button danger-text"
                   onClick={() => setCorrecting(true)}

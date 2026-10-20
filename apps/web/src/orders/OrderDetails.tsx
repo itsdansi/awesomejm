@@ -277,6 +277,14 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                     </small>
                   </>
                 )}
+                {detail.order.status === 'READY' && (
+                  <a
+                    className="button secondary"
+                    href={`#/purchases/new?orderId=${detail.order.id}`}
+                  >
+                    Deliver with old-metal exchange →
+                  </a>
+                )}
                 {detail.order.activeSaleId && (
                   <a
                     className="button primary"
