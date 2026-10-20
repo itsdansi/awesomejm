@@ -140,7 +140,6 @@ export function Staff() {
       <div className="page-heading">
         <div>
           <h1>{t('staff.access.peopleYouTrust')}</h1>
-          <p>{t('staff.access.individualStaffAccountsAClearAuditTrailAnd')}</p>
         </div>
         <button className="button primary" onClick={() => setEdit('new')}>
           {t('staff.access.addStaffMember')}

@@ -108,11 +108,6 @@ export function PurchaseFigures({
           <div className="stock-heading">
             <div>
               <h2>{t('purchases.purchaseFigures.outgoingJewellery')}</h2>
-              <p>
-                {t(
-                  'purchases.purchaseFigures.theNewPiecesSuppliedInThisExchange',
-                )}
-              </p>
             </div>
           </div>
           <div className="table-scroll">

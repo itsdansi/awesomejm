@@ -113,13 +113,7 @@ export function Rates() {
     <AppShell section="Metal rates">
       <div className="page-heading">
         <div>
-          <h1>
-            {t('rates.labels.goldSilverRates')}
-            <span>.</span>
-          </h1>
-          <p className="description">
-            {t('rates.book.yourShopSBuyingAndSellingRatesWith')}
-          </p>
+          <h1>{t('rates.labels.goldSilverRates')}</h1>
         </div>
         <Permission name="rates.write">
           <button
@@ -135,18 +129,7 @@ export function Rates() {
           </button>
         </Permission>
       </div>
-      <div className="rate-intro">
-        <div>
-          <span className="rate-intro-icon">
-            <Icon name="diamond" size={23} />
-          </span>
-          <div>
-            <strong>{t('rates.book.yourShopSRateBook')}</strong>
-            <p>{t('rates.book.manualQuotesInNprPerTola1Tola')}</p>
-          </div>
-        </div>
-        <span className="manual-badge">{t('rates.book.manualEntry')}</span>
-      </div>
+
       {notice && (
         <div className="success" role="status">
           {message(notice)}
@@ -170,7 +153,6 @@ export function Rates() {
               {t('rates.book.dailyRateBook') + ' '}
               <span>{book?.rates.length ?? '—'}</span>
             </h2>
-            <p>{t('rates.book.latestRevisionForEachPurityOnTheSelected')}</p>
           </div>
           <button className="text-button" onClick={refresh}>
             {t('common.actions.refresh')}
@@ -318,9 +300,6 @@ export function Rates() {
             </Permission>
           </div>
         )}
-        <div className="rate-book-footnote">
-          {t('rates.book.quotesApplyToTheirStatedPurityPerGram')}
-        </div>
       </section>
       <section
         className="stock-panel rate-history-panel"
@@ -333,7 +312,6 @@ export function Rates() {
               {t('rates.book.rateHistory') + ' '}
               <span>{history?.total ?? '—'}</span>
             </h2>
-            <p>{t('rates.book.originalEntriesAndEverySubsequentRevision')}</p>
           </div>
           <Icon name="history" size={19} />
         </div>

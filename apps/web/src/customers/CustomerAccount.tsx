@@ -94,7 +94,6 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
           </p>
           <h1>
             {customer?.name ?? t('customers.customerAccount.customerAccount2')}
-            <span>.</span>
           </h1>
           <p className="description">
             {customer
@@ -218,7 +217,6 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
                   {t('customers.customerAccount.accountStatement') + ' '}
                   <span>{data.statement.total}</span>
                 </h2>
-                <p>{t('customers.customerAccount.balanceSignHelp')}</p>
               </div>
               <button
                 className="text-button"

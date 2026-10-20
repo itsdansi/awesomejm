@@ -200,17 +200,7 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
             {review
               ? t('sales.saleBuilder.reviewThisSale')
               : t('common.labels.recordASale')}
-            <span>.</span>
           </h1>
-          <p className="description">
-            {review
-              ? t('sales.saleBuilder.reviewDescription')
-              : orderId
-                ? t('sales.saleBuilder.orderDeliveryHelp')
-                : t(
-                    'sales.saleBuilder.chooseACustomerAndAvailablePiecesThenReview',
-                  )}
-          </p>
         </div>
         <span className="manual-badge">
           {review ? t('common.steps.review') : t('common.steps.details')}
@@ -325,11 +315,6 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
               <div className="stock-heading">
                 <div>
                   <h2>{t('common.labels.customerDate')}</h2>
-                  <p>
-                    {t(
-                      'sales.saleBuilder.allAmountsWillBeRecordedAgainstThisCustomer',
-                    )}
-                  </p>
                 </div>
               </div>
               <div className="sale-form-content">
@@ -432,9 +417,6 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                     {t('sales.saleBuilder.choosePieces') + ' '}
                     <span>{lines.length} / 20</span>
                   </h2>
-                  <p>
-                    {t('sales.saleBuilder.eachPieceUsesTheLatestRateForIts')}
-                  </p>
                 </div>
                 <button
                   className="text-button"
@@ -640,11 +622,6 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
               <div className="stock-heading">
                 <div>
                   <h2>{t('sales.saleBuilder.chargesSettlement')}</h2>
-                  <p>
-                    {t(
-                      'sales.saleBuilder.enterTheAmountsAgreedWithTheCustomerExisting',
-                    )}
-                  </p>
                 </div>
               </div>
               <div className="sale-form-content form-grid">

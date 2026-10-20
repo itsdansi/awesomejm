@@ -104,13 +104,7 @@ export function Reports() {
     <AppShell section="Reports">
       <div className="page-heading">
         <div>
-          <h1>
-            {t('reports.title')}
-            <span>.</span>
-          </h1>
-          <p className="description">
-            {t('reports.overview.dailyAndMonthlySalesOldMetalPurchasesMoney')}
-          </p>
+          <h1>{t('reports.title')}</h1>
         </div>
         <div className="order-heading-actions">
           <button
@@ -251,7 +245,6 @@ export function Reports() {
                       : t('reports.overview.monthly')}{' '}
                     {' ' + t('reports.overview.activity')}
                   </h2>
-                  <p>{t('reports.overview.correctionDateHelp')}</p>
                 </div>
               </div>
               <div className="table-scroll">
@@ -352,11 +345,6 @@ export function Reports() {
                 <div className="stock-heading">
                   <div>
                     <h2>{t('reports.overview.byPaymentMethod')}</h2>
-                    <p>
-                      {t(
-                        'reports.overview.recordedMoneyMovementsNetOfCorrections',
-                      )}
-                    </p>
                   </div>
                 </div>
                 <div className="table-scroll">
@@ -418,7 +406,6 @@ export function Reports() {
               <div className="stock-heading">
                 <div>
                   <h2>{t('reports.overview.physicalStockReconciliation')}</h2>
-                  <p>{t('reports.overview.stockReconciliationHelp')}</p>
                 </div>
               </div>
               <StockTable rows={report.stock} />

@@ -98,11 +98,7 @@ export function Inventory() {
     <AppShell section="Inventory">
       <div className="page-heading">
         <div>
-          <h1>
-            {t('inventory.title')}
-            <span>.</span>
-          </h1>
-          <p className="description">{t('inventory.list.description')}</p>
+          <h1>{t('inventory.title')}</h1>
         </div>
         <Permission name="inventory.write">
           <button
@@ -132,7 +128,6 @@ export function Inventory() {
             {data ? totalPieces : '—'}
             <small>{t('common.labels.pieces')}</small>
           </strong>
-          <p>{t('inventory.list.readyMadeJewelleryInStock')}</p>
         </article>
         {(['GOLD', 'SILVER'] as const).map((kind) => {
           const row = data?.summary.metals.find((row) => row.metal === kind);
@@ -156,20 +151,13 @@ export function Inventory() {
                 <small>{t('common.units.grams')}</small>
               </strong>
               <p>
-                {data ? (row?.pieces ?? 0) : '—'}{' '}
-                {' ' + t('common.labels.pieces') + ' '}
-                <span>·</span> {' ' + t('inventory.labels.netMetalWeight')}
+                {data ? (row?.pieces ?? 0) : '—'} {t('common.labels.pieces')}
               </p>
             </article>
           );
         })}
       </section>
-      <div className="weight-note">
-        <span>{t('inventory.list.weightConvention')}</span>
-        {t('inventory.list.tolaConversion')}{' '}
-        <span className="note-divider">/</span>{' '}
-        {' ' + t('inventory.list.netWeightHelp')}
-      </div>
+
       {notice && (
         <div className="success" role="status">
           {message(notice)}
@@ -193,9 +181,6 @@ export function Inventory() {
               {t('inventory.list.stockRegister') + ' '}
               <span>{data?.list.total ?? '—'}</span>
             </h2>
-            <p>
-              {t('inventory.list.individualPiecesWithAPermanentReceiptHistory')}
-            </p>
           </div>
         </div>
         <div className="toolbar">

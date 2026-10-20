@@ -77,13 +77,7 @@ function CustomerRegister() {
     <AppShell section="Customers">
       <div className="page-heading">
         <div>
-          <h1>
-            {t('customers.labels.customerAccounts')}
-            <span>.</span>
-          </h1>
-          <p className="description">
-            {t('customers.list.keepCustomerDetailsDuesAndAdvancesInOne')}
-          </p>
+          <h1>{t('customers.labels.customerAccounts')}</h1>
         </div>
         <Permission name="customers.write">
           <button className="button primary" onClick={() => setCreating(true)}>
@@ -104,7 +98,6 @@ function CustomerRegister() {
             </span>
           </div>
           <strong>{data?.summary.customers ?? '—'}</strong>
-          <p>{t('customers.list.customerRecordsInYourShop')}</p>
         </article>
         <article className="summary-card gold-card">
           <div className="summary-top">
@@ -117,7 +110,6 @@ function CustomerRegister() {
             {data ? money(data.summary.receivableNpr) : '—'}
             <small>{t('common.money.currency')}</small>
           </strong>
-          <p>{t('customers.list.totalOwedToTheShop')}</p>
         </article>
         <article className="summary-card">
           <div className="summary-top">
@@ -130,12 +122,9 @@ function CustomerRegister() {
             {data ? money(data.summary.advanceNpr) : '—'}
             <small>{t('common.money.currency')}</small>
           </strong>
-          <p>{t('customers.list.customerFundsHeldByTheShop')}</p>
         </article>
       </section>
-      <p className="account-scope-note">
-        {t('customers.list.accountScopeHelp')}
-      </p>
+
       <section
         className="stock-panel"
         aria-labelledby="customer-register-title"
@@ -147,11 +136,6 @@ function CustomerRegister() {
               {t('customers.list.customerRegister') + ' '}
               <span>{data?.list.total ?? '—'}</span>
             </h2>
-            <p>
-              {t(
-                'customers.list.searchBeforeAddingACustomerSharedPhoneNumbers',
-              )}
-            </p>
           </div>
           <button
             className="text-button"

@@ -64,10 +64,7 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                   {t('orders.orderDetails.customOrder') + ' '}
                   {detail.order.orderDate} {' ' + t('common.labels.ad')}
                 </p>
-                <h1>
-                  {detail.order.orderCode}
-                  <span>.</span>
-                </h1>
+                <h1>{detail.order.orderCode}</h1>
                 <p className="description">
                   {detail.order.customerSnapshot.name} ·{' '}
                   {detail.order.pieceCount}{' '}
@@ -366,11 +363,6 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                     {t('orders.orderDetails.orderPayments') + ' '}
                     <span>{detail.payments.length}</span>
                   </h2>
-                  <p>
-                    {t(
-                      'orders.orderDetails.amountsReceivedForThisOrderAndAnyRecorded',
-                    )}
-                  </p>
                 </div>
               </div>
               {detail.payments.length ? (
@@ -429,7 +421,6 @@ export function OrderDetails({ orderId }: { orderId: string }) {
               <div className="stock-heading">
                 <div>
                   <h2>{t('orders.orderDetails.progressHistory')}</h2>
-                  <p>{t('orders.orderDetails.progressHistoryHelp')}</p>
                 </div>
                 <button
                   className="text-button"

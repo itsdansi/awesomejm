@@ -58,13 +58,7 @@ export function SaleDetails({ saleId }: { saleId: string }) {
                   {t('sales.saleDetails.recordedSale') + ' '}
                   {detail.sale.saleDate} {' ' + t('common.labels.ad')}
                 </p>
-                <h1>
-                  {detail.sale.saleCode}
-                  <span>.</span>
-                </h1>
-                <p className="description">
-                  {t('sales.saleDetails.thePiecesAndPricesSavedWhenThisSale')}
-                </p>
+                <h1>{detail.sale.saleCode}</h1>
               </div>
               <button
                 className="button secondary"

@@ -104,11 +104,7 @@ export function OrderForm() {
       </a>
       <div className="page-heading">
         <div>
-          <h1>
-            {t('common.labels.bookAnOrder')}
-            <span>.</span>
-          </h1>
-          <p className="description">{t('orders.orderForm.description')}</p>
+          <h1>{t('common.labels.bookAnOrder')}</h1>
         </div>
         <span className="manual-badge">{t('orders.orderForm.newOrder')}</span>
       </div>
@@ -118,9 +114,6 @@ export function OrderForm() {
             <div className="stock-heading">
               <div>
                 <h2>{t('orders.orderForm.customerDelivery')}</h2>
-                <p>
-                  {t('orders.orderForm.searchExistingCustomersBeforeBooking')}
-                </p>
               </div>
             </div>
             <div className="sale-form-content">
@@ -230,11 +223,6 @@ export function OrderForm() {
             <div className="stock-heading">
               <div>
                 <h2>{t('orders.orderForm.designsSpecifications')}</h2>
-                <p>
-                  {t(
-                    'orders.orderForm.expectedNetMetalWeightIsPerPieceExcluding',
-                  )}
-                </p>
               </div>
             </div>
             <div className="sale-form-content">
@@ -444,9 +432,6 @@ export function OrderForm() {
             <div className="stock-heading">
               <div>
                 <h2>{t('orders.orderForm.estimateAdvance')}</h2>
-                <p>
-                  {t('orders.orderForm.theEstimateIsAGuideActualWeightsAnd')}
-                </p>
               </div>
             </div>
             <div className="sale-form-content form-grid">

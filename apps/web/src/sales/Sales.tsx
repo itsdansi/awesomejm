@@ -50,13 +50,7 @@ function SalesRegister() {
     <AppShell section="Sales">
       <div className="page-heading">
         <div>
-          <h1>
-            {t('sales.list.salesRegister')}
-            <span>.</span>
-          </h1>
-          <p className="description">
-            {t('sales.list.everyPieceSoldEveryChargeAndPaymentRecorded')}
-          </p>
+          <h1>{t('sales.list.salesRegister')}</h1>
         </div>
         <Permission name="sales.write">
           <a className="button primary" href="#/sales/new">
@@ -77,7 +71,6 @@ function SalesRegister() {
             </span>
           </div>
           <strong>{summary.data?.posted ?? '—'}</strong>
-          <p>{t('sales.list.allTimeExcludesCancelledRecords')}</p>
         </article>
         <article className="summary-card gold-card">
           <div className="summary-top">
@@ -90,7 +83,6 @@ function SalesRegister() {
             {summary.data ? money(summary.data.postedTotalNpr) : '—'}
             <small>{t('common.money.currency')}</small>
           </strong>
-          <p>{t('sales.list.allTimeIncludesRecordedTaxFees')}</p>
         </article>
         <article className="summary-card">
           <div className="summary-top">
@@ -100,7 +92,6 @@ function SalesRegister() {
             </span>
           </div>
           <strong>{summary.data?.cancelled ?? '—'}</strong>
-          <p>{t('sales.list.correctionsRetainedForYourRecords')}</p>
         </article>
       </section>
       {summary.error && (
@@ -109,9 +100,7 @@ function SalesRegister() {
           {message(summary.error)}
         </p>
       )}
-      <p className="account-scope-note">
-        {t('sales.list.officialBillingHelp')}
-      </p>
+
       <section className="stock-panel" aria-busy={list.loading}>
         <div className="stock-heading">
           <div>
@@ -119,7 +108,6 @@ function SalesRegister() {
               {t('sales.list.recordedSales') + ' '}
               <span>{list.data?.total ?? '—'}</span>
             </h2>
-            <p>{t('sales.list.searchBySaleCodeCustomerNameOrOfficial')}</p>
           </div>
           <button
             className="text-button"

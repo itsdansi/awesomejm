@@ -38,13 +38,7 @@ function OrderRegister() {
     <AppShell section="Orders">
       <div className="page-heading">
         <div>
-          <h1>
-            {t('orders.title')}
-            <span>.</span>
-          </h1>
-          <p className="description">
-            {t('orders.list.fromTheFirstDesignToTheFinishedPiece')}
-          </p>
+          <h1>{t('orders.title')}</h1>
         </div>
         <Permission name="orders.write">
           <a className="button primary" href="#/orders/new">
@@ -61,19 +55,16 @@ function OrderRegister() {
           {
             label: t('orders.list.activeOrders'),
             value: summary.data?.active,
-            note: t('orders.list.bookedInProgressOrReady'),
             icon: 'box',
           },
           {
             label: t('orders.list.readyForDelivery'),
             value: summary.data?.ready,
-            note: t('orders.list.completeDeliveryThroughSales'),
             icon: 'diamond',
           },
           {
             label: t('orders.list.overdueOrders'),
             value: summary.data?.overdue,
-            note: t('orders.list.deliveryDatePassedNepalTime'),
             icon: 'history',
           },
         ].map((card, index) => (
@@ -88,7 +79,6 @@ function OrderRegister() {
               </span>
             </div>
             <strong>{card.value ?? '—'}</strong>
-            <p>{card.note}</p>
           </article>
         ))}
       </section>
@@ -104,9 +94,6 @@ function OrderRegister() {
               {t('orders.list.orderBook') + ' '}
               <span>{list.data?.total ?? '—'}</span>
             </h2>
-            <p>
-              {t('orders.list.upcomingDeliveryDatesFirstClosedOrdersStayIn')}
-            </p>
           </div>
           <button
             className="text-button"
@@ -282,9 +269,6 @@ function OrderRegister() {
           />
         </div>
       </section>
-      <p className="account-scope-note">
-        {t('orders.list.expectedWeightsAndEstimatesGuideTheOrderFinal')}
-      </p>
     </AppShell>
   );
 }

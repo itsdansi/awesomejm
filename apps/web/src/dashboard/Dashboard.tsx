@@ -17,10 +17,7 @@ export function Dashboard() {
     <AppShell section="Dashboard">
       <div className="page-heading">
         <div>
-          <h1>
-            {t('dashboard.dashboard.shopOverview')}
-            <span>.</span>
-          </h1>
+          <h1>{t('dashboard.dashboard.shopOverview')}</h1>
           <p className="description">
             {data
               ? t('dashboard.overview.asOfDate', { date: data.date })
@@ -140,11 +137,6 @@ export function Dashboard() {
                 <div className="stock-heading">
                   <div>
                     <h2>{t('dashboard.dashboard.availableMetal')}</h2>
-                    <p>
-                      {t(
-                        'dashboard.dashboard.physicalNetWeightHeldGroupedByPurity',
-                      )}
-                    </p>
                   </div>
                   <a className="text-button" href="#/reports">
                     {t('dashboard.dashboard.reconciliation')}
@@ -232,11 +224,6 @@ export function Dashboard() {
                   <div className="stock-heading">
                     <div>
                       <h2>{t('dashboard.dashboard.orderDesk')}</h2>
-                      <p>
-                        {t(
-                          'dashboard.dashboard.trackThePromisesStillInProgress',
-                        )}
-                      </p>
                     </div>
                   </div>
                   <div className="dashboard-order-counts">
@@ -267,11 +254,6 @@ export function Dashboard() {
               <div className="stock-heading">
                 <div>
                   <h2>{t('dashboard.dashboard.recentTradeRecords')}</h2>
-                  <p>
-                    {t(
-                      'dashboard.dashboard.salesAndOldMetalPurchasesExchangesAppearAs',
-                    )}
-                  </p>
                 </div>
               </div>
               {data.recent.length ? (
@@ -334,9 +316,6 @@ export function Dashboard() {
                 </div>
               )}
             </section>
-            <p className="account-scope-note">
-              {t('dashboard.overview.moneyMovementHelp')}
-            </p>
           </>
         )
       )}

@@ -33,7 +33,6 @@ export function ActivityCards({
         {
           label: t('common.labels.netMoneyMovement'),
           value: totals.netCashNpr,
-          note: t('reports.reportParts.moneyMovementHelp'),
         },
       ].map((card, index) => (
         <article
@@ -50,7 +49,7 @@ export function ActivityCards({
             {money(card.value)}
             <small>{t('common.money.currency')}</small>
           </strong>
-          <p>{card.note}</p>
+          {card.note && <p>{card.note}</p>}
         </article>
       ))}
     </section>

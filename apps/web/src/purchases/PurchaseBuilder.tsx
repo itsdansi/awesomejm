@@ -226,15 +226,7 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
             {review
               ? t('purchases.purchaseBuilder.reviewSettlement')
               : t('purchases.purchaseBuilder.buyOrExchangeMetal')}
-            <span>.</span>
           </h1>
-          <p className="description">
-            {review
-              ? t('purchases.purchaseBuilder.reviewDescription')
-              : t(
-                  'purchases.purchaseBuilder.recordTheAssessedMetalAndTheAmountAgreed',
-                )}
-          </p>
         </div>
         <span className="manual-badge">
           {review ? t('common.steps.review') : t('common.steps.details')}
@@ -325,7 +317,6 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
               <div className="stock-heading">
                 <div>
                   <h2>{t('common.labels.customerDate')}</h2>
-                  <p>{t('purchases.purchaseBuilder.accountCreditHelp')}</p>
                 </div>
               </div>
               <div className="sale-form-content">
@@ -426,7 +417,6 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
               <div className="stock-heading">
                 <div>
                   <h2>{t('purchases.purchaseBuilder.incomingOldMetal')}</h2>
-                  <p>{t('purchases.purchaseBuilder.measurementHelp')}</p>
                 </div>
                 <button
                   type="button"
@@ -685,7 +675,6 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
               <div className="stock-heading">
                 <div>
                   <h2>{t('purchases.purchaseBuilder.exchangeForJewellery')}</h2>
-                  <p>{t('purchases.purchaseBuilder.exchangeHelp')}</p>
                 </div>
                 <label className="overdue-toggle">
                   <input
@@ -925,11 +914,6 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
               <div className="stock-heading">
                 <div>
                   <h2>{t('purchases.purchaseBuilder.settlement')}</h2>
-                  <p>
-                    {t(
-                      'purchases.purchaseBuilder.leaveBothAmountsAtZeroToRetainThe',
-                    )}
-                  </p>
                 </div>
               </div>
               <div className="sale-form-content form-grid">

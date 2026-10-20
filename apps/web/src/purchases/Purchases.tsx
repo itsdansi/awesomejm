@@ -39,15 +39,7 @@ function PurchaseRegister() {
     <AppShell section="Purchases">
       <div className="page-heading">
         <div>
-          <h1>
-            {t('purchases.purchases.purchasesExchanges')}
-            <span>.</span>
-          </h1>
-          <p className="description">
-            {t(
-              'purchases.purchases.weighIncomingGoldAndSilverRetainItsValuation',
-            )}
-          </p>
+          <h1>{t('purchases.purchases.purchasesExchanges')}</h1>
         </div>
         <Permission name="purchases.write">
           <a href="#/purchases/new" className="button primary">
@@ -56,9 +48,7 @@ function PurchaseRegister() {
           </a>
         </Permission>
       </div>
-      <p className="account-scope-note">
-        {t('purchases.purchases.oldMetalIsKeptInSeparateLotsExchange')}
-      </p>
+
       <section className="stock-panel" aria-busy={data.loading}>
         <div className="stock-heading">
           <div>
@@ -66,7 +56,6 @@ function PurchaseRegister() {
               {t('purchases.purchases.purchaseRegister') + ' '}
               <span>{data.data?.total ?? '—'}</span>
             </h2>
-            <p>{t('purchases.list.searchHelp')}</p>
           </div>
           <button
             className="text-button"

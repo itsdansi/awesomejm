@@ -59,13 +59,7 @@ export function PurchaseDetails({ purchaseId }: { purchaseId: string }) {
                     : t('purchases.purchaseDetails.oldMetalPurchase')}{' '}
                   · {detail.purchase.purchaseDate} {' ' + t('common.labels.ad')}
                 </p>
-                <h1>
-                  {detail.purchase.purchaseCode}
-                  <span>.</span>
-                </h1>
-                <p className="description">
-                  {t('purchases.purchaseDetails.description')}
-                </p>
+                <h1>{detail.purchase.purchaseCode}</h1>
               </div>
               <button
                 className="button secondary"
