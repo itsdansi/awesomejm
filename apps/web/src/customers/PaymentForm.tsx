@@ -1,3 +1,4 @@
+import { t, message, useLanguage } from '../i18n/language';
 import { useState, type FormEvent } from 'react';
 import {
   accountMutationSchema,
@@ -21,6 +22,8 @@ export function PaymentForm({
   onClose: () => void;
   onSaved: () => void;
 }) {
+  useLanguage();
+
   const [requestId] = useState(() => globalThis.crypto.randomUUID());
   const [date, setDate] = useState(() => nepalToday());
   const [amount, setAmount] = useState('');
@@ -42,7 +45,7 @@ export function PaymentForm({
       notes,
     });
     if (!parsed.success) {
-      setError(parsed.error.issues.map((issue) => issue.message).join(' '));
+      setError(parsed.error.issues.map((issue) => issue.message).join('\n'));
       return;
     }
     setBusy(true);
@@ -66,29 +69,36 @@ export function PaymentForm({
   return (
     <Dialog
       title={
-        kind === 'PAYMENT' ? 'Record a payment' : 'Record an advance refund'
+        kind === 'PAYMENT'
+          ? t('Record a payment')
+          : t('Record an advance refund')
       }
-      eyebrow="Customer accounts"
+      eyebrow={t('Customer accounts')}
       busy={busy}
       onClose={onClose}
     >
       <p className="dialog-description">
         {kind === 'PAYMENT'
-          ? 'Record money received from'
-          : 'Record an advance already returned to'}{' '}
+          ? t('Record money received from')
+          : t('Record an advance already returned to')}{' '}
         <strong>{customer.name}</strong>.{' '}
         {kind === 'PAYMENT'
-          ? 'Any amount beyond the dues becomes an advance held for this customer.'
-          : 'The refund is limited to the advance currently held.'}
+          ? t(
+              'Any amount beyond the dues becomes an advance held for this customer.',
+            )
+          : t('The refund is limited to the advance currently held.')}
       </p>
       <div className={`account-form-balance ${current.className}`}>
-        <span>{current.label}</span>
-        <strong>NPR {current.amount}</strong>
+        <span>{t(current.label)}</span>
+        <strong>
+          {t('NPR ')}
+          {current.amount}
+        </strong>
       </div>
       <form onSubmit={(event) => void submit(event)}>
         <fieldset className="form-grid" disabled={busy}>
           <label>
-            Amount (NPR)
+            {t('Amount (NPR)')}
             <input
               required
               inputMode="decimal"
@@ -98,7 +108,7 @@ export function PaymentForm({
             />
           </label>
           <label>
-            Entry date (AD)
+            {t('Entry date (AD)')}
             <input
               required
               type="date"
@@ -108,33 +118,34 @@ export function PaymentForm({
               onChange={(event) => setDate(event.target.value)}
             />
             <span className="field-hint">
-              On or after {customer.latestEntryDate}.
+              {t('On or after ')}
+              {customer.latestEntryDate}.
             </span>
           </label>
           <label>
-            Payment method
+            {t('Payment method')}
             <select
               value={method}
               onChange={(event) =>
                 setMethod(event.target.value as AccountPayment['method'])
               }
             >
-              <option value="CASH">Cash</option>
-              <option value="BANK">Bank</option>
-              <option value="DIGITAL_WALLET">Digital wallet</option>
+              <option value="CASH">{t('Cash')}</option>
+              <option value="BANK">{t('Bank')}</option>
+              <option value="DIGITAL_WALLET">{t('Digital wallet')}</option>
             </select>
           </label>
           <label>
-            Reference (optional)
+            {t('Reference (optional)')}
             <input
               maxLength={160}
-              placeholder="Bank / wallet / paper reference"
+              placeholder={t('Bank / wallet / paper reference')}
               value={reference}
               onChange={(event) => setReference(event.target.value)}
             />
           </label>
           <label className="full-width">
-            Notes (optional)
+            {t('Notes (optional)')}
             <textarea
               rows={2}
               maxLength={500}
@@ -145,7 +156,7 @@ export function PaymentForm({
         </fieldset>
         {error && (
           <p className="error" role="alert">
-            {error}
+            {message(error)}
           </p>
         )}
         <div className="dialog-actions">
@@ -155,14 +166,14 @@ export function PaymentForm({
             disabled={busy}
             onClick={onClose}
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button className="button primary" disabled={busy}>
             {busy
-              ? 'Saving…'
+              ? t('Saving…')
               : kind === 'PAYMENT'
-                ? 'Save payment'
-                : 'Save refund'}
+                ? t('Save payment')
+                : t('Save refund')}
             <Icon name="arrow" size={18} />
           </button>
         </div>

@@ -1,9 +1,10 @@
+import { locale } from '../i18n/language';
 import type { AccountEntry } from '@awesomejm/contracts';
 
 export function money(value: string): string {
   const negative = value.startsWith('-');
   const [integer = '0', fraction = ''] = value.replace(/^-/, '').split('.');
-  return `${negative ? '-' : ''}${new Intl.NumberFormat('en-NP').format(BigInt(integer))}.${fraction.padEnd(2, '0')}`;
+  return `${negative ? '-' : ''}${new Intl.NumberFormat(locale()).format(BigInt(integer))}.${fraction.padEnd(2, '0')}`;
 }
 export function balance(value: string) {
   if (/^-?0(?:\.0+)?$/.test(value))

@@ -1,3 +1,5 @@
+import { LanguageSwitch } from '../i18n/LanguageSwitch';
+import { t, message, useLanguage } from '../i18n/language';
 import {
   useCallback,
   useEffect,
@@ -12,6 +14,8 @@ import { setSessionCsrf } from './session';
 import { Icon } from '../shared/ui';
 import { PasswordForm } from './PasswordForm';
 export function AuthGate({ children }: { children: ReactNode }) {
+  useLanguage();
+
   const [user, setUser] = useState<CurrentStaff | null>(null),
     [loading, setLoading] = useState(true),
     [error, setError] = useState('');
@@ -63,7 +67,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
   if (loading)
     return (
       <div className="app-loading" role="status">
-        Checking your session…
+        {t('Checking your session…')}
       </div>
     );
   if (!user)
@@ -80,15 +84,23 @@ export function AuthGate({ children }: { children: ReactNode }) {
     <AuthContext.Provider value={{ user, refresh, logout }}>
       {error && (
         <p className="session-error" role="alert">
-          {error}
+          {message(error)}
         </p>
       )}
       {user.mustChangePassword ? (
         <div className="auth-page">
+          <div className="auth-language">
+            <LanguageSwitch />
+          </div>
           <section className="auth-card">
-            <p className="eyebrow">Welcome, {user.name}</p>
-            <h1>Make this account yours.</h1>
-            <p>Choose a personal password before opening the workspace.</p>
+            <p className="eyebrow">
+              {t('Welcome, ')}
+              {user.name}
+            </p>
+            <h1>{t('Make this account yours.')}</h1>
+            <p>
+              {t('Choose a personal password before opening the workspace.')}
+            </p>
             <PasswordForm
               onChanged={() => {
                 setUser(null);
@@ -96,7 +108,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
               }}
             />
             <button className="text-button" onClick={() => void logout()}>
-              Sign out
+              {t('Sign out')}
             </button>
           </section>
         </div>
@@ -116,6 +128,8 @@ function Login({
     csrfToken: string | null;
   }) => void;
 }) {
+  useLanguage();
+
   const [username, setUsername] = useState(''),
     [password, setPassword] = useState(''),
     [busy, setBusy] = useState(false),
@@ -141,25 +155,28 @@ function Login({
   }
   return (
     <div className="auth-page">
+      <div className="auth-language">
+        <LanguageSwitch />
+      </div>
       <section className="auth-card">
         <span className="brand-mark">
           <Icon name="diamond" size={30} />
         </span>
-        <p className="eyebrow">AWESOMEJM · JEWELLERY MANAGER</p>
+        <p className="eyebrow">{t('AWESOMEJM · JEWELLERY MANAGER')}</p>
         <h1>
-          Your shop.
+          {t('Your shop.')}
           <br />
-          Your workspace.
+          {t('Your workspace.')}
         </h1>
-        <p>Sign in with your staff account to continue.</p>
+        <p>{t('Sign in with your staff account to continue.')}</p>
         {(error || connectionError) && (
           <p className="error-banner" role="alert">
-            {error || connectionError}
+            {message(error) || message(connectionError)}
           </p>
         )}
         <form className="access-form" onSubmit={(e) => void submit(e)}>
           <label>
-            Username
+            {t('Username')}
             <input
               autoComplete="username"
               value={username}
@@ -171,7 +188,7 @@ function Login({
             />
           </label>
           <label>
-            Password
+            {t('Password')}
             <input
               type="password"
               autoComplete="current-password"
@@ -182,20 +199,21 @@ function Login({
             />
           </label>
           <button className="button primary" disabled={busy}>
-            {busy ? 'Signing in…' : 'Sign in'}
+            {busy ? t('Signing in…') : t('Sign in')}
             <Icon name="arrow" />
           </button>
         </form>
         <p className="auth-help">
-          First-time setup and owner recovery are handled by your server
-          administrator. Ask the shop owner if you need a staff account.
+          {t(
+            'First-time setup and owner recovery are handled by your server administrator. Ask the shop owner if you need a staff account.',
+          )}
         </p>
       </section>
       <div className="auth-note">
         <span>◇</span>
-        <h2>Care in every detail.</h2>
-        <p>सुनचाँदी व्यवसायको लागि</p>
-        <small>Individual access. A clear record of every change.</small>
+        <h2>{t('Care in every detail.')}</h2>
+        <p>{t('For gold and silver businesses')}</p>
+        <small>{t('Individual access. A clear record of every change.')}</small>
       </div>
     </div>
   );

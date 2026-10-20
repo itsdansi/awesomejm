@@ -3129,3 +3129,113 @@ button.sale-picker-row:hover {
     min-width: 170px;
   }
 }
+.language-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border: 1px solid #dfe5d7;
+  background: #fff;
+  border-radius: 8px;
+  padding: 3px;
+  flex-shrink: 0;
+}
+.language-switch button {
+  border: 0;
+  background: transparent;
+  border-radius: 5px;
+  color: #67765e;
+  padding: 6px 9px;
+  font: inherit;
+  font-size: 11px;
+  line-height: 1.6;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.language-switch button[aria-pressed='true'] {
+  background: #2d493b;
+  color: #fff;
+}
+.language-switch button:focus-visible {
+  outline: 2px solid #a6b993;
+  outline-offset: 2px;
+}
+.auth-language {
+  position: fixed;
+  right: 24px;
+  top: 24px;
+  z-index: 5;
+}
+.dialog-tools {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+html[lang='ne'] body {
+  font-family:
+    'Noto Sans Devanagari', 'Kohinoor Devanagari', 'Nirmala UI', system-ui,
+    sans-serif;
+  line-height: 1.7;
+}
+html[lang='ne'] h1,
+html[lang='ne'] h2,
+html[lang='ne'] .eyebrow {
+  letter-spacing: 0;
+  line-height: 1.6;
+}
+html[lang='ne'] .eyebrow,
+html[lang='ne'] .nav-label {
+  font-size: 11px;
+  letter-spacing: 0.2px;
+}
+html[lang='ne'] .nav-item {
+  font-size: 13px;
+  line-height: 1.6;
+}
+html[lang='ne'] .description,
+html[lang='ne'] td,
+html[lang='ne'] .button {
+  font-size: 12px;
+  line-height: 1.8;
+}
+html[lang='ne'] th {
+  font-size: 11px;
+  line-height: 1.8;
+}
+html[lang='ne'] .brand {
+  font-family: system-ui, sans-serif;
+}
+html[lang='ne'] .auth-card h1 {
+  line-height: 1.5;
+}
+@media (max-width: 760px) {
+  .auth-language {
+    right: 16px;
+    top: 16px;
+  }
+  .auth-card {
+    padding-top: 90px;
+  }
+  .staff-topbar {
+    justify-content: flex-end;
+  }
+  .dialog-tools {
+    gap: 5px;
+  }
+  .dialog-tools .language-switch button {
+    padding: 5px 7px;
+  }
+}
+@media print {
+  .language-switch,
+  .auth-language {
+    display: none !important;
+  }
+  html[lang='ne'] body {
+    font-size: 11px;
+  }
+}
+.error,
+.error-banner,
+.session-error {
+  white-space: pre-line;
+}

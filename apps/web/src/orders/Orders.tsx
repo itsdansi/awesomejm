@@ -1,3 +1,4 @@
+import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useState } from 'react';
 import { ordersListSchema, ordersSummarySchema } from '@awesomejm/contracts';
@@ -15,6 +16,8 @@ export function Orders({ orderId }: { orderId: string | undefined }) {
   return <OrderRegister />;
 }
 function OrderRegister() {
+  useLanguage();
+
   const [search, setSearch] = useState(''),
     term = useDebounced(search);
   const [status, setStatus] = useState('ACTIVE'),
@@ -34,23 +37,25 @@ function OrderRegister() {
     <AppShell section="Orders">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">MADE TO ORDER, KEPT ON TRACK</p>
+          <p className="eyebrow">{t('MADE TO ORDER, KEPT ON TRACK')}</p>
           <h1>
-            Custom orders<span>.</span>
+            {t('Custom orders')}
+            <span>.</span>
           </h1>
           <p className="description">
-            From the first design to the finished piece, keep every promise in
-            view.
+            {t(
+              'From the first design to the finished piece, keep every promise in view.',
+            )}
           </p>
         </div>
         <Permission name="orders.write">
           <a className="button primary" href="#/orders/new">
             <Icon name="plus" size={18} />
-            Book an order
+            {t('Book an order')}
           </a>
         </Permission>
       </div>
-      <section className="summary-cards" aria-label="Order totals">
+      <section className="summary-cards" aria-label={t('Order totals')}>
         {[
           {
             label: 'Active orders',
@@ -76,44 +81,47 @@ function OrderRegister() {
             className={`summary-card ${index === 1 ? 'gold-card' : ''}`}
           >
             <div className="summary-top">
-              <span>{card.label}</span>
+              <span>{t(card.label)}</span>
               <span className="summary-icon neutral">
                 <Icon name={card.icon as 'box' | 'diamond' | 'history'} />
               </span>
             </div>
             <strong>{card.value ?? '—'}</strong>
-            <p>{card.note}</p>
+            <p>{message(card.note)}</p>
           </article>
         ))}
       </section>
       {summary.error && (
         <p className="error" role="alert">
-          {summary.error}
+          {message(summary.error)}
         </p>
       )}
       <section className="stock-panel" aria-busy={list.loading}>
         <div className="stock-heading">
           <div>
             <h2>
-              Order book <span>{list.data?.total ?? '—'}</span>
+              {t('Order book ')}
+              <span>{list.data?.total ?? '—'}</span>
             </h2>
             <p>
-              Upcoming delivery dates first. Closed orders stay in the register.
+              {t(
+                'Upcoming delivery dates first. Closed orders stay in the register.',
+              )}
             </p>
           </div>
           <button
             className="text-button"
             onClick={() => setRevision((value) => value + 1)}
           >
-            Refresh
+            {t('Refresh')}
           </button>
         </div>
         <div className="toolbar orders-toolbar">
           <label className="search">
             <Icon name="search" size={18} />
             <input
-              aria-label="Search orders"
-              placeholder="Search code, customer, piece or design…"
+              aria-label={t('Search orders')}
+              placeholder={t('Search code, customer, piece or design…')}
               maxLength={120}
               value={search}
               onChange={(event) => {
@@ -123,20 +131,20 @@ function OrderRegister() {
             />
           </label>
           <label className="filter-label">
-            <span className="sr-only">Order status</span>
+            <span className="sr-only">{t('Order status')}</span>
             <select
-              aria-label="Order status"
+              aria-label={t('Order status')}
               value={status}
               onChange={(event) => {
                 setStatus(event.target.value);
                 setPage(1);
               }}
             >
-              <option value="ACTIVE">Active orders</option>
-              <option value="ALL">All orders</option>
+              <option value="ACTIVE">{t('Active orders')}</option>
+              <option value="ALL">{t('All orders')}</option>
               {Object.entries(statusTitle).map(([key, title]) => (
                 <option key={key} value={key}>
-                  {title}
+                  {t(title)}
                 </option>
               ))}
             </select>
@@ -150,25 +158,25 @@ function OrderRegister() {
                 setPage(1);
               }}
             />
-            Overdue only
+            {t('Overdue only')}
           </label>
         </div>
         {list.loading ? (
           <div className="empty-state" role="status">
             <span className="loading-dot" />
-            <p>Loading orders…</p>
+            <p>{t('Loading orders…')}</p>
           </div>
         ) : list.error ? (
           <div className="empty-state">
-            <h3>Orders couldn’t load</h3>
+            <h3>{t('Orders couldn’t load')}</h3>
             <p className="error" role="alert">
-              {list.error}
+              {message(list.error)}
             </p>
             <button
               className="button secondary"
               onClick={() => setRevision((value) => value + 1)}
             >
-              Try again
+              {t('Try again')}
             </button>
           </div>
         ) : list.data?.items.length ? (
@@ -176,13 +184,13 @@ function OrderRegister() {
             <table>
               <thead>
                 <tr>
-                  <th>Order / customer</th>
-                  <th>Pieces</th>
-                  <th>Delivery date (AD)</th>
-                  <th>Status</th>
-                  <th className="numeric">Estimate (NPR)</th>
+                  <th>{t('Order / customer')}</th>
+                  <th>{t('Pieces')}</th>
+                  <th>{t('Delivery date (AD)')}</th>
+                  <th>{t('Status')}</th>
+                  <th className="numeric">{t('Estimate (NPR)')}</th>
                   <th>
-                    <span className="sr-only">Open order</span>
+                    <span className="sr-only">{t('Open order')}</span>
                   </th>
                 </tr>
               </thead>
@@ -199,8 +207,8 @@ function OrderRegister() {
                       <strong>{order.lines[0]?.name}</strong>
                       <small className="rate-subline">
                         {order.pieceCount}{' '}
-                        {order.pieceCount === 1 ? 'piece' : 'pieces'} ·{' '}
-                        {order.lines.length} designs
+                        {order.pieceCount === 1 ? t('piece') : t('pieces')} ·{' '}
+                        {order.lines.length} {t(' designs')}
                       </small>
                     </td>
                     <td>
@@ -209,24 +217,26 @@ function OrderRegister() {
                       </span>
                       {order.overdue && (
                         <small className="rate-subline danger-text">
-                          Overdue
+                          {t('Overdue')}
                         </small>
                       )}
                     </td>
                     <td>
                       <span className={statusClass(order.status)}>
-                        {statusTitle[order.status]}
+                        {t(statusTitle[order.status])}
                       </span>
                     </td>
                     <td className="numeric">
                       {order.estimatedTotalNpr === null
-                        ? 'Not set'
+                        ? t('Not set')
                         : money(order.estimatedTotalNpr)}
                     </td>
                     <td>
                       <a
                         className="icon-button"
-                        aria-label={`Open ${order.orderCode}`}
+                        aria-label={t('Open {value0}', {
+                          value0: order.orderCode,
+                        })}
                         href={`#/orders/${order.id}`}
                       >
                         <Icon name="arrow" size={18} />
@@ -244,33 +254,39 @@ function OrderRegister() {
             </span>
             <h3>
               {term || status !== 'ACTIVE' || overdue
-                ? 'No matching orders'
-                : 'A new piece begins with a promise'}
+                ? t('No matching orders')
+                : t('A new piece begins with a promise')}
             </h3>
             <p>
-              Book the design, expected weight and delivery date for your
-              customer.
+              {t(
+                'Book the design, expected weight and delivery date for your customer.',
+              )}
             </p>
             <Permission name="orders.write">
               <a className="button secondary" href="#/orders/new">
-                Book an order
+                {t('Book an order')}
               </a>
             </Permission>
           </div>
         )}
         <div className="table-footer">
-          <span>{list.data?.total ?? '—'} order records · AD dates</span>
+          <span>
+            {list.data?.total ?? '—'} {t(' order records · AD dates')}
+          </span>
           <div className="pagination">
             <button
-              aria-label="Previous orders page"
+              aria-label={t('Previous orders page')}
               disabled={page === 1 || list.loading}
               onClick={() => setPage((value) => value - 1)}
             >
               ‹
             </button>
-            <span>Page {page}</span>
+            <span>
+              {t('Page ')}
+              {page}
+            </span>
             <button
-              aria-label="Next orders page"
+              aria-label={t('Next orders page')}
               disabled={
                 !list.data ||
                 page * list.data.pageSize >= list.data.total ||
@@ -284,9 +300,9 @@ function OrderRegister() {
         </div>
       </section>
       <p className="account-scope-note">
-        Expected weights and estimates guide the order. Final pricing and stock
-        movement are recorded when the finished pieces are delivered through
-        Sales.
+        {t(
+          'Expected weights and estimates guide the order. Final pricing and stock movement are recorded when the finished pieces are delivered through Sales.',
+        )}
       </p>
     </AppShell>
   );

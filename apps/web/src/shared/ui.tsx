@@ -1,3 +1,5 @@
+import { LanguageSwitch } from '../i18n/LanguageSwitch';
+import { t, useLanguage } from '../i18n/language';
 import { useEffect, useRef, type ReactNode } from 'react';
 
 export function Icon({
@@ -96,7 +98,7 @@ export function Dialog({
   title,
   onClose,
   busy = false,
-  eyebrow = 'Jewellery inventory',
+  eyebrow = t('Jewellery inventory'),
   children,
 }: {
   title: string;
@@ -105,6 +107,8 @@ export function Dialog({
   eyebrow?: string;
   children: ReactNode;
 }) {
+  useLanguage();
+
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const dialog = ref.current;
@@ -126,15 +130,18 @@ export function Dialog({
           <p className="eyebrow">{eyebrow}</p>
           <h2>{title}</h2>
         </div>
-        <button
-          type="button"
-          className="icon-button"
-          aria-label="Close dialog"
-          onClick={onClose}
-          disabled={busy}
-        >
-          <Icon name="close" />
-        </button>
+        <div className="dialog-tools">
+          <LanguageSwitch />
+          <button
+            type="button"
+            className="icon-button"
+            aria-label={t('Close dialog')}
+            onClick={onClose}
+            disabled={busy}
+          >
+            <Icon name="close" />
+          </button>
+        </div>
       </div>
       {children}
     </dialog>

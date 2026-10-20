@@ -1,3 +1,5 @@
+import { useAuth } from '../auth/AuthContext';
+import { t, message, useLanguage } from '../i18n/language';
 import { useState, type FormEvent } from 'react';
 import {
   nepalToday,
@@ -11,6 +13,9 @@ import { money, methodTitle } from '../customers/format';
 import { ActivityCards, StockTable } from './ReportParts';
 import { downloadCsv } from './csv';
 export function Reports() {
+  useLanguage();
+  const { user } = useAuth();
+
   const today = nepalToday(),
     [from, setFrom] = useState(`${today.slice(0, 7)}-01`),
     [to, setTo] = useState(today),
@@ -28,7 +33,7 @@ export function Reports() {
     event.preventDefault();
     const parsed = reportsQuerySchema.safeParse({ from, to, groupBy });
     if (!parsed.success) {
-      setError(parsed.error.issues.map((i) => i.message).join(' '));
+      setError(parsed.error.issues.map((i) => i.message).join('\n'));
       return;
     }
     setError('');
@@ -99,13 +104,15 @@ export function Reports() {
     <AppShell section="Reports">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">THE DAY’S WORK, IN CLEAR NUMBERS</p>
+          <p className="eyebrow">{t('THE DAY’S WORK, IN CLEAR NUMBERS')}</p>
           <h1>
-            Business reports<span>.</span>
+            {t('Business reports')}
+            <span>.</span>
           </h1>
           <p className="description">
-            Daily and monthly sales, old-metal purchases, money movements and
-            physical stock.
+            {t(
+              'Daily and monthly sales, old-metal purchases, money movements and physical stock.',
+            )}
           </p>
         </div>
         <div className="order-heading-actions">
@@ -114,21 +121,21 @@ export function Reports() {
             disabled={!report}
             onClick={exportActivity}
           >
-            Activity CSV
+            {t('Activity CSV')}
           </button>
           <button
             className="button secondary"
             disabled={!report}
             onClick={exportStock}
           >
-            Stock CSV
+            {t('Stock CSV')}
           </button>
           <button
             className="button secondary"
             disabled={!report}
             onClick={() => globalThis.print()}
           >
-            Print report
+            {t('Print report')}
           </button>
         </div>
       </div>
@@ -139,27 +146,27 @@ export function Reports() {
             className="text-button"
             onClick={() => preset('today')}
           >
-            Today
+            {t('Today')}
           </button>
           <button
             type="button"
             className="text-button"
             onClick={() => preset('month')}
           >
-            This month
+            {t('This month')}
           </button>
           <button
             type="button"
             className="text-button"
             onClick={() => preset('previous')}
           >
-            Previous month
+            {t('Previous month')}
           </button>
-          <span>AD dates · Nepal time</span>
+          <span>{t('AD dates · Nepal time')}</span>
         </div>
         <div className="toolbar sales-toolbar">
           <label className="date-filter">
-            From (AD)
+            {t('From (AD)')}
             <input
               required
               type="date"
@@ -170,7 +177,7 @@ export function Reports() {
             />
           </label>
           <label className="date-filter">
-            To (AD)
+            {t('To (AD)')}
             <input
               required
               type="date"
@@ -181,54 +188,56 @@ export function Reports() {
             />
           </label>
           <label className="filter-label">
-            <span className="sr-only">Report grouping</span>
+            <span className="sr-only">{t('Report grouping')}</span>
             <select
-              aria-label="Report grouping"
+              aria-label={t('Report grouping')}
               value={groupBy}
               onChange={(e) => setGroupBy(e.target.value as 'DAY' | 'MONTH')}
             >
-              <option value="DAY">Daily</option>
-              <option value="MONTH">Monthly</option>
+              <option value="DAY">{t('Daily')}</option>
+              <option value="MONTH">{t('Monthly')}</option>
             </select>
           </label>
           <button className="button primary" disabled={result.loading}>
-            Apply period
+            {t('Apply period')}
           </button>
         </div>
         {error && (
           <p className="error report-filter-error" role="alert">
-            {error}
+            {message(error)}
           </p>
         )}
       </form>
       {result.loading ? (
         <div className="empty-state" role="status">
-          Loading reports…
+          {t('Loading reports…')}
         </div>
       ) : result.error ? (
         <div className="empty-state">
-          <h2>Reports couldn’t load</h2>
+          <h2>{t('Reports couldn’t load')}</h2>
           <p className="error" role="alert">
-            {result.error}
+            {message(result.error)}
           </p>
           <button
             className="button secondary"
             onClick={() => setRevision((v) => v + 1)}
           >
-            Try again
+            {t('Try again')}
           </button>
         </div>
       ) : (
         report && (
           <div className="print-document report-document">
             <div className="report-print-title">
-              <p className="eyebrow">AWESOMEJM / FIRST SHOP</p>
+              <p className="eyebrow">
+                {t('AWESOMEJM / {shopName}', { shopName: user.shopName })}
+              </p>
               <h2>
-                {report.from} — {report.to} AD
+                {report.from} — {report.to} {t(' AD')}
               </h2>
               <p>
-                {report.groupBy === 'DAY' ? 'Daily' : 'Monthly'} activity · NPR
-                · Nepal time
+                {report.groupBy === 'DAY' ? t('Daily') : t('Monthly')}{' '}
+                {t(' activity · NPR · Nepal time')}
               </p>
             </div>
             <ActivityCards totals={report.totals} />
@@ -236,11 +245,13 @@ export function Reports() {
               <div className="stock-heading">
                 <div>
                   <h2>
-                    {report.groupBy === 'DAY' ? 'Daily' : 'Monthly'} activity
+                    {report.groupBy === 'DAY' ? t('Daily') : t('Monthly')}{' '}
+                    {t(' activity')}
                   </h2>
                   <p>
-                    Net values include corrections on their recorded correction
-                    dates.
+                    {t(
+                      'Net values include corrections on their recorded correction dates.',
+                    )}
                   </p>
                 </div>
               </div>
@@ -248,12 +259,12 @@ export function Reports() {
                 <table className="activity-report">
                   <thead>
                     <tr>
-                      <th>Period (AD)</th>
-                      <th className="numeric">Net sales (NPR)</th>
-                      <th className="numeric">Net purchases (NPR)</th>
-                      <th className="numeric">Receipts, net (NPR)</th>
-                      <th className="numeric">Payouts, net (NPR)</th>
-                      <th className="numeric">Net movement (NPR)</th>
+                      <th>{t('Period (AD)')}</th>
+                      <th className="numeric">{t('Net sales (NPR)')}</th>
+                      <th className="numeric">{t('Net purchases (NPR)')}</th>
+                      <th className="numeric">{t('Receipts, net (NPR)')}</th>
+                      <th className="numeric">{t('Payouts, net (NPR)')}</th>
+                      <th className="numeric">{t('Net movement (NPR)')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -265,12 +276,13 @@ export function Reports() {
                         <td className="numeric">
                           {money(row.netSalesNpr)}
                           <small className="rate-subline">
-                            {row.postedSales} sales · {row.cancelledSales}{' '}
-                            corrections
+                            {row.postedSales} {t(' sales · ')}
+                            {row.cancelledSales} {t('corrections')}
                           </small>
                           {row.cancelledSales > 0 && (
                             <small className="rate-subline">
-                              Gross {money(row.salesNpr)} − corrections{' '}
+                              {t('Gross ')}
+                              {money(row.salesNpr)} {t(' − corrections')}{' '}
                               {money(row.salesCorrectionsNpr)}
                             </small>
                           )}
@@ -278,12 +290,13 @@ export function Reports() {
                         <td className="numeric">
                           {money(row.netPurchasesNpr)}
                           <small className="rate-subline">
-                            {row.postedPurchases} purchases ·{' '}
-                            {row.cancelledPurchases} corrections
+                            {row.postedPurchases} {t(' purchases ·')}{' '}
+                            {row.cancelledPurchases} {t(' corrections')}
                           </small>
                           {row.cancelledPurchases > 0 && (
                             <small className="rate-subline">
-                              Gross {money(row.purchasesNpr)} − corrections{' '}
+                              {t('Gross ')}
+                              {money(row.purchasesNpr)} {t(' − corrections')}{' '}
                               {money(row.purchaseCorrectionsNpr)}
                             </small>
                           )}
@@ -298,7 +311,7 @@ export function Reports() {
                   </tbody>
                   <tfoot>
                     <tr>
-                      <th>Total</th>
+                      <th>{t('Total')}</th>
                       <th className="numeric">
                         {money(report.totals.netSalesNpr)}
                       </th>
@@ -323,24 +336,24 @@ export function Reports() {
               <section className="stock-panel">
                 <div className="stock-heading">
                   <div>
-                    <h2>By payment method</h2>
-                    <p>Recorded money movements, net of corrections.</p>
+                    <h2>{t('By payment method')}</h2>
+                    <p>{t('Recorded money movements, net of corrections.')}</p>
                   </div>
                 </div>
                 <div className="table-scroll">
                   <table>
                     <thead>
                       <tr>
-                        <th>Method</th>
-                        <th className="numeric">Received</th>
-                        <th className="numeric">Paid out</th>
-                        <th className="numeric">Net NPR</th>
+                        <th>{t('Method')}</th>
+                        <th className="numeric">{t('Received')}</th>
+                        <th className="numeric">{t('Paid out')}</th>
+                        <th className="numeric">{t('Net NPR')}</th>
                       </tr>
                     </thead>
                     <tbody>
                       {report.methods.map((row) => (
                         <tr key={row.method}>
-                          <td>{methodTitle[row.method]}</td>
+                          <td>{t(methodTitle[row.method])}</td>
                           <td className="numeric">{money(row.receivedNpr)}</td>
                           <td className="numeric">{money(row.paidNpr)}</td>
                           <td className="numeric">
@@ -353,47 +366,50 @@ export function Reports() {
                 </div>
               </section>
               <section className="stock-panel report-account-balances">
-                <p className="eyebrow">CUSTOMER ACCOUNTS AT {report.to} AD</p>
+                <p className="eyebrow">
+                  {t('CUSTOMER ACCOUNTS AT ')}
+                  {report.to} {t(' AD')}
+                </p>
                 <dl>
                   <div>
-                    <dt>Customer dues</dt>
+                    <dt>{t('Customer dues')}</dt>
                     <dd className="due">
-                      NPR {money(report.accounts.duesNpr)}
+                      {t('NPR ')}
+                      {money(report.accounts.duesNpr)}
                     </dd>
                   </div>
                   <div>
-                    <dt>Advances / credit held</dt>
+                    <dt>{t('Advances / credit held')}</dt>
                     <dd className="advance">
-                      NPR {money(report.accounts.advancesNpr)}
+                      {t('NPR ')}
+                      {money(report.accounts.advancesNpr)}
                     </dd>
                   </div>
                 </dl>
                 <p>
-                  Separate customer balances, calculated through the end date.
+                  {t(
+                    'Separate customer balances, calculated through the end date.',
+                  )}
                 </p>
               </section>
             </div>
             <section className="stock-panel">
               <div className="stock-heading">
                 <div>
-                  <h2>Physical stock reconciliation</h2>
+                  <h2>{t('Physical stock reconciliation')}</h2>
                   <p>
-                    Opening + received − sold + corrections = closing. All
-                    weights are grams.
+                    {t(
+                      'Opening + received − sold + corrections = closing. All weights are grams.',
+                    )}
                   </p>
                 </div>
               </div>
               <StockTable rows={report.stock} />
             </section>
             <p className="account-scope-note">
-              These are operational reports, not profit, inventory cost
-              valuation or tax returns. Old-metal purchases are included;
-              supplier jewellery invoices and refining are outside this version.
-              Payouts include purchase payouts and customer advance refunds.
-              Negative period values can result from corrections to earlier
-              periods. Receipts/receipt voids use their Nepal recording date;
-              sales, purchases and their corrections use the recorded business
-              date.
+              {t(
+                'These are operational reports, not profit, inventory cost valuation or tax returns. Old-metal purchases are included; supplier jewellery invoices and refining are outside this version. Payouts include purchase payouts and customer advance refunds. Negative period values can result from corrections to earlier periods. Receipts/receipt voids use their Nepal recording date; sales, purchases and their corrections use the recorded business date.',
+              )}
             </p>
           </div>
         )

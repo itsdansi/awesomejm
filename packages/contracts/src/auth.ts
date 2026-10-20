@@ -31,7 +31,7 @@ export const usernameSchema = z
   );
 export const passwordSchema = z
   .string()
-  .min(15, 'Use at least 15 characters.')
+  .min(8, 'Use at least 8 characters.')
   .max(128);
 export const loginSchema = z
   .object({ username: usernameSchema, password: z.string().min(1).max(128) })

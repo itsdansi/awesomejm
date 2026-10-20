@@ -1,3 +1,5 @@
+import { FormValidation } from './i18n/FormValidation';
+import { AppLoading } from './i18n/AppLoading';
 import { AuthGate } from './auth/AuthGate';
 import { StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -9,13 +11,8 @@ if (!root) throw new Error('Application root is missing.');
 
 createRoot(root).render(
   <StrictMode>
-    <Suspense
-      fallback={
-        <div className="app-loading" role="status">
-          Loading workspace…
-        </div>
-      }
-    >
+    <FormValidation />
+    <Suspense fallback={<AppLoading />}>
       <AuthGate>
         <App />
       </AuthGate>

@@ -1,3 +1,4 @@
+import { t, message, useLanguage } from '../i18n/language';
 import { useState, type FormEvent } from 'react';
 import {
   customerListSchema,
@@ -28,6 +29,8 @@ type SelectedLine = {
   stonesNpr: string;
 };
 export function SaleBuilder({ orderId }: { orderId: string | null }) {
+  useLanguage();
+
   const [requestId] = useState(() => globalThis.crypto.randomUUID());
   const [customerSearch, setCustomerSearch] = useState('');
   const [stockSearch, setStockSearch] = useState('');
@@ -112,7 +115,7 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
       notes,
     });
     if (!parsed.success) {
-      setError(parsed.error.issues.map((issue) => issue.message).join(' '));
+      setError(parsed.error.issues.map((issue) => issue.message).join('\n'));
       return;
     }
     setBusy(true);
@@ -162,25 +165,27 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
     return (
       <AppShell section="Sales">
         <a href={`#/orders/${orderId}`} className="back-link">
-          ← Back to order
+          {t('← Back to order')}
         </a>
         <div className="empty-state">
           <h2>
             {linkedOrder.loading
-              ? 'Loading order…'
-              : 'Order is not ready for delivery'}
+              ? t('Loading order…')
+              : t('Order is not ready for delivery')}
           </h2>
           <p className="error" role="alert">
-            {linkedOrder.error ||
+            {message(linkedOrder.error) ||
               (linkedOrder.loading
                 ? ''
-                : 'Refresh the order and mark it ready before recording its delivery.')}
+                : t(
+                    'Refresh the order and mark it ready before recording its delivery.',
+                  ))}
           </p>
           <button
             className="button secondary"
             onClick={() => setRevision((value) => value + 1)}
           >
-            Refresh
+            {t('Refresh')}
           </button>
         </div>
       </AppShell>
@@ -189,61 +194,73 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
   return (
     <AppShell section="Sales">
       <a className="back-link" href="#/sales">
-        ← Sales register
+        {t('← Sales register')}
       </a>
       <div className="page-heading">
         <div>
           <p className="eyebrow">
-            {orderId ? 'CUSTOM ORDER DELIVERY' : 'READY-MADE JEWELLERY SALE'}
+            {orderId
+              ? t('CUSTOM ORDER DELIVERY')
+              : t('READY-MADE JEWELLERY SALE')}
           </p>
           <h1>
-            {review ? 'Review this sale' : 'Record a sale'}
+            {review ? t('Review this sale') : t('Record a sale')}
             <span>.</span>
           </h1>
           <p className="description">
             {review
-              ? 'Check the pieces, charges and settlement before posting.'
+              ? t('Check the pieces, charges and settlement before posting.')
               : orderId
-                ? 'Choose the finished pieces, then review delivery pricing and settlement.'
-                : 'Choose a customer and available pieces, then review the final amounts.'}
+                ? t(
+                    'Choose the finished pieces, then review delivery pricing and settlement.',
+                  )
+                : t(
+                    'Choose a customer and available pieces, then review the final amounts.',
+                  )}
           </p>
         </div>
         <span className="manual-badge">
-          {review ? '02 / REVIEW' : '01 / DETAILS'}
+          {review ? t('02 / REVIEW') : t('01 / DETAILS')}
         </span>
       </div>
       {linkedOrder.data && (
         <p className="order-delivery-banner">
-          Delivering{' '}
+          {t('Delivering')}{' '}
           <a href={`#/orders/${orderId}`}>{linkedOrder.data.order.orderCode}</a>{' '}
-          · Select all {linkedOrder.data.order.pieceCount} ordered pieces. Check
-          their design and size against the order. Final prices use actual stock
-          weights and the sale date’s rates. Recorded advances are already in
-          the customer account.
+          {t('· Select all ')}
+          {linkedOrder.data.order.pieceCount}{' '}
+          {t(
+            ' ordered pieces. Check their design and size against the order. Final prices use actual stock weights and the sale date’s rates. Recorded advances are already in the customer account.',
+          )}
         </p>
       )}
       {linkedOrder.data && (
         <details className="stock-panel order-delivery-specs">
-          <summary>Ordered designs and planned charges</summary>
+          <summary>{t('Ordered designs and planned charges')}</summary>
           <ul>
             {linkedOrder.data.order.lines.map((line, index) => (
               <li key={index}>
                 <strong>
                   {line.name} × {line.quantity}
                 </strong>{' '}
-                · {line.metal === 'GOLD' ? 'Gold' : 'Silver'} {line.fineness}‰ ·
-                Size: {line.size || 'not specified'}
+                · {line.metal === 'GOLD' ? t('Gold') : t('Silver')}{' '}
+                {line.fineness}
+                {t('‰ · Size: ')}
+                {line.size || t('not specified')}
                 <br />
                 {line.design}
                 <br />
-                Per piece: expected {line.expectedNetWeightGrams} g net ·
-                planned wastage {line.plannedWastageGrams} g · making NPR{' '}
-                {money(line.plannedMakingNpr)} · stones NPR{' '}
+                {t('Per piece: expected ')}
+                {line.expectedNetWeightGrams} {t(' g net · planned wastage ')}
+                {line.plannedWastageGrams} {t(' g · making NPR')}{' '}
+                {money(line.plannedMakingNpr)} {t(' · stones NPR')}{' '}
                 {money(line.plannedStonesNpr)}
               </li>
             ))}
           </ul>
-          <p>Enter the final agreed charges below for each finished piece.</p>
+          <p>
+            {t('Enter the final agreed charges below for each finished piece.')}
+          </p>
         </details>
       )}
       {review ? (
@@ -254,27 +271,29 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                 <h2>{review.quote.customer.name}</h2>
                 <p>
                   {review.quote.customer.customerCode} · {review.quote.saleDate}{' '}
-                  AD · {review.quote.lines.length} pieces
+                  {t('AD · ')}
+                  {review.quote.lines.length} {t(' pieces')}
                 </p>
               </div>
-              <span className="manual-badge">REVIEW</span>
+              <span className="manual-badge">{t('REVIEW')}</span>
             </div>
             <SaleFigures lines={review.quote.lines} totals={review.quote} />
             <div className="sale-review-reference">
               <p>
-                Bill reference: {review.draft.billReference || 'Not entered'}
+                {t('Bill reference: ')}
+                {review.draft.billReference || t('Not entered')}
               </p>
               {review.draft.notes && <p>{review.draft.notes}</p>}
             </div>
           </section>
           <p className="account-scope-note">
-            Posting records this sale, removes its pieces from available stock
-            and updates the customer account. Use the shop’s approved billing
-            process for the official invoice.
+            {t(
+              'Posting records this sale, removes its pieces from available stock and updates the customer account. Use the shop’s approved billing process for the official invoice.',
+            )}
           </p>
           {error && (
             <p className="error" role="alert">
-              {error}
+              {message(error)}
             </p>
           )}
           <div className="sale-page-actions">
@@ -287,14 +306,14 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                 setRevision((value) => value + 1);
               }}
             >
-              Back to details
+              {t('Back to details')}
             </button>
             <button
               className="button primary"
               disabled={busy}
               onClick={() => void post()}
             >
-              {busy ? 'Posting…' : 'Post sale'}
+              {busy ? t('Posting…') : t('Post sale')}
               <Icon name="arrow" size={18} />
             </button>
           </div>
@@ -305,16 +324,18 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
             <section className="stock-panel">
               <div className="stock-heading">
                 <div>
-                  <h2>Customer & date</h2>
+                  <h2>{t('Customer & date')}</h2>
                   <p>
-                    All amounts will be recorded against this customer account.
+                    {t(
+                      'All amounts will be recorded against this customer account.',
+                    )}
                   </p>
                 </div>
                 <span className="register-label">01</span>
               </div>
               <div className="sale-form-content">
                 <label className="date-filter">
-                  Sale date (AD)
+                  {t('Sale date (AD)')}
                   <input
                     required
                     type="date"
@@ -329,8 +350,8 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                     <div>
                       <strong>{customer.name}</strong>
                       <small>
-                        {customer.customerCode} · {pickedBalance.label}: NPR{' '}
-                        {pickedBalance.amount}
+                        {customer.customerCode} · {t(pickedBalance.label)}
+                        {t(': NPR')} {pickedBalance.amount}
                       </small>
                     </div>
                     <button
@@ -339,7 +360,7 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                       disabled={orderId !== null}
                       onClick={() => setCustomer(null)}
                     >
-                      Change customer
+                      {t('Change customer')}
                     </button>
                   </div>
                 ) : (
@@ -347,8 +368,8 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                     <label className="search">
                       <Icon name="search" size={18} />
                       <input
-                        aria-label="Find sale customer"
-                        placeholder="Search customer name, phone or code…"
+                        aria-label={t('Find sale customer')}
+                        placeholder={t('Search customer name, phone or code…')}
                         value={customerSearch}
                         onChange={(event) =>
                           setCustomerSearch(event.target.value)
@@ -358,10 +379,10 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                     </label>
                     <div className="sale-picker-list">
                       {customers.loading ? (
-                        <p className="muted">Loading customers…</p>
+                        <p className="muted">{t('Loading customers…')}</p>
                       ) : customers.error ? (
                         <p className="error" role="alert">
-                          {customers.error}
+                          {message(customers.error)}
                         </p>
                       ) : customers.data?.items.length ? (
                         customers.data.items.map((item) => (
@@ -374,7 +395,8 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                             <span>
                               <strong>{item.name}</strong>
                               <small>
-                                {item.customerCode} · {item.phone || 'No phone'}
+                                {item.customerCode} ·{' '}
+                                {item.phone || t('No phone')}
                               </small>
                             </span>
                             <Icon name="arrow" size={17} />
@@ -382,17 +404,18 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                         ))
                       ) : (
                         <p className="muted">
-                          No matching customer.{' '}
+                          {t('No matching customer.')}{' '}
                           <a href="#/customers">
-                            Add the customer in Customers first.
+                            {t('Add the customer in Customers first.')}
                           </a>
                         </p>
                       )}
                     </div>
                     {customers.data && customers.data.total > 20 && (
                       <p className="field-hint">
-                        Showing 20 matches. Refine your search to find another
-                        customer.
+                        {t(
+                          'Showing 20 matches. Refine your search to find another customer.',
+                        )}
                       </p>
                     )}
                   </div>
@@ -403,11 +426,13 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
               <div className="stock-heading">
                 <div>
                   <h2>
-                    Choose pieces <span>{lines.length} / 20</span>
+                    {t('Choose pieces ')}
+                    <span>{lines.length} / 20</span>
                   </h2>
                   <p>
-                    Each piece uses the latest rate for its exact metal and
-                    purity on the sale date.
+                    {t(
+                      'Each piece uses the latest rate for its exact metal and purity on the sale date.',
+                    )}
                   </p>
                 </div>
                 <button
@@ -415,15 +440,17 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                   type="button"
                   onClick={() => setRevision((value) => value + 1)}
                 >
-                  Refresh stock & rates
+                  {t('Refresh stock & rates')}
                 </button>
               </div>
               <div className="sale-form-content">
                 <label className="search">
                   <Icon name="search" size={18} />
                   <input
-                    aria-label="Find sale stock"
-                    placeholder="Search available item code, name or category…"
+                    aria-label={t('Find sale stock')}
+                    placeholder={t(
+                      'Search available item code, name or category…',
+                    )}
                     value={stockSearch}
                     onChange={(event) => setStockSearch(event.target.value)}
                     maxLength={120}
@@ -431,15 +458,17 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                 </label>
                 {rates.error && (
                   <p className="error" role="alert">
-                    {rates.error}
+                    {message(rates.error)}
                   </p>
                 )}
                 <div className="sale-picker-list stock-picker">
                   {stock.loading || rates.loading ? (
-                    <p className="muted">Loading available stock and rates…</p>
+                    <p className="muted">
+                      {t('Loading available stock and rates…')}
+                    </p>
                   ) : stock.error ? (
                     <p className="error" role="alert">
-                      {stock.error}
+                      {message(stock.error)}
                     </p>
                   ) : stock.data?.items.length ? (
                     stock.data.items.map((item) => {
@@ -453,20 +482,27 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                             <strong>{item.name}</strong>
                             <small>
                               {item.itemCode} ·{' '}
-                              {item.metal === 'GOLD' ? 'Gold' : 'Silver'}{' '}
-                              {item.fineness}‰ · {item.netWeightGrams} g net
+                              {item.metal === 'GOLD' ? t('Gold') : t('Silver')}{' '}
+                              {item.fineness}‰ · {item.netWeightGrams}{' '}
+                              {t(' g net')}
                             </small>
                             <small className={rate ? '' : 'danger-text'}>
                               {rate
-                                ? `NPR ${money(rate.sellRatePerTola)} / tola`
-                                : 'No matching rate on this date. Set it in Metal rates.'}
+                                ? t('NPR {value0} / tola', {
+                                    value0: money(rate.sellRatePerTola),
+                                  })
+                                : t(
+                                    'No matching rate on this date. Set it in Metal rates.',
+                                  )}
                             </small>
                           </span>
                           <button
                             type="button"
                             className="button secondary compact"
                             disabled={added || !rate || lines.length >= 20}
-                            aria-label={`Add ${item.itemCode}`}
+                            aria-label={t('Add {value0}', {
+                              value0: item.itemCode,
+                            })}
                             onClick={() =>
                               setLines([
                                 ...lines,
@@ -479,24 +515,25 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                               ])
                             }
                           >
-                            {added ? 'Added' : 'Add piece'}
+                            {added ? t('Added') : t('Add piece')}
                           </button>
                         </div>
                       );
                     })
                   ) : (
                     <p className="muted">
-                      No available pieces match this search.{' '}
+                      {t('No available pieces match this search.')}{' '}
                       <a href="#/inventory">
-                        Receive stock in Inventory first.
+                        {t('Receive stock in Inventory first.')}
                       </a>
                     </p>
                   )}
                 </div>
                 {stock.data && stock.data.total > 20 && (
                   <p className="field-hint">
-                    Showing 20 matches. Refine your search to find another
-                    piece.
+                    {t(
+                      'Showing 20 matches. Refine your search to find another piece.',
+                    )}
                   </p>
                 )}
                 {lines.map((line) => (
@@ -505,14 +542,16 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                       <div>
                         <strong>{line.item.name}</strong>
                         <small>
-                          {line.item.itemCode} · {line.item.netWeightGrams} g
-                          net
+                          {line.item.itemCode} · {line.item.netWeightGrams}{' '}
+                          {t(' g net')}
                         </small>
                       </div>
                       <button
                         type="button"
                         className="icon-button"
-                        aria-label={`Remove ${line.item.itemCode}`}
+                        aria-label={t('Remove {value0}', {
+                          value0: line.item.itemCode,
+                        })}
                         onClick={() =>
                           setLines(
                             lines.filter(
@@ -526,9 +565,11 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                     </div>
                     <div className="sale-charge-inputs">
                       <label>
-                        Billed wastage (g)
+                        {t('Billed wastage (g)')}
                         <input
-                          aria-label={`Billed wastage for ${line.item.itemCode}`}
+                          aria-label={t('Billed wastage for {value0}', {
+                            value0: line.item.itemCode,
+                          })}
                           required
                           inputMode="decimal"
                           value={line.wastageGrams}
@@ -542,9 +583,11 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                         />
                       </label>
                       <label>
-                        Making charge (NPR)
+                        {t('Making charge (NPR)')}
                         <input
-                          aria-label={`Making charge for ${line.item.itemCode}`}
+                          aria-label={t('Making charge for {value0}', {
+                            value0: line.item.itemCode,
+                          })}
                           required
                           inputMode="decimal"
                           value={line.makingNpr}
@@ -558,9 +601,11 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                         />
                       </label>
                       <label>
-                        Stone charge (NPR)
+                        {t('Stone charge (NPR)')}
                         <input
-                          aria-label={`Stone charge for ${line.item.itemCode}`}
+                          aria-label={t('Stone charge for {value0}', {
+                            value0: line.item.itemCode,
+                          })}
                           required
                           inputMode="decimal"
                           value={line.stonesNpr}
@@ -576,8 +621,8 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                     </div>
                     {!matchingRate(line.item) && (
                       <p className="error">
-                        A matching rate is required for {line.item.itemCode} on
-                        this date.
+                        {t('A matching rate is required for ')}
+                        {line.item.itemCode} {t(' on this date.')}
                       </p>
                     )}
                   </article>
@@ -587,17 +632,18 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
             <section className="stock-panel">
               <div className="stock-heading">
                 <div>
-                  <h2>Charges & settlement</h2>
+                  <h2>{t('Charges & settlement')}</h2>
                   <p>
-                    Enter the amounts agreed with the customer. Existing
-                    advances are applied to the remaining sale amount.
+                    {t(
+                      'Enter the amounts agreed with the customer. Existing advances are applied to the remaining sale amount.',
+                    )}
                   </p>
                 </div>
                 <span className="register-label">03</span>
               </div>
               <div className="sale-form-content form-grid">
                 <label>
-                  Discount (NPR)
+                  {t('Discount (NPR)')}
                   <input
                     required
                     inputMode="decimal"
@@ -606,7 +652,7 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                   />
                 </label>
                 <label>
-                  Tax / fees from bill (NPR)
+                  {t('Tax / fees from bill (NPR)')}
                   <input
                     required
                     inputMode="decimal"
@@ -615,7 +661,7 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                   />
                 </label>
                 <label>
-                  Received now for this sale (NPR)
+                  {t('Received now for this sale (NPR)')}
                   <input
                     required
                     inputMode="decimal"
@@ -624,19 +670,21 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                   />
                 </label>
                 <label>
-                  Payment method
+                  {t('Payment method')}
                   <select
                     value={method}
                     onChange={(event) => setMethod(event.target.value)}
                     disabled={Number(payment) <= 0}
                   >
-                    <option value="CASH">Cash</option>
-                    <option value="BANK">Bank</option>
-                    <option value="DIGITAL_WALLET">Digital wallet</option>
+                    <option value="CASH">{t('Cash')}</option>
+                    <option value="BANK">{t('Bank')}</option>
+                    <option value="DIGITAL_WALLET">
+                      {t('Digital wallet')}
+                    </option>
                   </select>
                 </label>
                 <label>
-                  Payment reference (optional)
+                  {t('Payment reference (optional)')}
                   <input
                     maxLength={160}
                     value={reference}
@@ -644,7 +692,7 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                   />
                 </label>
                 <label>
-                  Official bill reference (optional)
+                  {t('Official bill reference (optional)')}
                   <input
                     maxLength={160}
                     value={bill}
@@ -652,7 +700,7 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                   />
                 </label>
                 <label className="full-width">
-                  Notes (optional)
+                  {t('Notes (optional)')}
                   <textarea
                     rows={2}
                     maxLength={500}
@@ -665,12 +713,12 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
           </fieldset>
           {error && (
             <p className="error" role="alert">
-              {error}
+              {message(error)}
             </p>
           )}
           <div className="sale-page-actions">
             <a className="button secondary" href="#/sales">
-              Back to register
+              {t('Back to register')}
             </a>
             <button
               className="button primary"
@@ -682,7 +730,7 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                 lines.some((line) => !matchingRate(line.item))
               }
             >
-              {busy ? 'Calculating…' : 'Review sale'}
+              {busy ? t('Calculating…') : t('Review sale')}
               <Icon name="arrow" size={18} />
             </button>
           </div>

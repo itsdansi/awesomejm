@@ -1,3 +1,4 @@
+import { t, message, useLanguage } from '../i18n/language';
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { ratePerGram } from '@awesomejm/calculations';
 import {
@@ -21,6 +22,8 @@ export function RateForm({
   onClose: () => void;
   onSaved: () => void;
 }) {
+  useLanguage();
+
   const [fields, setFields] = useState({
     rateDate: rate?.rateDate ?? date,
     metal: rate?.metal ?? initialMetal,
@@ -59,7 +62,7 @@ export function RateForm({
       expectedRevision: rate?.revision ?? 0,
     });
     if (!parsed.success) {
-      setError(parsed.error.issues.map((issue) => issue.message).join(' '));
+      setError(parsed.error.issues.map((issue) => issue.message).join('\n'));
       return;
     }
     setBusy(true);
@@ -78,20 +81,25 @@ export function RateForm({
   }
   return (
     <Dialog
-      title={rate ? 'Revise a rate' : 'Set a metal rate'}
-      eyebrow="Gold & silver rates"
+      title={rate ? t('Revise a rate') : t('Set a metal rate')}
+      eyebrow={t('Gold & silver rates')}
       onClose={onClose}
       busy={busy}
     >
       <p className="dialog-description">
         {rate
-          ? `This saves revision ${rate.revision + 1}. The previous rate stays in history.`
-          : 'Record your shop’s quote for one metal and purity. Rates are entered manually in NPR per tola.'}
+          ? t(
+              'This saves revision {value0}. The previous rate stays in history.',
+              { value0: rate.revision + 1 },
+            )
+          : t(
+              'Record your shop’s quote for one metal and purity. Rates are entered manually in NPR per tola.',
+            )}
       </p>
       <form onSubmit={(event) => void submit(event)}>
         <fieldset className="form-grid" disabled={busy}>
           <label className="full-width">
-            Rate date (AD)
+            {t('Rate date (AD)')}
             <input
               type="date"
               value={fields.rateDate}
@@ -100,7 +108,7 @@ export function RateForm({
             />
           </label>
           <label>
-            Metal
+            {t('Metal')}
             <select
               {...field('metal')}
               disabled={Boolean(rate)}
@@ -112,12 +120,12 @@ export function RateForm({
                 })
               }
             >
-              <option value="GOLD">Gold · सुन</option>
-              <option value="SILVER">Silver · चाँदी</option>
+              <option value="GOLD">{t('Gold · सुन')}</option>
+              <option value="SILVER">{t('Silver · चाँदी')}</option>
             </select>
           </label>
           <label>
-            Purity / fineness (‰)
+            {t('Purity / fineness (‰)')}
             <input
               required
               inputMode="decimal"
@@ -126,56 +134,57 @@ export function RateForm({
             />
             <span className="field-hint">
               {fields.metal === 'GOLD'
-                ? '22K ≈ 916.667‰ · 24K nominally 1000‰.'
-                : 'Sterling silver is 925‰.'}{' '}
-              Enter actual quoted purity.
+                ? t('22K ≈ 916.667‰ · 24K nominally 1000‰.')
+                : t('Sterling silver is 925‰.')}{' '}
+              {t('Enter actual quoted purity.')}
             </span>
           </label>
           <label>
-            Buying rate (NPR / tola)
+            {t('Buying rate (NPR / tola)')}
             <input
               required
               inputMode="decimal"
               placeholder="0.00"
               {...field('buyRatePerTola')}
             />
-            <span className="field-hint">The shop’s buying quote.</span>
+            <span className="field-hint">{t('The shop’s buying quote.')}</span>
           </label>
           <label>
-            Selling rate (NPR / tola)
+            {t('Selling rate (NPR / tola)')}
             <input
               required
               inputMode="decimal"
               placeholder="0.00"
               {...field('sellRatePerTola')}
             />
-            <span className="field-hint">The shop’s selling quote.</span>
+            <span className="field-hint">{t('The shop’s selling quote.')}</span>
           </label>
           <div className="weight-preview full-width">
             <div>
-              <span>Buying / gram ≈</span>
+              <span>{t('Buying / gram ≈')}</span>
               <strong>{buyPreview}</strong>
             </div>
             <div>
-              <span>Selling / gram ≈</span>
+              <span>{t('Selling / gram ≈')}</span>
               <strong>{sellPreview}</strong>
             </div>
           </div>
           <p className="field-hint full-width rate-form-note">
-            1 tola = 11.664 g. Per-gram values are rounded previews. The quote
-            already applies to the stated purity.
+            {t(
+              '1 tola = 11.664 g. Per-gram values are rounded previews. The quote already applies to the stated purity.',
+            )}
           </p>
           <label className="full-width">
-            Rate source / reference
+            {t('Rate source / reference')}
             <input
               required
               maxLength={160}
               {...field('source')}
-              placeholder="Shop-set rate or source reference"
+              placeholder={t('Shop-set rate or source reference')}
             />
           </label>
           <label className="full-width">
-            {rate ? 'Reason for revision' : 'Notes (optional)'}
+            {rate ? t('Reason for revision') : t('Notes (optional)')}
             <textarea
               required={Boolean(rate)}
               minLength={rate ? 5 : undefined}
@@ -187,7 +196,7 @@ export function RateForm({
         </fieldset>
         {error && (
           <p className="error" role="alert">
-            {error}
+            {message(error)}
           </p>
         )}
         <div className="dialog-actions">
@@ -197,10 +206,10 @@ export function RateForm({
             disabled={busy}
             onClick={onClose}
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button className="button primary" disabled={busy}>
-            {busy ? 'Saving…' : rate ? 'Save revision' : 'Save rate'}
+            {busy ? t('Saving…') : rate ? t('Save revision') : t('Save rate')}
             <Icon name="arrow" size={18} />
           </button>
         </div>

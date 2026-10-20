@@ -1,3 +1,5 @@
+import { useAuth } from '../auth/AuthContext';
+import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useState, type FormEvent } from 'react';
 import {
@@ -13,6 +15,9 @@ import { errorMessage, request } from '../shared/api';
 import { methodTitle } from '../customers/format';
 import { PurchaseFigures } from './PurchaseFigures';
 export function PurchaseDetails({ purchaseId }: { purchaseId: string }) {
+  useLanguage();
+  const { user } = useAuth();
+
   const [revision, setRevision] = useState(0),
     [correcting, setCorrecting] = useState(false),
     result = useResource(
@@ -24,23 +29,23 @@ export function PurchaseDetails({ purchaseId }: { purchaseId: string }) {
   return (
     <AppShell section="Purchases">
       <a className="back-link" href="#/purchases">
-        ← Purchase register
+        {t('← Purchase register')}
       </a>
       {result.loading ? (
         <div className="empty-state" role="status">
-          Loading purchase…
+          {t('Loading purchase…')}
         </div>
       ) : result.error ? (
         <div className="empty-state">
-          <h2>Purchase couldn’t load</h2>
+          <h2>{t('Purchase couldn’t load')}</h2>
           <p className="error" role="alert">
-            {result.error}
+            {message(result.error)}
           </p>
           <button
             className="button secondary"
             onClick={() => setRevision((v) => v + 1)}
           >
-            Try again
+            {t('Try again')}
           </button>
         </div>
       ) : (
@@ -49,30 +54,33 @@ export function PurchaseDetails({ purchaseId }: { purchaseId: string }) {
             <div className="page-heading">
               <div>
                 <p className="eyebrow">
-                  {detail.sale ? 'EXCHANGE' : 'OLD-METAL PURCHASE'} ·{' '}
-                  {detail.purchase.purchaseDate} AD
+                  {detail.sale ? t('EXCHANGE') : t('OLD-METAL PURCHASE')} ·{' '}
+                  {detail.purchase.purchaseDate} {t(' AD')}
                 </p>
                 <h1>
                   {detail.purchase.purchaseCode}
                   <span>.</span>
                 </h1>
                 <p className="description">
-                  Incoming lots, original valuation and the complete recorded
-                  settlement.
+                  {t(
+                    'Incoming lots, original valuation and the complete recorded settlement.',
+                  )}
                 </p>
               </div>
               <button
                 className="button secondary"
                 onClick={() => globalThis.print()}
               >
-                Print internal record
+                {t('Print internal record')}
               </button>
             </div>
             <section className="stock-panel print-document">
               <div className="stock-heading">
                 <div>
                   <p className="eyebrow">
-                    AWESOMEJM / FIRST SHOP · PURCHASE RECORD
+                    {t('AWESOMEJM / {shopName} · PURCHASE RECORD', {
+                      shopName: user.shopName,
+                    })}
                   </p>
                   <h2>
                     {detail.purchase.purchaseCode}{' '}
@@ -80,27 +88,31 @@ export function PurchaseDetails({ purchaseId }: { purchaseId: string }) {
                       className={`status ${detail.purchase.status === 'CANCELLED' ? 'voided' : ''}`}
                     >
                       {detail.purchase.status === 'CANCELLED'
-                        ? 'Cancelled'
+                        ? t('Cancelled')
                         : detail.sale
-                          ? 'Exchange posted'
-                          : 'Posted'}
+                          ? t('Exchange posted')
+                          : t('Posted')}
                     </span>
                   </h2>
-                  <p>{detail.purchase.purchaseDate} AD · NPR</p>
+                  <p>
+                    {detail.purchase.purchaseDate} {t(' AD · NPR')}
+                  </p>
                 </div>
               </div>
               {detail.purchase.status === 'CANCELLED' && (
                 <p className="receipt-reversed sale-cancelled">
-                  CANCELLED · {detail.purchase.cancellationDate} AD ·{' '}
+                  {t('CANCELLED · ')}
+                  {detail.purchase.cancellationDate} {t(' AD ·')}{' '}
                   {detail.purchase.cancellationReason}
                   <br />
-                  Amounts and weights below show the original posting. The
-                  linked records were reversed together.
+                  {t(
+                    'Amounts and weights below show the original posting. The linked records were reversed together.',
+                  )}
                 </p>
               )}
               <dl className="details-grid sale-customer-details">
                 <div>
-                  <dt>Customer at posting</dt>
+                  <dt>{t('Customer at posting')}</dt>
                   <dd>
                     {detail.purchase.customerSnapshot.name}
                     <small>
@@ -109,32 +121,33 @@ export function PurchaseDetails({ purchaseId }: { purchaseId: string }) {
                   </dd>
                 </div>
                 <div>
-                  <dt>Phone / PAN</dt>
+                  <dt>{t('Phone / PAN')}</dt>
                   <dd>
                     {detail.purchase.customerSnapshot.phone || '—'}
                     <small>
-                      PAN: {detail.purchase.customerSnapshot.pan || '—'}
+                      {t('PAN: ')}
+                      {detail.purchase.customerSnapshot.pan || '—'}
                     </small>
                   </dd>
                 </div>
                 <div>
-                  <dt>Address</dt>
+                  <dt>{t('Address')}</dt>
                   <dd>{detail.purchase.customerSnapshot.address || '—'}</dd>
                 </div>
                 <div>
-                  <dt>Purchase reference</dt>
+                  <dt>{t('Purchase reference')}</dt>
                   <dd>{detail.purchase.reference || '—'}</dd>
                 </div>
                 <div>
-                  <dt>Payout method</dt>
+                  <dt>{t('Payout method')}</dt>
                   <dd>
                     {detail.purchase.payoutMethod
-                      ? methodTitle[detail.purchase.payoutMethod]
-                      : 'No payout'}
+                      ? t(methodTitle[detail.purchase.payoutMethod])
+                      : t('No payout')}
                   </dd>
                 </div>
                 <div>
-                  <dt>Payout reference</dt>
+                  <dt>{t('Payout reference')}</dt>
                   <dd>{detail.purchase.payoutReference || '—'}</dd>
                 </div>
               </dl>
@@ -149,16 +162,16 @@ export function PurchaseDetails({ purchaseId }: { purchaseId: string }) {
                 balanceAfterNpr={detail.purchase.balanceAfterNpr}
               />
               <p className="sale-review-reference">
-                Incoming lots:{' '}
+                {t('Incoming lots:')}{' '}
                 {detail.lines.map((line) => line.lotCode).join(', ')}
               </p>
               {detail.purchase.notes && (
                 <p className="sale-review-reference">{detail.purchase.notes}</p>
               )}
               <p className="sale-disclaimer receipt-disclaimer">
-                Internal record, not an official invoice. Balances are snapshots
-                at posting. This tracks metal purchased outright; customer-owned
-                metal custody and refining are separate workflows.
+                {t(
+                  'Internal record, not an official invoice. Balances are snapshots at posting. This tracks metal purchased outright; customer-owned metal custody and refining are separate workflows.',
+                )}
               </p>
             </section>
             <div className="sale-page-actions">
@@ -167,14 +180,14 @@ export function PurchaseDetails({ purchaseId }: { purchaseId: string }) {
                   className="button secondary"
                   href={`#/customers/${detail.purchase.customerId}`}
                 >
-                  View customer account →
+                  {t('View customer account →')}
                 </a>
                 {detail.sale && (
                   <a
                     className="button secondary"
                     href={`#/sales/${detail.sale.sale.id}`}
                   >
-                    View exchange sale →
+                    {t('View exchange sale →')}
                   </a>
                 )}
               </div>
@@ -184,7 +197,7 @@ export function PurchaseDetails({ purchaseId }: { purchaseId: string }) {
                     className="text-button danger-text"
                     onClick={() => setCorrecting(true)}
                   >
-                    Correct erroneous settlement
+                    {t('Correct erroneous settlement')}
                   </button>
                 </Permission>
               )}
@@ -214,6 +227,8 @@ function PurchaseCorrection({
   onClose: () => void;
   onSaved: () => void;
 }) {
+  useLanguage();
+
   const [requestId] = useState(() => globalThis.crypto.randomUUID()),
     [date, setDate] = useState(() => nepalToday()),
     [reason, setReason] = useState(''),
@@ -229,7 +244,7 @@ function PurchaseCorrection({
       confirmStockInShop: confirmed,
     });
     if (!input.success) {
-      setError(input.error.issues.map((i) => i.message).join(' '));
+      setError(input.error.issues.map((i) => i.message).join('\n'));
       return;
     }
     setBusy(true);
@@ -252,21 +267,19 @@ function PurchaseCorrection({
   }
   return (
     <Dialog
-      title={`Correct ${detail.purchase.purchaseCode}`}
-      eyebrow="SETTLEMENT CORRECTION"
+      title={t('Correct {value0}', { value0: detail.purchase.purchaseCode })}
+      eyebrow={t('SETTLEMENT CORRECTION')}
       busy={busy}
       onClose={onClose}
     >
       <form className="correction-form" onSubmit={(event) => void save(event)}>
         <p>
-          Use this to correct a recording mistake while the complete incoming
-          metal and any outgoing jewellery are physically in the shop. It
-          reverses the purchase, exchange sale and recorded money movements
-          together. It does not transfer money or process a delivered-item
-          return.
+          {t(
+            'Use this to correct a recording mistake while the complete incoming metal and any outgoing jewellery are physically in the shop. It reverses the purchase, exchange sale and recorded money movements together. It does not transfer money or process a delivered-item return.',
+          )}
         </p>
         <label>
-          Correction date (AD)
+          {t('Correction date (AD)')}
           <input
             required
             type="date"
@@ -278,7 +291,7 @@ function PurchaseCorrection({
           />
         </label>
         <label>
-          Reason
+          {t('Reason')}
           <textarea
             required
             minLength={5}
@@ -296,11 +309,13 @@ function PurchaseCorrection({
             disabled={busy}
             onChange={(e) => setConfirmed(e.target.checked)}
           />
-          All incoming lots and any outgoing pieces are physically in the shop.
+          {t(
+            'All incoming lots and any outgoing pieces are physically in the shop.',
+          )}
         </label>
         {error && (
           <p className="error" role="alert">
-            {error}
+            {message(error)}
           </p>
         )}
         <div className="dialog-actions">
@@ -310,10 +325,10 @@ function PurchaseCorrection({
             disabled={busy}
             onClick={onClose}
           >
-            Keep settlement
+            {t('Keep settlement')}
           </button>
           <button className="button danger" disabled={busy || !confirmed}>
-            {busy ? 'Correcting…' : 'Cancel erroneous settlement'}
+            {busy ? t('Correcting…') : t('Cancel erroneous settlement')}
           </button>
         </div>
       </form>

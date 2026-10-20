@@ -1,3 +1,4 @@
+import { locale, t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useEffect, useState } from 'react';
 import { ratePerGram } from '@awesomejm/calculations';
@@ -15,12 +16,12 @@ import { Icon } from '../shared/ui';
 import { RateForm } from './RateForm';
 
 const npr = (value: string) =>
-  new Intl.NumberFormat('en-NP', {
+  new Intl.NumberFormat(locale(), {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(Number(value));
 const time = (value: string) =>
-  new Date(value).toLocaleString('en-NP', {
+  new Date(value).toLocaleString(locale(), {
     timeZone: 'Asia/Kathmandu',
     month: 'short',
     day: 'numeric',
@@ -29,6 +30,8 @@ const time = (value: string) =>
   });
 
 export function Rates() {
+  useLanguage();
+
   const [date, setDate] = useState(() => nepalToday());
   const [metal, setMetal] = useState('');
   const [from, setFrom] = useState('');
@@ -109,12 +112,15 @@ export function Rates() {
     <AppShell section="Metal rates">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">A CLEAR RECORD OF EVERY QUOTE</p>
+          <p className="eyebrow">{t('A CLEAR RECORD OF EVERY QUOTE')}</p>
           <h1>
-            Gold & silver rates<span>.</span>
+            {t('Gold & silver rates')}
+            <span>.</span>
           </h1>
           <p className="description">
-            Your shop’s buying and selling rates, with every revision preserved.
+            {t(
+              'Your shop’s buying and selling rates, with every revision preserved.',
+            )}
           </p>
         </div>
         <Permission name="rates.write">
@@ -127,7 +133,7 @@ export function Rates() {
             }}
           >
             <Icon name="plus" size={18} />
-            Set a rate
+            {t('Set a rate')}
           </button>
         </Permission>
       </div>
@@ -137,18 +143,18 @@ export function Rates() {
             <Icon name="diamond" size={23} />
           </span>
           <div>
-            <strong>Your shop’s rate book</strong>
-            <p>Manual quotes in NPR per tola · 1 tola = 11.664 g</p>
+            <strong>{t('Your shop’s rate book')}</strong>
+            <p>{t('Manual quotes in NPR per tola · 1 tola = 11.664 g')}</p>
           </div>
         </div>
-        <span className="manual-badge">MANUAL ENTRY</span>
+        <span className="manual-badge">{t('MANUAL ENTRY')}</span>
       </div>
       {notice && (
         <div className="success" role="status">
-          {notice}
+          {message(notice)}
           <button
             className="icon-button"
-            aria-label="Dismiss message"
+            aria-label={t('Dismiss message')}
             onClick={() => setNotice('')}
           >
             <Icon name="close" size={16} />
@@ -163,19 +169,20 @@ export function Rates() {
         <div className="stock-heading">
           <div>
             <h2 id="rate-book-title">
-              Daily rate book <span>{book?.rates.length ?? '—'}</span>
+              {t('Daily rate book ')}
+              <span>{book?.rates.length ?? '—'}</span>
             </h2>
-            <p>Latest revision for each purity on the selected date.</p>
+            <p>{t('Latest revision for each purity on the selected date.')}</p>
           </div>
           <button className="text-button" onClick={refresh}>
-            Refresh
+            {t('Refresh')}
           </button>
         </div>
         <div className="toolbar rate-toolbar">
           <label className="date-filter">
-            Rate date (AD)
+            {t('Rate date (AD)')}
             <input
-              aria-label="Rate book date"
+              aria-label={t('Rate book date')}
               type="date"
               min="2000-01-01"
               max={today}
@@ -184,37 +191,37 @@ export function Rates() {
             />
           </label>
           <button className="text-button" onClick={() => setDate(nepalToday())}>
-            Today
+            {t('Today')}
           </button>
           <label className="filter-label">
-            <span className="sr-only">Filter by metal</span>
+            <span className="sr-only">{t('Filter by metal')}</span>
             <select
-              aria-label="Filter by metal"
+              aria-label={t('Filter by metal')}
               value={metal}
               onChange={(event) => {
                 setMetal(event.target.value);
                 setPage(1);
               }}
             >
-              <option value="">All metals</option>
-              <option value="GOLD">Gold</option>
-              <option value="SILVER">Silver</option>
+              <option value="">{t('All metals')}</option>
+              <option value="GOLD">{t('Gold')}</option>
+              <option value="SILVER">{t('Silver')}</option>
             </select>
           </label>
         </div>
         {bookLoading ? (
           <div className="empty-state rate-empty" role="status">
             <span className="loading-dot" />
-            <p>Loading the rate book…</p>
+            <p>{t('Loading the rate book…')}</p>
           </div>
         ) : bookError ? (
           <div className="empty-state rate-empty">
-            <h3>Rate book couldn’t load</h3>
+            <h3>{t('Rate book couldn’t load')}</h3>
             <p className="error" role="alert">
-              {bookError}
+              {message(bookError)}
             </p>
             <button className="button secondary" onClick={refresh}>
-              Try again
+              {t('Try again')}
             </button>
           </div>
         ) : book?.rates.length ? (
@@ -222,12 +229,12 @@ export function Rates() {
             <table>
               <thead>
                 <tr>
-                  <th>Metal & purity</th>
-                  <th className="numeric">Buying / tola</th>
-                  <th className="numeric">Selling / tola</th>
-                  <th>Source / saved</th>
+                  <th>{t('Metal & purity')}</th>
+                  <th className="numeric">{t('Buying / tola')}</th>
+                  <th className="numeric">{t('Selling / tola')}</th>
+                  <th>{t('Source / saved')}</th>
                   <th>
-                    <span className="sr-only">Actions</span>
+                    <span className="sr-only">{t('Actions')}</span>
                   </th>
                 </tr>
               </thead>
@@ -239,47 +246,51 @@ export function Rates() {
                         className={`metal-badge ${rate.metal.toLowerCase()}`}
                       >
                         {rate.metal === 'GOLD'
-                          ? 'Gold · सुन'
-                          : 'Silver · चाँदी'}
+                          ? t('Gold · सुन')
+                          : t('Silver · चाँदी')}
                       </span>
                       <strong className="rate-purity">{rate.fineness}‰</strong>
                       <small className="rate-subline">
-                        Revision {rate.revision}
+                        {t('Revision ')}
+                        {rate.revision}
                       </small>
                     </td>
                     <td className="numeric rate-amount">
-                      <small>NPR </small>
+                      <small>{t('NPR ')}</small>
                       {npr(rate.buyRatePerTola)}
                       <span>
                         ≈ {ratePerGram(rate.buyRatePerTola, rate.gramsPerTola)}{' '}
-                        / g
+                        / {t('g')}
                       </span>
                     </td>
                     <td className="numeric rate-amount">
-                      <small>NPR </small>
+                      <small>{t('NPR ')}</small>
                       {npr(rate.sellRatePerTola)}
                       <span>
                         ≈ {ratePerGram(rate.sellRatePerTola, rate.gramsPerTola)}{' '}
-                        / g
+                        / {t('g')}
                       </span>
                     </td>
                     <td className="rate-source">
                       {rate.source}
                       <time className="rate-subline" dateTime={rate.createdAt}>
-                        {time(rate.createdAt)} NPT
+                        {time(rate.createdAt)} {t(' NPT')}
                       </time>
                     </td>
                     <td>
                       <Permission name="rates.write">
                         <button
                           className="button secondary compact"
-                          aria-label={`Revise ${rate.metal.toLowerCase()} ${rate.fineness}`}
+                          aria-label={t('Revise {value0} {value1}', {
+                            value0: rate.metal.toLowerCase(),
+                            value1: rate.fineness,
+                          })}
                           onClick={() => {
                             setForm({ rate });
                             setNotice('');
                           }}
                         >
-                          Revise
+                          {t('Revise')}
                         </button>
                       </Permission>
                     </td>
@@ -293,10 +304,11 @@ export function Rates() {
             <span className="empty-icon">
               <Icon name="diamond" size={30} />
             </span>
-            <h3>No rates recorded for this date</h3>
+            <h3>{t('No rates recorded for this date')}</h3>
             <p>
-              Set a quote for each metal and purity you trade. Previous dates
-              are available in history.
+              {t(
+                'Set a quote for each metal and purity you trade. Previous dates are available in history.',
+              )}
             </p>
             <Permission name="rates.write">
               <button
@@ -305,14 +317,15 @@ export function Rates() {
                 onClick={() => setForm({})}
               >
                 <Icon name="plus" size={17} />
-                Set first rate
+                {t('Set first rate')}
               </button>
             </Permission>
           </div>
         )}
         <div className="rate-book-footnote">
-          Quotes apply to their stated purity. Per-gram values are rounded
-          previews.
+          {t(
+            'Quotes apply to their stated purity. Per-gram values are rounded previews.',
+          )}
         </div>
       </section>
       <section
@@ -323,17 +336,18 @@ export function Rates() {
         <div className="stock-heading">
           <div>
             <h2 id="rate-history-title">
-              Rate history <span>{history?.total ?? '—'}</span>
+              {t('Rate history ')}
+              <span>{history?.total ?? '—'}</span>
             </h2>
-            <p>Original entries and every subsequent revision.</p>
+            <p>{t('Original entries and every subsequent revision.')}</p>
           </div>
           <Icon name="history" size={19} />
         </div>
         <div className="toolbar rate-toolbar history-toolbar">
           <label className="date-filter">
-            From (AD)
+            {t('From (AD)')}
             <input
-              aria-label="History start date"
+              aria-label={t('History start date')}
               type="date"
               min="2000-01-01"
               max={to || today}
@@ -345,9 +359,9 @@ export function Rates() {
             />
           </label>
           <label className="date-filter">
-            To (AD)
+            {t('To (AD)')}
             <input
-              aria-label="History end date"
+              aria-label={t('History end date')}
               type="date"
               min={from || '2000-01-01'}
               max={today}
@@ -367,19 +381,19 @@ export function Rates() {
                 setPage(1);
               }}
             >
-              Clear dates
+              {t('Clear dates')}
             </button>
           )}
         </div>
         {historyLoading ? (
           <div className="history-placeholder" role="status">
-            Loading rate history…
+            {t('Loading rate history…')}
           </div>
         ) : historyError ? (
           <div className="history-placeholder error" role="alert">
-            {historyError}{' '}
+            {message(historyError)}{' '}
             <button className="text-button" onClick={refresh}>
-              Try again
+              {t('Try again')}
             </button>
           </div>
         ) : history?.items.length ? (
@@ -387,10 +401,10 @@ export function Rates() {
             <table>
               <thead>
                 <tr>
-                  <th>Date / purity</th>
-                  <th className="numeric">Buying / tola</th>
-                  <th className="numeric">Selling / tola</th>
-                  <th>Revision / reason</th>
+                  <th>{t('Date / purity')}</th>
+                  <th className="numeric">{t('Buying / tola')}</th>
+                  <th className="numeric">{t('Selling / tola')}</th>
+                  <th>{t('Revision / reason')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -399,17 +413,26 @@ export function Rates() {
                     <td>
                       <strong className="history-date">{rate.rateDate}</strong>
                       <span className="rate-subline">
-                        {rate.metal === 'GOLD' ? 'Gold' : 'Silver'} ·{' '}
+                        {rate.metal === 'GOLD' ? t('Gold') : t('Silver')} ·{' '}
                         {rate.fineness}‰
                       </span>
                     </td>
-                    <td className="numeric">NPR {npr(rate.buyRatePerTola)}</td>
-                    <td className="numeric">NPR {npr(rate.sellRatePerTola)}</td>
+                    <td className="numeric">
+                      {t('NPR ')}
+                      {npr(rate.buyRatePerTola)}
+                    </td>
+                    <td className="numeric">
+                      {t('NPR ')}
+                      {npr(rate.sellRatePerTola)}
+                    </td>
                     <td className="history-reason">
-                      <strong>Revision {rate.revision}</strong>
-                      <span>{rate.reason || 'Initial rate'}</span>
+                      <strong>
+                        {t('Revision ')}
+                        {rate.revision}
+                      </strong>
+                      <span>{rate.reason || t('Initial rate')}</span>
                       <small>
-                        {rate.source} · {time(rate.createdAt)} NPT
+                        {rate.source} · {time(rate.createdAt)} {t(' NPT')}
                       </small>
                     </td>
                   </tr>
@@ -419,28 +442,34 @@ export function Rates() {
           </div>
         ) : (
           <div className="history-placeholder">
-            No rate history{' '}
-            {from || to || metal ? 'matches these filters' : 'yet'}. Saved
-            quotes will appear here.
+            {t('No rate history')}{' '}
+            {from || to || metal ? t('matches these filters') : t('yet')}
+            {t('. Saved quotes will appear here.')}
           </div>
         )}
         <div className="table-footer">
           <span>
             {history
-              ? `${history.total} recorded ${history.total === 1 ? 'entry' : 'entries'}`
-              : 'Rate history'}
+              ? t('{value0} recorded {value1}', {
+                  value0: history.total,
+                  value1: t(history.total === 1 ? 'entry' : 'entries'),
+                })
+              : t('Rate history')}
           </span>
           <div className="pagination">
             <button
-              aria-label="Previous history page"
+              aria-label={t('Previous history page')}
               disabled={page === 1 || historyLoading}
               onClick={() => setPage((value) => value - 1)}
             >
               ‹
             </button>
-            <span>Page {page}</span>
+            <span>
+              {t('Page ')}
+              {page}
+            </span>
             <button
-              aria-label="Next history page"
+              aria-label={t('Next history page')}
               disabled={
                 !history ||
                 page * history.pageSize >= history.total ||

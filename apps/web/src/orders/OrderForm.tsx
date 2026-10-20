@@ -1,3 +1,4 @@
+import { t, message, useLanguage } from '../i18n/language';
 import { useState, type FormEvent } from 'react';
 import {
   createOrderSchema,
@@ -26,6 +27,8 @@ const blankLine = () => ({
   plannedStonesNpr: '0',
 });
 export function OrderForm() {
+  useLanguage();
+
   const [requestId] = useState(() => globalThis.crypto.randomUUID());
   const [search, setSearch] = useState(''),
     term = useDebounced(search),
@@ -76,7 +79,7 @@ export function OrderForm() {
       setError(
         parsed.error.issues
           .map((issue) => `${issue.path.join('.')}: ${issue.message}`)
-          .join(' '),
+          .join('\n'),
       );
       return;
     }
@@ -97,34 +100,35 @@ export function OrderForm() {
   return (
     <AppShell section="Orders">
       <a className="back-link" href="#/orders">
-        ← Order book
+        {t('← Order book')}
       </a>
       <div className="page-heading">
         <div>
-          <p className="eyebrow">CUSTOM JEWELLERY BOOKING</p>
+          <p className="eyebrow">{t('CUSTOM JEWELLERY BOOKING')}</p>
           <h1>
-            Book an order<span>.</span>
+            {t('Book an order')}
+            <span>.</span>
           </h1>
           <p className="description">
-            Capture the design, agreed specifications and promised date.
+            {t('Capture the design, agreed specifications and promised date.')}
           </p>
         </div>
-        <span className="manual-badge">NEW ORDER</span>
+        <span className="manual-badge">{t('NEW ORDER')}</span>
       </div>
       <form onSubmit={(event) => void create(event)}>
         <fieldset disabled={busy} className="sale-builder-fields">
           <section className="stock-panel">
             <div className="stock-heading">
               <div>
-                <h2>Customer & delivery</h2>
-                <p>Search existing customers before booking.</p>
+                <h2>{t('Customer & delivery')}</h2>
+                <p>{t('Search existing customers before booking.')}</p>
               </div>
               <span className="register-label">01</span>
             </div>
             <div className="sale-form-content">
               <div className="form-grid order-dates">
                 <label>
-                  Order date (AD)
+                  {t('Order date (AD)')}
                   <input
                     required
                     type="date"
@@ -135,7 +139,7 @@ export function OrderForm() {
                   />
                 </label>
                 <label>
-                  Promised delivery date (AD)
+                  {t('Promised delivery date (AD)')}
                   <input
                     required
                     type="date"
@@ -151,8 +155,8 @@ export function OrderForm() {
                   <div>
                     <strong>{customer.name}</strong>
                     <small>
-                      {customer.customerCode} · {account.label}: NPR{' '}
-                      {account.amount}
+                      {customer.customerCode} · {t(account.label)}
+                      {t(': NPR')} {account.amount}
                     </small>
                   </div>
                   <button
@@ -160,7 +164,7 @@ export function OrderForm() {
                     type="button"
                     onClick={() => setCustomer(null)}
                   >
-                    Change customer
+                    {t('Change customer')}
                   </button>
                 </div>
               ) : (
@@ -168,8 +172,8 @@ export function OrderForm() {
                   <label className="search">
                     <Icon name="search" size={18} />
                     <input
-                      aria-label="Find order customer"
-                      placeholder="Search customer name, phone or code…"
+                      aria-label={t('Find order customer')}
+                      placeholder={t('Search customer name, phone or code…')}
                       maxLength={120}
                       value={search}
                       onChange={(event) => setSearch(event.target.value)}
@@ -177,10 +181,10 @@ export function OrderForm() {
                   </label>
                   <div className="sale-picker-list">
                     {customers.loading ? (
-                      <p className="muted">Loading customers…</p>
+                      <p className="muted">{t('Loading customers…')}</p>
                     ) : customers.error ? (
                       <p className="error" role="alert">
-                        {customers.error}
+                        {message(customers.error)}
                       </p>
                     ) : customers.data?.items.length ? (
                       customers.data.items.map((item) => (
@@ -193,7 +197,8 @@ export function OrderForm() {
                           <span>
                             <strong>{item.name}</strong>
                             <small>
-                              {item.customerCode} · {item.phone || 'No phone'}
+                              {item.customerCode} ·{' '}
+                              {item.phone || t('No phone')}
                             </small>
                           </span>
                           <Icon name="arrow" size={17} />
@@ -201,17 +206,18 @@ export function OrderForm() {
                       ))
                     ) : (
                       <p className="muted">
-                        No matching customer.{' '}
+                        {t('No matching customer.')}{' '}
                         <a href="#/customers">
-                          Add the customer in Customers first.
+                          {t('Add the customer in Customers first.')}
                         </a>
                       </p>
                     )}
                   </div>
                   {customers.data && customers.data.total > 20 && (
                     <p className="field-hint">
-                      Showing 20 matches. Refine your search to find another
-                      customer.
+                      {t(
+                        'Showing 20 matches. Refine your search to find another customer.',
+                      )}
                     </p>
                   )}
                 </>
@@ -221,10 +227,11 @@ export function OrderForm() {
           <section className="stock-panel">
             <div className="stock-heading">
               <div>
-                <h2>Designs & specifications</h2>
+                <h2>{t('Designs & specifications')}</h2>
                 <p>
-                  Expected net metal weight is per piece, excluding stones.
-                  Maximum 20 pieces per order.
+                  {t(
+                    'Expected net metal weight is per piece, excluding stones. Maximum 20 pieces per order.',
+                  )}
                 </p>
               </div>
               <span className="register-label">02</span>
@@ -233,11 +240,16 @@ export function OrderForm() {
               {lines.map((line, index) => (
                 <article className="order-spec-editor" key={line.key}>
                   <div className="sale-line-heading">
-                    <strong>Design {index + 1}</strong>
+                    <strong>
+                      {t('Design ')}
+                      {index + 1}
+                    </strong>
                     <button
                       type="button"
                       className="icon-button"
-                      aria-label={`Remove design ${index + 1}`}
+                      aria-label={t('Remove design {value0}', {
+                        value0: index + 1,
+                      })}
                       disabled={lines.length === 1}
                       onClick={() =>
                         setLines(lines.filter((item) => item.key !== line.key))
@@ -248,9 +260,11 @@ export function OrderForm() {
                   </div>
                   <div className="form-grid">
                     <label>
-                      Piece name
+                      {t('Piece name')}
                       <input
-                        aria-label={`Piece name ${index + 1}`}
+                        aria-label={t('Piece name {value0}', {
+                          value0: index + 1,
+                        })}
                         required
                         maxLength={120}
                         value={line.name}
@@ -260,11 +274,11 @@ export function OrderForm() {
                       />
                     </label>
                     <label>
-                      Size / measurement (optional)
+                      {t('Size / measurement (optional)')}
                       <input
-                        aria-label={`Size ${index + 1}`}
+                        aria-label={t('Size {value0}', { value0: index + 1 })}
                         maxLength={120}
-                        placeholder="e.g. ring size 16, chain 18 inches"
+                        placeholder={t('e.g. ring size 16, chain 18 inches')}
                         value={line.size}
                         onChange={(event) =>
                           changeLine(line.key, { size: event.target.value })
@@ -272,9 +286,9 @@ export function OrderForm() {
                       />
                     </label>
                     <label>
-                      Metal
+                      {t('Metal')}
                       <select
-                        aria-label={`Metal ${index + 1}`}
+                        aria-label={t('Metal {value0}', { value0: index + 1 })}
                         value={line.metal}
                         onChange={(event) =>
                           changeLine(line.key, {
@@ -284,14 +298,14 @@ export function OrderForm() {
                           })
                         }
                       >
-                        <option value="GOLD">Gold</option>
-                        <option value="SILVER">Silver</option>
+                        <option value="GOLD">{t('Gold')}</option>
+                        <option value="SILVER">{t('Silver')}</option>
                       </select>
                     </label>
                     <label>
-                      Purity (‰)
+                      {t('Purity (‰)')}
                       <input
-                        aria-label={`Purity ${index + 1}`}
+                        aria-label={t('Purity {value0}', { value0: index + 1 })}
                         required
                         inputMode="decimal"
                         value={line.fineness}
@@ -301,9 +315,11 @@ export function OrderForm() {
                       />
                     </label>
                     <label>
-                      Quantity
+                      {t('Quantity')}
                       <input
-                        aria-label={`Quantity ${index + 1}`}
+                        aria-label={t('Quantity {value0}', {
+                          value0: index + 1,
+                        })}
                         type="number"
                         min="1"
                         max="20"
@@ -318,9 +334,11 @@ export function OrderForm() {
                       />
                     </label>
                     <label>
-                      Expected net weight / piece (g)
+                      {t('Expected net weight / piece (g)')}
                       <input
-                        aria-label={`Expected net weight ${index + 1}`}
+                        aria-label={t('Expected net weight {value0}', {
+                          value0: index + 1,
+                        })}
                         required
                         inputMode="decimal"
                         value={line.expectedNetWeightGrams}
@@ -332,9 +350,11 @@ export function OrderForm() {
                       />
                     </label>
                     <label>
-                      Planned billed wastage / piece (g)
+                      {t('Planned billed wastage / piece (g)')}
                       <input
-                        aria-label={`Planned wastage ${index + 1}`}
+                        aria-label={t('Planned wastage {value0}', {
+                          value0: index + 1,
+                        })}
                         inputMode="decimal"
                         required
                         value={line.plannedWastageGrams}
@@ -346,9 +366,11 @@ export function OrderForm() {
                       />
                     </label>
                     <label>
-                      Planned making / piece (NPR)
+                      {t('Planned making / piece (NPR)')}
                       <input
-                        aria-label={`Planned making ${index + 1}`}
+                        aria-label={t('Planned making {value0}', {
+                          value0: index + 1,
+                        })}
                         inputMode="decimal"
                         required
                         value={line.plannedMakingNpr}
@@ -360,9 +382,11 @@ export function OrderForm() {
                       />
                     </label>
                     <label>
-                      Planned stones / piece (NPR)
+                      {t('Planned stones / piece (NPR)')}
                       <input
-                        aria-label={`Planned stones ${index + 1}`}
+                        aria-label={t('Planned stones {value0}', {
+                          value0: index + 1,
+                        })}
                         inputMode="decimal"
                         required
                         value={line.plannedStonesNpr}
@@ -374,13 +398,17 @@ export function OrderForm() {
                       />
                     </label>
                     <label className="full-width">
-                      Design details / reference
+                      {t('Design details / reference')}
                       <textarea
-                        aria-label={`Design details ${index + 1}`}
+                        aria-label={t('Design details {value0}', {
+                          value0: index + 1,
+                        })}
                         required
                         rows={2}
                         maxLength={500}
-                        placeholder="Pattern, finish, stone setting or a design reference…"
+                        placeholder={t(
+                          'Pattern, finish, stone setting or a design reference…',
+                        )}
                         value={line.design}
                         onChange={(event) =>
                           changeLine(line.key, { design: event.target.value })
@@ -397,24 +425,25 @@ export function OrderForm() {
                 onClick={() => setLines([...lines, blankLine()])}
               >
                 <Icon name="plus" size={16} />
-                Add another design
+                {t('Add another design')}
               </button>
             </div>
           </section>
           <section className="stock-panel">
             <div className="stock-heading">
               <div>
-                <h2>Estimate & advance</h2>
+                <h2>{t('Estimate & advance')}</h2>
                 <p>
-                  The estimate is a guide. Actual weights and prices are settled
-                  at delivery.
+                  {t(
+                    'The estimate is a guide. Actual weights and prices are settled at delivery.',
+                  )}
                 </p>
               </div>
               <span className="register-label">03</span>
             </div>
             <div className="sale-form-content form-grid">
               <label>
-                Estimated total (NPR, optional)
+                {t('Estimated total (NPR, optional)')}
                 <input
                   inputMode="decimal"
                   value={estimate}
@@ -422,7 +451,7 @@ export function OrderForm() {
                 />
               </label>
               <label>
-                Advance received now (NPR)
+                {t('Advance received now (NPR)')}
                 <input
                   required
                   inputMode="decimal"
@@ -431,19 +460,19 @@ export function OrderForm() {
                 />
               </label>
               <label>
-                Payment method
+                {t('Payment method')}
                 <select
                   disabled={Number(deposit) <= 0}
                   value={method}
                   onChange={(event) => setMethod(event.target.value)}
                 >
-                  <option value="CASH">Cash</option>
-                  <option value="BANK">Bank</option>
-                  <option value="DIGITAL_WALLET">Digital wallet</option>
+                  <option value="CASH">{t('Cash')}</option>
+                  <option value="BANK">{t('Bank')}</option>
+                  <option value="DIGITAL_WALLET">{t('Digital wallet')}</option>
                 </select>
               </label>
               <label>
-                Payment reference (optional)
+                {t('Payment reference (optional)')}
                 <input
                   maxLength={160}
                   value={reference}
@@ -451,7 +480,7 @@ export function OrderForm() {
                 />
               </label>
               <label className="full-width">
-                Order notes (optional)
+                {t('Order notes (optional)')}
                 <textarea
                   maxLength={1000}
                   rows={2}
@@ -463,22 +492,21 @@ export function OrderForm() {
           </section>
         </fieldset>
         <p className="account-scope-note">
-          The advance credits the customer’s overall account and may reduce
-          earlier dues. Booking does not charge the estimate or change stock.
-          Customer-supplied metal must be recorded in a separate metal-custody
-          workflow.
+          {t(
+            'The advance credits the customer’s overall account and may reduce earlier dues. Booking does not charge the estimate or change stock. Customer-supplied metal must be recorded in a separate metal-custody workflow.',
+          )}
         </p>
         {error && (
           <p className="error" role="alert">
-            {error}
+            {message(error)}
           </p>
         )}
         <div className="sale-page-actions">
           <a href="#/orders" className="button secondary">
-            Back to order book
+            {t('Back to order book')}
           </a>
           <button className="button primary" disabled={busy || !customer}>
-            {busy ? 'Booking…' : 'Book order'}
+            {busy ? t('Booking…') : t('Book order')}
             <Icon name="arrow" size={18} />
           </button>
         </div>

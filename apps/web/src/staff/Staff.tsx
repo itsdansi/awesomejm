@@ -1,3 +1,4 @@
+import { locale, t, message, useLanguage } from '../i18n/language';
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import {
   staffListSchema,
@@ -60,9 +61,11 @@ const resources: Record<string, string> = {
 };
 const time = (value: string | null) =>
   value
-    ? new Date(value).toLocaleString('en-NP', { timeZone: 'Asia/Kathmandu' })
-    : 'Not verified';
+    ? new Date(value).toLocaleString(locale(), { timeZone: 'Asia/Kathmandu' })
+    : t('Not verified');
 export function Staff() {
+  useLanguage();
+
   const { user } = useAuth();
   const [staff, setStaff] = useState<StaffUser[]>([]),
     [audit, setAudit] = useState<AuditList | null>(null),
@@ -116,42 +119,43 @@ export function Staff() {
     <AppShell section="Staff & recovery">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">ACCESS & CONTINUITY</p>
-          <h1>People you trust.</h1>
+          <p className="eyebrow">{t('ACCESS & CONTINUITY')}</p>
+          <h1>{t('People you trust.')}</h1>
           <p>
-            Individual staff accounts, a clear audit trail and verified
-            recovery.
+            {t(
+              'Individual staff accounts, a clear audit trail and verified recovery.',
+            )}
           </p>
         </div>
         <button className="button primary" onClick={() => setEdit('new')}>
-          Add staff member
+          {t('Add staff member')}
         </button>
       </div>
       {error && (
         <p role="alert" className="error-banner">
-          {error}
+          {message(error)}
         </p>
       )}
       {notice && (
         <p role="status" className="success-banner">
-          {notice}
+          {message(notice)}
         </p>
       )}
       <section className="panel">
         <div className="panel-heading">
-          <h2>Staff access</h2>
+          <h2>{t('Staff access')}</h2>
           <button className="text-button" onClick={() => void load()}>
-            Refresh
+            {t('Refresh')}
           </button>
         </div>
         <div className="table-scroll">
           <table>
             <thead>
               <tr>
-                <th>Staff member</th>
-                <th>Role</th>
-                <th>Access</th>
-                <th>Actions</th>
+                <th>{t('Staff member')}</th>
+                <th>{t('Role')}</th>
+                <th>{t('Access')}</th>
+                <th>{t('Actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -161,15 +165,15 @@ export function Staff() {
                     <strong>{member.name}</strong>
                     <small className="cell-subtitle">
                       {member.username}
-                      {member.id === user.id ? ' · You' : ''}
+                      {member.id === user.id ? t(' · You') : ''}
                     </small>
                   </td>
-                  <td>{member.role}</td>
+                  <td>{t(member.role)}</td>
                   <td>
-                    {member.active ? 'Active' : 'Disabled'}
+                    {member.active ? t('Active') : t('Disabled')}
                     {member.mustChangePassword && (
                       <small className="cell-subtitle">
-                        Personal password required
+                        {t('Personal password required')}
                       </small>
                     )}
                   </td>
@@ -179,20 +183,20 @@ export function Staff() {
                         className="text-button"
                         onClick={() => setEdit(member)}
                       >
-                        Edit access
+                        {t('Edit access')}
                       </button>
                       <button
                         className="text-button"
                         onClick={() => setReset(member)}
                       >
-                        Reset password
+                        {t('Reset password')}
                       </button>
                       <button
                         className="text-button"
                         disabled={busy || member.id === user.id}
                         onClick={() => void revoke(member)}
                       >
-                        Sign out devices
+                        {t('Sign out devices')}
                       </button>
                     </div>
                   </td>
@@ -202,34 +206,32 @@ export function Staff() {
           </table>
         </div>
         <p className="section-note">
-          Owner: all access and staff administration. Manager: all shop
-          operations and corrections. Cashier: customers, sales, orders and
-          incoming payments. Viewer: read-only. All roles can view shop records
-          and reports. Opening balances, refunds and corrections require Manager
-          or Owner.
+          {t(
+            'Owner: all access and staff administration. Manager: all shop operations and corrections. Cashier: customers, sales, orders and incoming payments. Viewer: read-only. All roles can view shop records and reports. Opening balances, refunds and corrections require Manager or Owner.',
+          )}
         </p>
       </section>
       <section className="panel recovery-panel">
         <div className="panel-heading">
           <div>
-            <p className="eyebrow">RECOVERY CHECKPOINT</p>
-            <h2>Backups that have been restored.</h2>
+            <p className="eyebrow">{t('RECOVERY CHECKPOINT')}</p>
+            <h2>{t('Backups that have been restored.')}</h2>
           </div>
         </div>
         <p>
-          Encrypted backups are created by the server operator. Verification
-          restores the archive into a separate database and compares every table
-          against the backup snapshot.
+          {t(
+            'Encrypted backups are created by the server operator. Verification restores the archive into a separate database and compares every table against the backup snapshot.',
+          )}
         </p>
         {recovery?.backups.length ? (
           <div className="table-scroll">
             <table>
               <thead>
                 <tr>
-                  <th>Archive</th>
-                  <th>Created · Nepal time</th>
-                  <th>Restore verified</th>
-                  <th>Tables checked</th>
+                  <th>{t('Archive')}</th>
+                  <th>{t('Created · Nepal time')}</th>
+                  <th>{t('Restore verified')}</th>
+                  <th>{t('Tables checked')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -238,8 +240,8 @@ export function Staff() {
                     <td>
                       {b.fileName}
                       <small className="cell-subtitle">
-                        {(Number(b.sizeBytes) / 1024).toFixed(1)} KB · SHA256{' '}
-                        {b.sha256.slice(0, 12)}…
+                        {(Number(b.sizeBytes) / 1024).toFixed(1)}{' '}
+                        {t(' KB · SHA256')} {b.sha256.slice(0, 12)}…
                       </small>
                     </td>
                     <td>{time(b.createdAt)}</td>
@@ -252,32 +254,33 @@ export function Staff() {
           </div>
         ) : (
           <div className="empty-state">
-            <h3>No backup has been recorded yet</h3>
+            <h3>{t('No backup has been recorded yet')}</h3>
             <p>
-              Ask your server administrator to configure the backup key, daily
-              backups and regular restore verification before rollout.
+              {t(
+                'Ask your server administrator to configure the backup key, daily backups and regular restore verification before rollout.',
+              )}
             </p>
           </div>
         )}
         <p className="section-note">
-          Keep an encrypted copy off the application server and the recovery key
-          in a separate secure location. A local archive alone does not protect
-          against losing the server.
+          {t(
+            'Keep an encrypted copy off the application server and the recovery key in a separate secure location. A local archive alone does not protect against losing the server.',
+          )}
         </p>
       </section>
       <section className="panel">
         <div className="panel-heading">
-          <h2>Audit trail</h2>
-          <span>Latest changes · Nepal time</span>
+          <h2>{t('Audit trail')}</h2>
+          <span>{t('Latest changes · Nepal time')}</span>
         </div>
         <div className="table-scroll">
           <table>
             <thead>
               <tr>
-                <th>When</th>
-                <th>Staff member</th>
-                <th>Action</th>
-                <th>Record</th>
+                <th>{t('When')}</th>
+                <th>{t('Staff member')}</th>
+                <th>{t('Action')}</th>
+                <th>{t('Record')}</th>
               </tr>
             </thead>
             <tbody>
@@ -285,14 +288,14 @@ export function Staff() {
                 <tr key={event.id}>
                   <td>{time(event.occurredAt)}</td>
                   <td>
-                    {event.actorName ?? 'Server operator / legacy import'}
+                    {event.actorName ?? t('Server operator / legacy import')}
                     <small className="cell-subtitle">
                       {event.actorUsername}
                     </small>
                   </td>
-                  <td>{actions[event.action] ?? event.action}</td>
+                  <td>{t(actions[event.action] ?? event.action)}</td>
                   <td>
-                    {resources[event.resource] ?? event.resource}
+                    {t(resources[event.resource] ?? event.resource)}
                     <small className="cell-subtitle">
                       {event.recordId ?? '—'}
                     </small>
@@ -308,17 +311,18 @@ export function Staff() {
             disabled={page === 1}
             onClick={() => setPage((p) => p - 1)}
           >
-            Previous
+            {t('Previous')}
           </button>
           <span>
-            Page {page} · {audit?.total ?? 0} events
+            {t('Page ')}
+            {page} · {audit?.total ?? 0} {t(' events')}
           </span>
           <button
             className="button secondary"
             disabled={!audit || page * 50 >= audit.total}
             onClick={() => setPage((p) => p + 1)}
           >
-            Next
+            {t('Next')}
           </button>
         </div>
       </section>
@@ -358,6 +362,8 @@ function StaffForm({
   onClose: () => void;
   onSaved: () => void;
 }) {
+  useLanguage();
+
   const existing = member === 'new' ? null : member;
   const [name, setName] = useState(existing?.name ?? ''),
     [username, setUsername] = useState(existing?.username ?? ''),
@@ -372,7 +378,7 @@ function StaffForm({
       ? updateStaffSchema.safeParse({ name, role, active })
       : createStaffSchema.safeParse({ name, username, role, password });
     if (!parsed.success) {
-      setError(parsed.error.issues.map((i) => i.message).join(' '));
+      setError(parsed.error.issues.map((i) => i.message).join('\n'));
       return;
     }
     setBusy(true);
@@ -396,19 +402,19 @@ function StaffForm({
   }
   return (
     <Dialog
-      title={existing ? 'Edit staff access' : 'Add staff member'}
-      eyebrow="Staff administration"
+      title={existing ? t('Edit staff access') : t('Add staff member')}
+      eyebrow={t('Staff administration')}
       onClose={onClose}
       busy={busy}
     >
       <form className="access-form" onSubmit={(e) => void submit(e)}>
         {error && (
           <p role="alert" className="error-banner">
-            {error}
+            {message(error)}
           </p>
         )}
         <label>
-          Name
+          {t('Name')}
           <input
             required
             maxLength={120}
@@ -417,7 +423,7 @@ function StaffForm({
           />
         </label>
         <label>
-          Username
+          {t('Username')}
           <input
             required
             disabled={!!existing}
@@ -427,17 +433,19 @@ function StaffForm({
           />
         </label>
         <label>
-          Role
+          {t('Role')}
           <select
             value={role}
             onChange={(e) => setRole(e.target.value as StaffRole)}
           >
             {roles.map((r) => (
-              <option key={r}>{r}</option>
+              <option value={r} key={r}>
+                {t(r)}
+              </option>
             ))}
           </select>
         </label>
-        <p className="section-note">{roleDescriptions[role]}</p>
+        <p className="section-note">{t(roleDescriptions[role])}</p>
         {existing ? (
           <label className="checkbox-label">
             <input
@@ -445,11 +453,11 @@ function StaffForm({
               checked={active}
               onChange={(e) => setActive(e.target.checked)}
             />
-            Allow sign-in
+            {t('Allow sign-in')}
           </label>
         ) : (
           <label>
-            Temporary password
+            {t('Temporary password')}
             <input
               required
               type="password"
@@ -460,8 +468,9 @@ function StaffForm({
               onChange={(e) => setPassword(e.target.value)}
             />
             <small>
-              Share securely with this staff member. They must replace it at
-              first sign-in.
+              {t(
+                'Share securely with this staff member. They must replace it at first sign-in.',
+              )}
             </small>
           </label>
         )}
@@ -472,10 +481,10 @@ function StaffForm({
             onClick={onClose}
             disabled={busy}
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button className="button primary" disabled={busy}>
-            {busy ? 'Saving…' : 'Save staff access'}
+            {busy ? t('Saving…') : t('Save staff access')}
           </button>
         </div>
       </form>
@@ -491,6 +500,8 @@ function ResetForm({
   onClose: () => void;
   onSaved: () => void;
 }) {
+  useLanguage();
+
   const [password, setPassword] = useState(''),
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false);
@@ -498,7 +509,7 @@ function ResetForm({
     e.preventDefault();
     const parsed = resetPasswordSchema.safeParse({ password });
     if (!parsed.success) {
-      setError(parsed.error.issues.map((i) => i.message).join(' '));
+      setError(parsed.error.issues.map((i) => i.message).join('\n'));
       return;
     }
     setBusy(true);
@@ -522,23 +533,24 @@ function ResetForm({
   }
   return (
     <Dialog
-      title={`Reset password · ${member.name}`}
+      title={t('Reset password · {value0}', { value0: member.name })}
       onClose={onClose}
       busy={busy}
-      eyebrow="Staff recovery"
+      eyebrow={t('Staff recovery')}
     >
       <form className="access-form" onSubmit={(e) => void submit(e)}>
         {error && (
           <p role="alert" className="error-banner">
-            {error}
+            {message(error)}
           </p>
         )}
         <p>
-          This signs the staff member out everywhere. They must change this
-          temporary password at next sign-in.
+          {t(
+            'This signs the staff member out everywhere. They must change this temporary password at next sign-in.',
+          )}
         </p>
         <label>
-          Temporary password
+          {t('Temporary password')}
           <input
             type="password"
             required
@@ -550,7 +562,7 @@ function ResetForm({
           />
         </label>
         <button className="button primary" disabled={busy}>
-          {busy ? 'Resetting…' : 'Reset password'}
+          {busy ? t('Resetting…') : t('Reset password')}
         </button>
       </form>
     </Dialog>

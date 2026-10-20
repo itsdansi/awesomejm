@@ -1,3 +1,4 @@
+import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useState } from 'react';
 import { purchasesListSchema } from '@awesomejm/contracts';
@@ -21,6 +22,8 @@ export function Purchases({
   return <PurchaseRegister />;
 }
 function PurchaseRegister() {
+  useLanguage();
+
   const [search, setSearch] = useState(''),
     term = useDebounced(search),
     [status, setStatus] = useState('ALL'),
@@ -35,52 +38,56 @@ function PurchaseRegister() {
     <AppShell section="Purchases">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">OLD METAL, CLEARLY ACCOUNTED FOR</p>
+          <p className="eyebrow">{t('OLD METAL, CLEARLY ACCOUNTED FOR')}</p>
           <h1>
-            Purchases & exchanges<span>.</span>
+            {t('Purchases & exchanges')}
+            <span>.</span>
           </h1>
           <p className="description">
-            Weigh incoming gold and silver, retain its valuation and settle with
-            the customer.
+            {t(
+              'Weigh incoming gold and silver, retain its valuation and settle with the customer.',
+            )}
           </p>
         </div>
         <Permission name="purchases.write">
           <a href="#/purchases/new" className="button primary">
             <Icon name="plus" size={18} />
-            Buy / exchange metal
+            {t('Buy / exchange metal')}
           </a>
         </Permission>
       </div>
       <p className="account-scope-note">
-        Old metal is kept in separate lots. Exchange sales, account credit and
-        any payout are posted together. Refining and melting are separate future
-        workflows.
+        {t(
+          'Old metal is kept in separate lots. Exchange sales, account credit and any payout are posted together. Refining and melting are separate future workflows.',
+        )}
       </p>
       <section className="stock-panel" aria-busy={data.loading}>
         <div className="stock-heading">
           <div>
             <h2>
-              Purchase register <span>{data.data?.total ?? '—'}</span>
+              {t('Purchase register ')}
+              <span>{data.data?.total ?? '—'}</span>
             </h2>
             <p>
-              Search purchase code, customer or reference. Corrections remain
-              visible.
+              {t(
+                'Search purchase code, customer or reference. Corrections remain visible.',
+              )}
             </p>
           </div>
           <button
             className="text-button"
             onClick={() => setRevision((v) => v + 1)}
           >
-            Refresh
+            {t('Refresh')}
           </button>
         </div>
         <div className="toolbar">
           <label className="search">
             <Icon name="search" size={18} />
             <input
-              aria-label="Search purchases"
+              aria-label={t('Search purchases')}
               maxLength={120}
-              placeholder="Search purchases or customers…"
+              placeholder={t('Search purchases or customers…')}
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -89,36 +96,36 @@ function PurchaseRegister() {
             />
           </label>
           <label className="filter-label">
-            <span className="sr-only">Purchase status</span>
+            <span className="sr-only">{t('Purchase status')}</span>
             <select
-              aria-label="Purchase status"
+              aria-label={t('Purchase status')}
               value={status}
               onChange={(e) => {
                 setStatus(e.target.value);
                 setPage(1);
               }}
             >
-              <option value="ALL">All records</option>
-              <option value="POSTED">Posted</option>
-              <option value="CANCELLED">Cancelled</option>
+              <option value="ALL">{t('All records')}</option>
+              <option value="POSTED">{t('Posted')}</option>
+              <option value="CANCELLED">{t('Cancelled')}</option>
             </select>
           </label>
         </div>
         {data.loading ? (
           <div className="empty-state" role="status">
-            Loading purchases…
+            {t('Loading purchases…')}
           </div>
         ) : data.error ? (
           <div className="empty-state">
-            <h3>Purchases couldn’t load</h3>
+            <h3>{t('Purchases couldn’t load')}</h3>
             <p className="error" role="alert">
-              {data.error}
+              {message(data.error)}
             </p>
             <button
               className="button secondary"
               onClick={() => setRevision((v) => v + 1)}
             >
-              Try again
+              {t('Try again')}
             </button>
           </div>
         ) : data.data?.items.length ? (
@@ -126,13 +133,13 @@ function PurchaseRegister() {
             <table>
               <thead>
                 <tr>
-                  <th>Purchase / date (AD)</th>
-                  <th>Customer</th>
-                  <th>Type / status</th>
-                  <th className="numeric">Old-metal value (NPR)</th>
-                  <th className="numeric">Paid out (NPR)</th>
+                  <th>{t('Purchase / date (AD)')}</th>
+                  <th>{t('Customer')}</th>
+                  <th>{t('Type / status')}</th>
+                  <th className="numeric">{t('Old-metal value (NPR)')}</th>
+                  <th className="numeric">{t('Paid out (NPR)')}</th>
                   <th>
-                    <span className="sr-only">Details</span>
+                    <span className="sr-only">{t('Details')}</span>
                   </th>
                 </tr>
               </thead>
@@ -156,10 +163,10 @@ function PurchaseRegister() {
                         className={`status ${p.status === 'CANCELLED' ? 'voided' : ''}`}
                       >
                         {p.status === 'CANCELLED'
-                          ? 'Cancelled'
+                          ? t('Cancelled')
                           : p.saleId
-                            ? 'Exchange'
-                            : 'Purchase'}
+                            ? t('Exchange')
+                            : t('Purchase')}
                       </span>
                     </td>
                     <td className="numeric">
@@ -170,7 +177,9 @@ function PurchaseRegister() {
                       <a
                         className="icon-button"
                         href={`#/purchases/${p.id}`}
-                        aria-label={`Open ${p.purchaseCode}`}
+                        aria-label={t('Open {value0}', {
+                          value0: p.purchaseCode,
+                        })}
                       >
                         <Icon name="arrow" size={18} />
                       </a>
@@ -187,32 +196,39 @@ function PurchaseRegister() {
             </span>
             <h3>
               {term || status !== 'ALL'
-                ? 'No matching purchases'
-                : 'Record the metal coming in'}
+                ? t('No matching purchases')
+                : t('Record the metal coming in')}
             </h3>
             <p>
-              Buy old gold or silver, or exchange it for available jewellery.
+              {t(
+                'Buy old gold or silver, or exchange it for available jewellery.',
+              )}
             </p>
             <Permission name="purchases.write">
               <a className="button secondary" href="#/purchases/new">
-                Buy / exchange metal
+                {t('Buy / exchange metal')}
               </a>
             </Permission>
           </div>
         )}
         <div className="table-footer">
-          <span>{data.data?.total ?? '—'} purchase records</span>
+          <span>
+            {data.data?.total ?? '—'} {t(' purchase records')}
+          </span>
           <div className="pagination">
             <button
-              aria-label="Previous purchase page"
+              aria-label={t('Previous purchase page')}
               disabled={page === 1 || data.loading}
               onClick={() => setPage((v) => v - 1)}
             >
               ‹
             </button>
-            <span>Page {page}</span>
+            <span>
+              {t('Page ')}
+              {page}
+            </span>
             <button
-              aria-label="Next purchase page"
+              aria-label={t('Next purchase page')}
               disabled={
                 !data.data ||
                 page * data.data.pageSize >= data.data.total ||

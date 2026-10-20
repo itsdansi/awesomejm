@@ -1,3 +1,4 @@
+import { locale, t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useEffect, useState, type FormEvent } from 'react';
 import { gramsToTola } from '@awesomejm/calculations';
@@ -20,6 +21,8 @@ export function ItemDetails({
   onClose: () => void;
   onSaved: () => void;
 }) {
+  useLanguage();
+
   const [history, setHistory] = useState<InventoryHistory | null>(null);
   const [reason, setReason] = useState('');
   const [correcting, setCorrecting] = useState(false);
@@ -62,54 +65,61 @@ export function ItemDetails({
       <div className="detail-meta">
         <code>{item.itemCode}</code>
         <span className={`metal-badge ${item.metal.toLowerCase()}`}>
-          {item.metal === 'GOLD' ? 'Gold' : 'Silver'}
+          {item.metal === 'GOLD' ? t('Gold') : t('Silver')}
         </span>
         <span className="muted">
           {item.status === 'AVAILABLE'
-            ? 'Available'
+            ? t('Available')
             : item.status === 'SOLD'
-              ? 'Sold'
-              : 'Voided receipt'}
+              ? t('Sold')
+              : t('Voided receipt')}
         </span>
       </div>
       <dl className="details-grid">
         <div>
-          <dt>Category</dt>
+          <dt>{t('Category')}</dt>
           <dd>{item.category}</dd>
         </div>
         <div>
-          <dt>Purity</dt>
+          <dt>{t('Purity')}</dt>
           <dd>{item.fineness}‰</dd>
         </div>
         <div>
-          <dt>Gross weight</dt>
-          <dd>{item.grossWeightGrams} g</dd>
-        </div>
-        <div>
-          <dt>Stone / other weight</dt>
-          <dd>{item.nonMetalWeightGrams} g</dd>
-        </div>
-        <div>
-          <dt>Net metal weight</dt>
+          <dt>{t('Gross weight')}</dt>
           <dd>
-            {item.netWeightGrams} g{' '}
+            {item.grossWeightGrams} {t(' g')}
+          </dd>
+        </div>
+        <div>
+          <dt>{t('Stone / other weight')}</dt>
+          <dd>
+            {item.nonMetalWeightGrams} {t(' g')}
+          </dd>
+        </div>
+        <div>
+          <dt>{t('Net metal weight')}</dt>
+          <dd>
+            {item.netWeightGrams} {t(' g')}{' '}
             <small>
-              ({gramsToTola(item.netWeightGrams, item.gramsPerTola)} tola)
+              ({gramsToTola(item.netWeightGrams, item.gramsPerTola)}{' '}
+              {t(' tola)')}
             </small>
           </dd>
         </div>
         <div>
-          <dt>Fine-metal equivalent</dt>
-          <dd>{item.fineWeightGrams} g</dd>
+          <dt>{t('Fine-metal equivalent')}</dt>
+          <dd>
+            {item.fineWeightGrams} {t(' g')}
+          </dd>
         </div>
       </dl>
       {item.notes && <p className="item-notes">{item.notes}</p>}
       <h3 className="history-title">
-        <Icon name="history" size={18} /> Stock history
+        <Icon name="history" size={18} /> {t(' Stock history')}
       </h3>
       {!history && !error && (
         <p className="muted" role="status">
-          Loading history…
+          {t('Loading history…')}
         </p>
       )}
       <ol className="history-list">
@@ -117,28 +127,30 @@ export function ItemDetails({
           <li key={entry.id}>
             <div>
               <strong>
-                {
+                {t(
                   {
                     RECEIPT: 'Piece received',
                     RECEIPT_VOID: 'Receipt voided',
                     SALE: 'Piece sold',
                     SALE_CANCEL: 'Sale cancelled',
-                  }[entry.kind]
-                }
+                  }[entry.kind],
+                )}
               </strong>
-              <span>{entry.netWeightGrams} g</span>
+              <span>
+                {entry.netWeightGrams} {t(' g')}
+              </span>
             </div>
             <p>{entry.reason}</p>
             {entry.saleId && (
               <a className="text-button" href={`#/sales/${entry.saleId}`}>
-                View sale →
+                {t('View sale →')}
               </a>
             )}
             <time dateTime={entry.createdAt}>
-              {new Date(entry.createdAt).toLocaleString('en-NP', {
+              {new Date(entry.createdAt).toLocaleString(locale(), {
                 timeZone: 'Asia/Kathmandu',
               })}{' '}
-              · Nepal time
+              {t('· Nepal time')}
             </time>
           </li>
         ))}
@@ -150,11 +162,12 @@ export function ItemDetails({
             onSubmit={(event) => void voidReceipt(event)}
           >
             <p>
-              Use this only to correct a mistaken receipt. The piece leaves
-              available stock and its history is retained.
+              {t(
+                'Use this only to correct a mistaken receipt. The piece leaves available stock and its history is retained.',
+              )}
             </p>
             <label>
-              Reason for correction
+              {t('Reason for correction')}
               <textarea
                 required
                 minLength={5}
@@ -171,29 +184,29 @@ export function ItemDetails({
                 onClick={() => setCorrecting(false)}
                 disabled={busy}
               >
-                Keep receipt
+                {t('Keep receipt')}
               </button>
               <button className="button danger" disabled={busy}>
-                {busy ? 'Saving…' : 'Confirm void receipt'}
+                {busy ? t('Saving…') : t('Confirm void receipt')}
               </button>
             </div>
           </form>
         ) : (
           <div className="detail-footer">
-            <span className="muted">Entered something incorrectly?</span>
+            <span className="muted">{t('Entered something incorrectly?')}</span>
             <Permission name="records.correct">
               <button
                 className="text-button danger-text"
                 onClick={() => setCorrecting(true)}
               >
-                Void this receipt
+                {t('Void this receipt')}
               </button>
             </Permission>
           </div>
         ))}
       {error && (
         <p className="error" role="alert">
-          {error}
+          {message(error)}
         </p>
       )}
     </Dialog>

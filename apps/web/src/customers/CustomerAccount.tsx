@@ -1,3 +1,4 @@
+import { locale, t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useEffect, useState } from 'react';
 import {
@@ -18,6 +19,8 @@ import { EntryDetails } from './EntryDetails';
 import { balance, entryTitle, methodTitle, money } from './format';
 
 export function CustomerAccount({ customerId }: { customerId: string }) {
+  useLanguage();
+
   const [result, setResult] = useState<{
     key: string;
     data: { detail: CustomerDetail; statement: CustomerStatement } | null;
@@ -80,21 +83,25 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
   return (
     <AppShell section="Customers">
       <a className="back-link" href="#/customers">
-        ← Customer register
+        {t('← Customer register')}
       </a>
       <div className="page-heading">
         <div>
           <p className="eyebrow">
-            CUSTOMER ACCOUNT / {customer?.customerCode ?? '—'}
+            {t('CUSTOMER ACCOUNT / ')}
+            {customer?.customerCode ?? '—'}
           </p>
           <h1>
-            {customer?.name ?? 'Customer account'}
+            {customer?.name ?? t('Customer account')}
             <span>.</span>
           </h1>
           <p className="description">
             {customer
-              ? `Opened ${customer.openedOn} AD · Customer details and account statement`
-              : 'Loading customer details…'}
+              ? t(
+                  'Opened {value0} AD · Customer details and account statement',
+                  { value0: customer.openedOn },
+                )
+              : t('Loading customer details…')}
           </p>
         </div>
         <div className="account-actions">
@@ -104,7 +111,7 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
               disabled={!customer || loading}
               onClick={() => setEditing(true)}
             >
-              Edit profile
+              {t('Edit profile')}
             </button>
           </Permission>
           <Permission name="customers.write">
@@ -114,17 +121,17 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
               onClick={() => setPayment('PAYMENT')}
             >
               <Icon name="plus" size={17} />
-              Record payment
+              {t('Record payment')}
             </button>
           </Permission>
         </div>
       </div>
       {notice && (
         <div className="success" role="status">
-          {notice}
+          {message(notice)}
           <button
             className="icon-button"
-            aria-label="Dismiss message"
+            aria-label={t('Dismiss message')}
             onClick={() => setNotice('')}
           >
             <Icon name="close" size={16} />
@@ -133,48 +140,54 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
       )}
       {error ? (
         <div className="stock-panel empty-state">
-          <h3>Customer account couldn’t load</h3>
+          <h3>{t('Customer account couldn’t load')}</h3>
           <p className="error" role="alert">
-            {error}
+            {message(error)}
           </p>
           <button
             className="button secondary"
             onClick={() => setRevision((value) => value + 1)}
           >
-            Try again
+            {t('Try again')}
           </button>
         </div>
       ) : customer && account && data ? (
         <>
           <section
             className="customer-overview"
-            aria-label="Customer account overview"
+            aria-label={t('Customer account overview')}
           >
             <article className="customer-contact">
               <div className="customer-avatar">
                 <Icon name="users" size={25} />
               </div>
               <div>
-                <p>{customer.phone || 'Phone not provided'}</p>
-                <p>{customer.address || 'Address not provided'}</p>
-                <small>PAN: {customer.pan || '—'}</small>
+                <p>{customer.phone || t('Phone not provided')}</p>
+                <p>{customer.address || t('Address not provided')}</p>
+                <small>
+                  {t('PAN: ')}
+                  {customer.pan || '—'}
+                </small>
                 {customer.notes && (
                   <p className="customer-notes">{customer.notes}</p>
                 )}
               </div>
             </article>
             <article className={`account-total ${account.className}`}>
-              <span>Current balance · {account.label}</span>
+              <span>
+                {t('Current balance · ')}
+                {t(account.label)}
+              </span>
               <strong>
-                <small>NPR </small>
+                <small>{t('NPR ')}</small>
                 {account.amount}
               </strong>
               <p>
                 {account.className === 'due'
-                  ? 'Amount the customer owes the shop.'
+                  ? t('Amount the customer owes the shop.')
                   : account.className === 'advance'
-                    ? 'Customer funds held by the shop.'
-                    : 'No outstanding dues or advance.'}
+                    ? t('Customer funds held by the shop.')
+                    : t('No outstanding dues or advance.')}
               </p>
               <Permission name="records.correct">
                 <button
@@ -182,7 +195,7 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
                   disabled={account.className !== 'advance' || loading}
                   onClick={() => setPayment('ADVANCE_REFUND')}
                 >
-                  Record advance refund →
+                  {t('Record advance refund →')}
                 </button>
               </Permission>
             </article>
@@ -195,25 +208,27 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
             <div className="stock-heading">
               <div>
                 <h2 id="statement-title">
-                  Account statement <span>{data.statement.total}</span>
+                  {t('Account statement ')}
+                  <span>{data.statement.total}</span>
                 </h2>
                 <p>
-                  Positive balance = customer owes · Negative balance = advance
-                  held
+                  {t(
+                    'Positive balance = customer owes · Negative balance = advance held',
+                  )}
                 </p>
               </div>
               <button
                 className="text-button"
                 onClick={() => setRevision((value) => value + 1)}
               >
-                Refresh
+                {t('Refresh')}
               </button>
             </div>
             <div className="toolbar rate-toolbar history-toolbar">
               <label className="date-filter">
-                From (AD)
+                {t('From (AD)')}
                 <input
-                  aria-label="Statement start date"
+                  aria-label={t('Statement start date')}
                   type="date"
                   min="2000-01-01"
                   max={to || nepalToday()}
@@ -225,9 +240,9 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
                 />
               </label>
               <label className="date-filter">
-                To (AD)
+                {t('To (AD)')}
                 <input
-                  aria-label="Statement end date"
+                  aria-label={t('Statement end date')}
                   type="date"
                   min={from || '2000-01-01'}
                   max={nepalToday()}
@@ -247,40 +262,42 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
                     setPage(1);
                   }}
                 >
-                  Clear dates
+                  {t('Clear dates')}
                 </button>
               )}
             </div>
             <div className="statement-balances">
               <span>
-                Period opening{' '}
+                {t('Period opening')}{' '}
                 <strong>
-                  NPR {loading ? '—' : money(data.statement.openingBalanceNpr)}
+                  {t('NPR ')}
+                  {loading ? '—' : money(data.statement.openingBalanceNpr)}
                 </strong>
               </span>
               <span>
-                Period closing{' '}
+                {t('Period closing')}{' '}
                 <strong>
-                  NPR {loading ? '—' : money(data.statement.closingBalanceNpr)}
+                  {t('NPR ')}
+                  {loading ? '—' : money(data.statement.closingBalanceNpr)}
                 </strong>
               </span>
             </div>
             {loading ? (
               <div className="history-placeholder" role="status">
-                Loading statement…
+                {t('Loading statement…')}
               </div>
             ) : data.statement.items.length ? (
               <div className="table-scroll">
                 <table>
                   <thead>
                     <tr>
-                      <th>Date / entry</th>
-                      <th>Particulars</th>
-                      <th className="numeric">Debit (NPR)</th>
-                      <th className="numeric">Credit (NPR)</th>
-                      <th className="numeric">Balance after entry</th>
+                      <th>{t('Date / entry')}</th>
+                      <th>{t('Particulars')}</th>
+                      <th className="numeric">{t('Debit (NPR)')}</th>
+                      <th className="numeric">{t('Credit (NPR)')}</th>
+                      <th className="numeric">{t('Balance after entry')}</th>
                       <th>
-                        <span className="sr-only">Details</span>
+                        <span className="sr-only">{t('Details')}</span>
                       </th>
                     </tr>
                   </thead>
@@ -296,14 +313,16 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
                             <code>{item.entryCode}</code>
                           </td>
                           <td>
-                            <span>{entryTitle[item.kind]}</span>
+                            <span>{t(entryTitle[item.kind])}</span>
                             {item.reversed && (
-                              <small className="reversed-badge">Reversed</small>
+                              <small className="reversed-badge">
+                                {t('Reversed')}
+                              </small>
                             )}
                             <small className="rate-subline">
                               {item.method
-                                ? methodTitle[item.method]
-                                : item.reference || 'Account balance'}
+                                ? t(methodTitle[item.method])
+                                : item.reference || t('Account balance')}
                             </small>
                           </td>
                           <td className="numeric">
@@ -318,7 +337,9 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
                           <td>
                             <button
                               className="icon-button"
-                              aria-label={`View ${item.entryCode}`}
+                              aria-label={t('View {value0}', {
+                                value0: item.entryCode,
+                              })}
                               onClick={() => setEntry(item)}
                             >
                               <Icon name="arrow" size={18} />
@@ -337,29 +358,38 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
                 </span>
                 <h3>
                   {from || to
-                    ? 'No entries in this period'
-                    : 'No account entries yet'}
+                    ? t('No entries in this period')
+                    : t('No account entries yet')}
                 </h3>
                 <p>
                   {from || to
-                    ? 'Choose another date range to view this customer’s entries.'
-                    : 'Record a received payment to begin this account’s history.'}
+                    ? t(
+                        'Choose another date range to view this customer’s entries.',
+                      )
+                    : t(
+                        'Record a received payment to begin this account’s history.',
+                      )}
                 </p>
               </div>
             )}
             <div className="table-footer">
-              <span>{data.statement.total} entries · Newest first</span>
+              <span>
+                {data.statement.total} {t(' entries · Newest first')}
+              </span>
               <div className="pagination">
                 <button
-                  aria-label="Previous statement page"
+                  aria-label={t('Previous statement page')}
                   disabled={page === 1 || loading}
                   onClick={() => setPage((value) => value - 1)}
                 >
                   ‹
                 </button>
-                <span>Page {page}</span>
+                <span>
+                  {t('Page ')}
+                  {page}
+                </span>
                 <button
-                  aria-label="Next statement page"
+                  aria-label={t('Next statement page')}
                   disabled={
                     page * data.statement.pageSize >= data.statement.total ||
                     loading
@@ -372,23 +402,25 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
             </div>
           </section>
           <details className="profile-history">
-            <summary>Profile history · Latest 20 changes</summary>
+            <summary>{t('Profile history · Latest 20 changes')}</summary>
             <ol>
               {data.detail.profileHistory.map((change) => (
                 <li key={change.version}>
                   <strong>
-                    Version {change.version} · {change.name}
+                    {t('Version ')}
+                    {change.version} · {change.name}
                   </strong>
                   <p>{change.reason}</p>
                   <small>
-                    {change.phone || 'No phone'} ·{' '}
-                    {change.address || 'No address'} · PAN {change.pan || '—'}
+                    {change.phone || t('No phone')} ·{' '}
+                    {change.address || t('No address')} {t(' · PAN ')}
+                    {change.pan || '—'}
                   </small>
                   <time dateTime={change.changedAt}>
-                    {new Date(change.changedAt).toLocaleString('en-NP', {
+                    {new Date(change.changedAt).toLocaleString(locale(), {
                       timeZone: 'Asia/Kathmandu',
                     })}{' '}
-                    NPT
+                    {t('NPT')}
                   </time>
                 </li>
               ))}
@@ -398,7 +430,7 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
       ) : (
         <div className="empty-state" role="status">
           <span className="loading-dot" />
-          <p>Loading the customer account…</p>
+          <p>{t('Loading the customer account…')}</p>
         </div>
       )}
       {editing && customer && (

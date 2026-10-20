@@ -1,3 +1,4 @@
+import { t, useLanguage } from '../i18n/language';
 import type { PurchasePreview, SaleDetail } from '@awesomejm/contracts';
 import { balance, money } from '../customers/format';
 export function PurchaseFigures({
@@ -19,6 +20,8 @@ export function PurchaseFigures({
   balanceBeforeNpr: string;
   balanceAfterNpr: string;
 }) {
+  useLanguage();
+
   const closing = balance(balanceAfterNpr),
     opening = balance(balanceBeforeNpr);
   return (
@@ -27,11 +30,11 @@ export function PurchaseFigures({
         <table className="purchase-lines">
           <thead>
             <tr>
-              <th>Incoming lot / assay</th>
-              <th className="numeric">Physical net</th>
-              <th className="numeric">Buying quote</th>
-              <th className="numeric">Agreed deductions</th>
-              <th className="numeric">Credit (NPR)</th>
+              <th>{t('Incoming lot / assay')}</th>
+              <th className="numeric">{t('Physical net')}</th>
+              <th className="numeric">{t('Buying quote')}</th>
+              <th className="numeric">{t('Agreed deductions')}</th>
+              <th className="numeric">{t('Credit (NPR)')}</th>
             </tr>
           </thead>
           <tbody>
@@ -40,40 +43,46 @@ export function PurchaseFigures({
                 <td>
                   <strong className="sale-piece-name">{line.name}</strong>
                   <code>
-                    {line.metal === 'GOLD' ? 'Gold' : 'Silver'} ·{' '}
+                    {line.metal === 'GOLD' ? t('Gold') : t('Silver')} ·{' '}
                     {line.fineness}‰
                   </code>
                   <small className="rate-subline">{line.assayNotes}</small>
                   <small className="rate-subline">
-                    Gross {line.grossWeightGrams} g · stone/other{' '}
-                    {line.nonMetalWeightGrams} g
+                    {t('Gross ')}
+                    {line.grossWeightGrams} {t(' g · stone/other')}{' '}
+                    {line.nonMetalWeightGrams} {t(' g')}
                   </small>
                 </td>
                 <td className="numeric">
-                  {line.netWeightGrams} g
+                  {line.netWeightGrams} {t(' g')}
                   <small className="rate-subline">
-                    Fine equivalent {line.fineWeightGrams} g
+                    {t('Fine equivalent ')}
+                    {line.fineWeightGrams} {t(' g')}
                   </small>
                   <small className="rate-subline">
-                    Payable {line.payableWeightGrams} g
+                    {t('Payable ')}
+                    {line.payableWeightGrams} {t(' g')}
                   </small>
                 </td>
                 <td className="numeric">
                   {money(line.rate.buyRatePerTola)}
                   <small className="rate-subline">
-                    NPR/tola · {line.rate.gramsPerTola} g/tola
+                    {t('NPR/tola · ')}
+                    {line.rate.gramsPerTola} {t(' g/tola')}
                   </small>
                   <small className="rate-subline">
-                    Metal value {money(line.metalNpr)}
+                    {t('Metal value ')}
+                    {money(line.metalNpr)}
                   </small>
                 </td>
                 <td className="numeric">
-                  {line.deductedWeightGrams} g
+                  {line.deductedWeightGrams} {t(' g')}
                   <small className="rate-subline">
-                    NPR {money(line.deductionNpr)}
+                    {t('NPR ')}
+                    {money(line.deductionNpr)}
                   </small>
                   <small className="rate-subline">
-                    {line.deductionReason || 'No deductions'}
+                    {line.deductionReason || t('No deductions')}
                   </small>
                 </td>
                 <td className="numeric">
@@ -88,19 +97,19 @@ export function PurchaseFigures({
         <>
           <div className="stock-heading">
             <div>
-              <h2>Outgoing jewellery</h2>
-              <p>The new pieces supplied in this exchange.</p>
+              <h2>{t('Outgoing jewellery')}</h2>
+              <p>{t('The new pieces supplied in this exchange.')}</p>
             </div>
           </div>
           <div className="table-scroll">
             <table>
               <thead>
                 <tr>
-                  <th>Piece</th>
-                  <th className="numeric">Net grams</th>
-                  <th className="numeric">Metal / wastage</th>
-                  <th className="numeric">Making / stones</th>
-                  <th className="numeric">Line value (NPR)</th>
+                  <th>{t('Piece')}</th>
+                  <th className="numeric">{t('Net grams')}</th>
+                  <th className="numeric">{t('Metal / wastage')}</th>
+                  <th className="numeric">{t('Making / stones')}</th>
+                  <th className="numeric">{t('Line value (NPR)')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -116,13 +125,15 @@ export function PurchaseFigures({
                     <td className="numeric">
                       {money(line.metalNpr)}
                       <small className="rate-subline">
-                        Wastage {money(line.wastageNpr)}
+                        {t('Wastage ')}
+                        {money(line.wastageNpr)}
                       </small>
                     </td>
                     <td className="numeric">
                       {money(line.makingNpr)}
                       <small className="rate-subline">
-                        Stones {money(line.stonesNpr)}
+                        {t('Stones ')}
+                        {money(line.stonesNpr)}
                       </small>
                     </td>
                     <td className="numeric">
@@ -137,37 +148,47 @@ export function PurchaseFigures({
       )}
       <div className="sale-settlement">
         <div className="sale-account-note">
-          <p className="eyebrow">ACCOUNT AFTER COMPLETE SETTLEMENT</p>
-          <strong className={closing.className}>NPR {closing.amount}</strong>
-          <p>{closing.label}. Includes earlier customer transactions.</p>
+          <p className="eyebrow">{t('ACCOUNT AFTER COMPLETE SETTLEMENT')}</p>
+          <strong className={closing.className}>
+            {t('NPR ')}
+            {closing.amount}
+          </strong>
+          <p>
+            {t(closing.label)}
+            {t('. Includes earlier customer transactions.')}
+          </p>
           <small>
-            Full physical net metal is received into old-metal lots. Deductions
-            affect valuation, not the metal held.
+            {t(
+              'Full physical net metal is received into old-metal lots. Deductions affect valuation, not the metal held.',
+            )}
           </small>
         </div>
         <dl className="sale-totals">
           <div>
-            <dt>Earlier balance · {opening.label}</dt>
+            <dt>
+              {t('Earlier balance · ')}
+              {t(opening.label)}
+            </dt>
             <dd>{opening.amount}</dd>
           </div>
           <div>
-            <dt>Old-metal credit</dt>
+            <dt>{t('Old-metal credit')}</dt>
             <dd>− {money(totalNpr)}</dd>
           </div>
           <div>
-            <dt>New jewellery total</dt>
+            <dt>{t('New jewellery total')}</dt>
             <dd>{money(saleTotalNpr)}</dd>
           </div>
           <div>
-            <dt>Received now</dt>
+            <dt>{t('Received now')}</dt>
             <dd>− {money(receivedNpr)}</dd>
           </div>
           <div>
-            <dt>Paid out now</dt>
+            <dt>{t('Paid out now')}</dt>
             <dd>{money(payoutNpr)}</dd>
           </div>
           <div className="sale-grand-total">
-            <dt>Balance (signed NPR)</dt>
+            <dt>{t('Balance (signed NPR)')}</dt>
             <dd>{money(balanceAfterNpr)}</dd>
           </div>
         </dl>

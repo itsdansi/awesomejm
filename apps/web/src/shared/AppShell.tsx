@@ -1,3 +1,5 @@
+import { LanguageSwitch } from '../i18n/LanguageSwitch';
+import { t, useLanguage } from '../i18n/language';
 import { useAuth } from '../auth/AuthContext';
 import type { ReactNode } from 'react';
 import { Icon } from './ui';
@@ -19,28 +21,37 @@ export function AppShell({
     | 'Staff & recovery';
   children: ReactNode;
 }) {
+  useLanguage();
+
   const { user, can, logout } = useAuth();
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <a className="brand" href="#/dashboard" aria-label="AwesomeJM home">
+        <a
+          className="brand"
+          href="#/dashboard"
+          aria-label={t('AwesomeJM home')}
+        >
           <span className="brand-mark">
             <Icon name="diamond" size={23} />
           </span>
           <span>
-            awesome<span className="brand-light">jm</span>
-            <small>JEWELLERY MANAGER</small>
+            {t('awesome')}
+            <span className="brand-light">{t('jm')}</span>
+            <small>{t('JEWELLERY MANAGER')}</small>
           </span>
         </a>
         <div className="shop-switch">
-          <span className="shop-avatar">S</span>
+          <span className="shop-avatar">{t('S')}</span>
           <div>
             <strong>{user.shopName}</strong>
-            <small>{user.role.toLowerCase()} access</small>
+            <small>
+              {t(user.role)} {t(' access')}
+            </small>
           </div>
         </div>
-        <p className="nav-label">WORKSPACE</p>
-        <nav aria-label="Main navigation">
+        <p className="nav-label">{t('WORKSPACE')}</p>
+        <nav aria-label={t('Main navigation')}>
           {(
             [
               {
@@ -85,7 +96,7 @@ export function AppShell({
               aria-current={section === item.name ? 'page' : undefined}
             >
               <Icon name={item.icon} />
-              {item.name}
+              {t(item.name)}
               <span>{item.index}</span>
             </a>
           ))}
@@ -95,29 +106,33 @@ export function AppShell({
               href="#/staff"
             >
               <Icon name="users" />
-              Staff & recovery<span>08</span>
+              {t('Staff & recovery')}
+              <span>08</span>
             </a>
           )}
         </nav>
         <div className="sidebar-bottom">
           <span className="tiny-diamond">◇</span>
           <p>
-            Made for your everyday craft.<small>सुनचाँदी व्यवसायको लागि</small>
+            {t('Made for your everyday craft.')}
+            <small>{t('For gold and silver businesses')}</small>
           </p>
         </div>
       </aside>
       <div className="main-shell">
         <header className="topbar">
           <span>
-            Workspace <span className="breadcrumb-separator">/</span>
-            <strong>{section}</strong>
+            {t('Workspace ')}
+            <span className="breadcrumb-separator">/</span>
+            <strong>{t(section)}</strong>
           </span>
           <div className="staff-topbar">
+            <LanguageSwitch />
             <a className="text-button" href="#/account">
-              {user.name} · {user.role.toLowerCase()}
+              {user.name} · {t(user.role)}
             </a>
             <button className="text-button" onClick={() => void logout()}>
-              Sign out
+              {t('Sign out')}
             </button>
           </div>
         </header>
@@ -125,10 +140,11 @@ export function AppShell({
           {children}
           <footer>
             <span>
-              AWESOMEJM <span className="footer-dot">·</span> Care in every
-              detail.
+              {t('AWESOMEJM ')}
+              <span className="footer-dot">·</span>{' '}
+              {t(' Care in every detail.')}
             </span>
-            <span>NPR · Nepal time (NPT)</span>
+            <span>{t('NPR · Nepal time (NPT)')}</span>
           </footer>
         </main>
       </div>

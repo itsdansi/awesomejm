@@ -1,7 +1,10 @@
+import { t, message, useLanguage } from '../i18n/language';
 import { useState, type FormEvent } from 'react';
 import { changePasswordSchema } from '@awesomejm/contracts';
 import { errorMessage, request } from '../shared/api';
 export function PasswordForm({ onChanged }: { onChanged: () => void }) {
+  useLanguage();
+
   const [currentPassword, setCurrent] = useState(''),
     [password, setPassword] = useState(''),
     [confirmation, setConfirmation] = useState(''),
@@ -14,7 +17,7 @@ export function PasswordForm({ onChanged }: { onChanged: () => void }) {
       password,
     });
     if (!parsed.success) {
-      setError(parsed.error.issues.map((i) => i.message).join(' '));
+      setError(parsed.error.issues.map((i) => i.message).join('\n'));
       return;
     }
     if (password !== confirmation) {
@@ -47,11 +50,11 @@ export function PasswordForm({ onChanged }: { onChanged: () => void }) {
     <form className="access-form" onSubmit={(e) => void submit(e)}>
       {error && (
         <p className="error-banner" role="alert">
-          {error}
+          {message(error)}
         </p>
       )}
       <label>
-        Current password
+        {t('Current password')}
         <input
           type="password"
           autoComplete="current-password"
@@ -62,7 +65,7 @@ export function PasswordForm({ onChanged }: { onChanged: () => void }) {
         />
       </label>
       <label>
-        New password
+        {t('New password')}
         <input
           type="password"
           autoComplete="new-password"
@@ -73,11 +76,11 @@ export function PasswordForm({ onChanged }: { onChanged: () => void }) {
           onChange={(e) => setPassword(e.target.value)}
         />
         <small>
-          Use 15–128 characters. A long, unique passphrase works well.
+          {t('Use 15–128 characters. A long, unique passphrase works well.')}
         </small>
       </label>
       <label>
-        Confirm new password
+        {t('Confirm new password')}
         <input
           type="password"
           autoComplete="new-password"
@@ -86,9 +89,9 @@ export function PasswordForm({ onChanged }: { onChanged: () => void }) {
           onChange={(e) => setConfirmation(e.target.value)}
         />
       </label>
-      <p>Changing your password signs you out on every device.</p>
+      <p>{t('Changing your password signs you out on every device.')}</p>
       <button className="button primary" disabled={busy}>
-        {busy ? 'Updating…' : 'Change password and sign out'}
+        {busy ? t('Updating…') : t('Change password and sign out')}
       </button>
     </form>
   );

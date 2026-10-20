@@ -1,3 +1,4 @@
+import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import {
@@ -20,6 +21,8 @@ export function CustomerForm({
   onClose: () => void;
   onSaved: (customer: Customer) => void;
 }) {
+  useLanguage();
+
   const [requestId] = useState(() => globalThis.crypto.randomUUID());
   const [fields, setFields] = useState({
     name: customer?.name ?? '',
@@ -47,7 +50,7 @@ export function CustomerForm({
     event.preventDefault();
     const profile = customerProfileSchema.safeParse(fields);
     if (!profile.success) {
-      setError(profile.error.issues.map((issue) => issue.message).join(' '));
+      setError(profile.error.issues.map((issue) => issue.message).join('\n'));
       return;
     }
     const parsed = customer
@@ -65,7 +68,7 @@ export function CustomerForm({
           openingReference: fields.openingReference,
         });
     if (!parsed.success) {
-      setError(parsed.error.issues.map((issue) => issue.message).join(' '));
+      setError(parsed.error.issues.map((issue) => issue.message).join('\n'));
       return;
     }
     setBusy(true);
@@ -88,71 +91,76 @@ export function CustomerForm({
   }
   return (
     <Dialog
-      title={customer ? 'Edit customer' : 'Add a customer'}
-      eyebrow="Customer accounts"
+      title={customer ? t('Edit customer') : t('Add a customer')}
+      eyebrow={t('Customer accounts')}
       busy={busy}
       onClose={onClose}
     >
       <p className="dialog-description">
         {customer
-          ? 'Changes are recorded in profile history. Earlier account entries keep their original customer details.'
-          : 'Create a customer record and bring forward an existing balance if needed. Search by phone or PAN first to avoid duplicate records.'}
+          ? t(
+              'Changes are recorded in profile history. Earlier account entries keep their original customer details.',
+            )
+          : t(
+              'Create a customer record and bring forward an existing balance if needed. Search by phone or PAN first to avoid duplicate records.',
+            )}
       </p>
       <form onSubmit={(event) => void submit(event)}>
         <fieldset className="form-grid" disabled={busy}>
           <label className="full-width">
-            Customer name
+            {t('Customer name')}
             <input
               autoComplete="name"
               required
               maxLength={120}
-              placeholder="नाम / Customer name"
+              placeholder={t('नाम / Customer name')}
               {...field('name')}
             />
           </label>
           <label>
-            Phone (optional)
+            {t('Phone (optional)')}
             <input
               type="tel"
               autoComplete="tel"
               maxLength={30}
-              placeholder="98XXXXXXXX or +977…"
+              placeholder={t('98XXXXXXXX or +977…')}
               {...field('phone')}
             />
           </label>
           <label>
-            PAN (optional)
+            {t('PAN (optional)')}
             <input
               inputMode="numeric"
               maxLength={9}
-              placeholder="9 digits"
+              placeholder={t('9 digits')}
               {...field('pan')}
             />
           </label>
           <label className="full-width">
-            Address (optional)
+            {t('Address (optional)')}
             <input
               autoComplete="street-address"
               maxLength={300}
-              placeholder="City, ward or address"
+              placeholder={t('City, ward or address')}
               {...field('address')}
             />
           </label>
           <label className="full-width">
-            Notes (optional)
+            {t('Notes (optional)')}
             <textarea rows={2} maxLength={1000} {...field('notes')} />
           </label>
           {!customer && (
             <>
               <div className="form-section full-width">
-                <h3>Opening account balance</h3>
+                <h3>{t('Opening account balance')}</h3>
                 <p>
-                  Use the balance from the shop’s existing records. This is
-                  recorded once when the account is created.
+                  {t(
+                    'Use the balance from the shop’s existing records. This is recorded once when the account is created.',
+                  )}
                 </p>
               </div>
               <label>
-                Opening date (AD)
+                {t('Opening date (AD)')}
                 <input
                   type="date"
                   required
@@ -162,7 +170,7 @@ export function CustomerForm({
                 />
               </label>
               <label>
-                Balance type
+                {t('Balance type')}
                 <select
                   {...field('openingType')}
                   onChange={(event) =>
@@ -176,19 +184,21 @@ export function CustomerForm({
                     })
                   }
                 >
-                  <option value="NONE">Settled · No balance</option>
+                  <option value="NONE">{t('Settled · No balance')}</option>
                   <Permission name="records.correct">
-                    <option value="DUE">Customer owes the shop</option>
+                    <option value="DUE">{t('Customer owes the shop')}</option>
                   </Permission>
                   <Permission name="records.correct">
-                    <option value="ADVANCE">Shop holds an advance</option>
+                    <option value="ADVANCE">
+                      {t('Shop holds an advance')}
+                    </option>
                   </Permission>
                 </select>
               </label>
               {fields.openingType !== 'NONE' && (
                 <>
                   <label>
-                    Opening amount (NPR)
+                    {t('Opening amount (NPR)')}
                     <input
                       required
                       inputMode="decimal"
@@ -197,12 +207,12 @@ export function CustomerForm({
                     />
                   </label>
                   <label>
-                    Opening balance source
+                    {t('Opening balance source')}
                     <input
                       required
                       minLength={5}
                       maxLength={160}
-                      placeholder="e.g. Paper ledger balance"
+                      placeholder={t('e.g. Paper ledger balance')}
                       {...field('openingReference')}
                     />
                   </label>
@@ -212,7 +222,7 @@ export function CustomerForm({
           )}
           {customer && (
             <label className="full-width">
-              Reason for profile change
+              {t('Reason for profile change')}
               <textarea
                 required
                 minLength={5}
@@ -225,7 +235,7 @@ export function CustomerForm({
         </fieldset>
         {error && (
           <p className="error" role="alert">
-            {error}
+            {message(error)}
           </p>
         )}
         <div className="dialog-actions">
@@ -235,10 +245,14 @@ export function CustomerForm({
             disabled={busy}
             onClick={onClose}
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button className="button primary" disabled={busy}>
-            {busy ? 'Saving…' : customer ? 'Save profile' : 'Create customer'}
+            {busy
+              ? t('Saving…')
+              : customer
+                ? t('Save profile')
+                : t('Create customer')}
             <Icon name="arrow" size={18} />
           </button>
         </div>

@@ -1,3 +1,4 @@
+import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { AppShell } from '../shared/AppShell';
 import { useEffect, useState } from 'react';
@@ -15,6 +16,8 @@ import { ItemDetails } from './ItemDetails';
 import { Icon } from './ui';
 
 export function Inventory() {
+  useLanguage();
+
   const [result, setResult] = useState<{
     key: string;
     data: { list: InventoryList; summary: InventorySummary } | null;
@@ -94,12 +97,13 @@ export function Inventory() {
     <AppShell section="Inventory">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">YOUR STOCK, AT A GLANCE</p>
+          <p className="eyebrow">{t('YOUR STOCK, AT A GLANCE')}</p>
           <h1>
-            Jewellery inventory<span>.</span>
+            {t('Jewellery inventory')}
+            <span>.</span>
           </h1>
           <p className="description">
-            Every piece accounted for. Every gram in its place.
+            {t('Every piece accounted for. Every gram in its place.')}
           </p>
         </div>
         <Permission name="inventory.write">
@@ -111,23 +115,26 @@ export function Inventory() {
             }}
           >
             <Icon name="plus" size={18} />
-            Receive a piece
+            {t('Receive a piece')}
           </button>
         </Permission>
       </div>
-      <section className="summary-cards" aria-label="Available stock totals">
+      <section
+        className="summary-cards"
+        aria-label={t('Available stock totals')}
+      >
         <article className="summary-card">
           <div className="summary-top">
-            <span>Total available</span>
+            <span>{t('Total available')}</span>
             <span className="summary-icon neutral">
               <Icon name="box" />
             </span>
           </div>
           <strong>
             {data ? totalPieces : '—'}
-            <small>pieces</small>
+            <small>{t('pieces')}</small>
           </strong>
-          <p>Ready-made jewellery in stock</p>
+          <p>{t('Ready-made jewellery in stock')}</p>
         </article>
         {(['GOLD', 'SILVER'] as const).map((kind) => {
           const row = data?.summary.metals.find((row) => row.metal === kind);
@@ -137,34 +144,36 @@ export function Inventory() {
               key={kind}
             >
               <div className="summary-top">
-                <span>{kind === 'GOLD' ? 'Gold · सुन' : 'Silver · चाँदी'}</span>
+                <span>
+                  {kind === 'GOLD' ? t('Gold · सुन') : t('Silver · चाँदी')}
+                </span>
                 <span className={`summary-icon ${kind.toLowerCase()}`}>
                   <Icon name="diamond" />
                 </span>
               </div>
               <strong>
                 {data ? (row?.netWeightGrams ?? '0.000') : '—'}
-                <small>g</small>
+                <small>{t('g')}</small>
               </strong>
               <p>
-                {data ? (row?.pieces ?? 0) : '—'} pieces <span>·</span> Net
-                metal weight
+                {data ? (row?.pieces ?? 0) : '—'} {t(' pieces ')}
+                <span>·</span> {t(' Net metal weight')}
               </p>
             </article>
           );
         })}
       </section>
       <div className="weight-note">
-        <span>WEIGHT CONVENTION</span>1 tola = 11.664 g{' '}
-        <span className="note-divider">/</span> Stones and other materials
-        excluded from net weight.
+        <span>{t('WEIGHT CONVENTION')}</span>
+        {t('1 tola = 11.664 g')} <span className="note-divider">/</span>{' '}
+        {t(' Stones and other materials excluded from net weight.')}
       </div>
       {notice && (
         <div className="success" role="status">
-          {notice}
+          {message(notice)}
           <button
             className="icon-button"
-            aria-label="Dismiss message"
+            aria-label={t('Dismiss message')}
             onClick={() => setNotice('')}
           >
             <Icon name="close" size={16} />
@@ -179,25 +188,26 @@ export function Inventory() {
         <div className="stock-heading">
           <div>
             <h2 id="stock-title">
-              Stock register <span>{data?.list.total ?? '—'}</span>
+              {t('Stock register ')}
+              <span>{data?.list.total ?? '—'}</span>
             </h2>
-            <p>Individual pieces, with a permanent receipt history.</p>
+            <p>{t('Individual pieces, with a permanent receipt history.')}</p>
           </div>
-          <span className="register-label">INVENTORY / 01</span>
+          <span className="register-label">{t('INVENTORY / 01')}</span>
         </div>
         <div className="toolbar">
           <label className="search">
             <Icon name="search" size={18} />
             <input
-              aria-label="Search inventory"
-              placeholder="Search code, name or category…"
+              aria-label={t('Search inventory')}
+              placeholder={t('Search code, name or category…')}
               maxLength={120}
               value={search}
               onChange={(event) => setSearch(event.target.value)}
             />
           </label>
           <label className="filter-label">
-            <span className="sr-only">Filter by metal</span>
+            <span className="sr-only">{t('Filter by metal')}</span>
             <select
               value={metal}
               onChange={(event) => {
@@ -205,13 +215,13 @@ export function Inventory() {
                 setPage(1);
               }}
             >
-              <option value="">All metals</option>
-              <option value="GOLD">Gold</option>
-              <option value="SILVER">Silver</option>
+              <option value="">{t('All metals')}</option>
+              <option value="GOLD">{t('Gold')}</option>
+              <option value="SILVER">{t('Silver')}</option>
             </select>
           </label>
           <label className="filter-label">
-            <span className="sr-only">Receipt status</span>
+            <span className="sr-only">{t('Receipt status')}</span>
             <select
               value={status}
               onChange={(event) => {
@@ -219,9 +229,9 @@ export function Inventory() {
                 setPage(1);
               }}
             >
-              <option value="AVAILABLE">Available stock</option>
-              <option value="SOLD">Sold pieces</option>
-              <option value="VOIDED">Voided receipts</option>
+              <option value="AVAILABLE">{t('Available stock')}</option>
+              <option value="SOLD">{t('Sold pieces')}</option>
+              <option value="VOIDED">{t('Voided receipts')}</option>
             </select>
           </label>
         </div>
@@ -230,34 +240,34 @@ export function Inventory() {
             <span className="empty-icon">
               <Icon name="box" size={30} />
             </span>
-            <h3>Inventory couldn’t load</h3>
+            <h3>{t('Inventory couldn’t load')}</h3>
             <p className="error" role="alert">
-              {error}
+              {message(error)}
             </p>
             <button
               className="button secondary"
               onClick={() => setRevision((value) => value + 1)}
             >
-              Try again
+              {t('Try again')}
             </button>
           </div>
         ) : loading ? (
           <div className="empty-state" role="status">
             <span className="loading-dot" />
-            <p>Loading your stock register…</p>
+            <p>{t('Loading your stock register…')}</p>
           </div>
         ) : data?.list.items.length ? (
           <div className="table-scroll">
             <table>
               <thead>
                 <tr>
-                  <th>Piece / item code</th>
-                  <th>Metal & purity</th>
-                  <th>Category</th>
-                  <th className="numeric">Net weight</th>
-                  <th className="numeric">Tola</th>
+                  <th>{t('Piece / item code')}</th>
+                  <th>{t('Metal & purity')}</th>
+                  <th>{t('Category')}</th>
+                  <th className="numeric">{t('Net weight')}</th>
+                  <th className="numeric">{t('Tola')}</th>
                   <th>
-                    <span className="sr-only">Details</span>
+                    <span className="sr-only">{t('Details')}</span>
                   </th>
                 </tr>
               </thead>
@@ -277,14 +287,14 @@ export function Inventory() {
                       <span
                         className={`metal-badge ${item.metal.toLowerCase()}`}
                       >
-                        {item.metal === 'GOLD' ? 'Gold' : 'Silver'}
+                        {item.metal === 'GOLD' ? t('Gold') : t('Silver')}
                       </span>
                       <span className="purity">{item.fineness}‰</span>
                     </td>
                     <td className="muted">{item.category}</td>
                     <td className="numeric weight-cell">
                       {item.netWeightGrams}
-                      <small> g</small>
+                      <small> {t(' g')}</small>
                     </td>
                     <td className="numeric muted">
                       {gramsToTola(item.netWeightGrams, item.gramsPerTola)}
@@ -292,7 +302,9 @@ export function Inventory() {
                     <td>
                       <button
                         className="icon-button"
-                        aria-label={`View ${item.itemCode}`}
+                        aria-label={t('View {value0}', {
+                          value0: item.itemCode,
+                        })}
                         onClick={() => setSelected(item)}
                       >
                         <Icon name="arrow" size={18} />
@@ -310,13 +322,15 @@ export function Inventory() {
             </span>
             <h3>
               {searchTerm || metal || status !== 'AVAILABLE'
-                ? 'No matching pieces'
-                : 'Your stock register starts here'}
+                ? t('No matching pieces')
+                : t('Your stock register starts here')}
             </h3>
             <p>
               {searchTerm || metal || status !== 'AVAILABLE'
-                ? 'Try another search or change your filters.'
-                : 'Receive your first gold or silver piece to start tracking your inventory.'}
+                ? t('Try another search or change your filters.')
+                : t(
+                    'Receive your first gold or silver piece to start tracking your inventory.',
+                  )}
             </p>
             {!searchTerm && !metal && status === 'AVAILABLE' && (
               <Permission name="inventory.write">
@@ -325,7 +339,7 @@ export function Inventory() {
                   onClick={() => setReceiving(true)}
                 >
                   <Icon name="plus" size={17} />
-                  Receive first piece
+                  {t('Receive first piece')}
                 </button>
               </Permission>
             )}
@@ -334,20 +348,32 @@ export function Inventory() {
         <div className="table-footer">
           <span>
             {data && !loading
-              ? `${data.list.total} ${data.list.total === 1 ? 'piece' : 'pieces'} · ${status === 'AVAILABLE' ? 'Available stock' : status === 'SOLD' ? 'Sold pieces' : 'Voided receipts'}`
-              : 'Stock register'}
+              ? t('{value0} {value1} · {value2}', {
+                  value0: data.list.total,
+                  value1: t(data.list.total === 1 ? 'piece' : 'pieces'),
+                  value2:
+                    status === 'AVAILABLE'
+                      ? t('Available stock')
+                      : status === 'SOLD'
+                        ? t('Sold pieces')
+                        : t('Voided receipts'),
+                })
+              : t('Stock register')}
           </span>
           <div className="pagination">
             <button
-              aria-label="Previous page"
+              aria-label={t('Previous page')}
               disabled={page === 1 || loading}
               onClick={() => setPage((value) => value - 1)}
             >
               ‹
             </button>
-            <span>Page {page}</span>
+            <span>
+              {t('Page ')}
+              {page}
+            </span>
             <button
-              aria-label="Next page"
+              aria-label={t('Next page')}
               disabled={
                 !data || page * data.list.pageSize >= data.list.total || loading
               }

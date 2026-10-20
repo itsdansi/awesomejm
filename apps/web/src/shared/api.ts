@@ -22,7 +22,7 @@ export async function request<T>(
         ? data.message
         : 'The request failed.';
     throw new Error(
-      Array.isArray(message) ? message.join(' ') : String(message),
+      Array.isArray(message) ? message.join('\n') : String(message),
     );
   }
   return schema.parse(data);

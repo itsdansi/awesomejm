@@ -1,3 +1,4 @@
+import { t, message, useLanguage } from '../i18n/language';
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { inventoryWeights } from '@awesomejm/calculations';
 import { inventoryItemSchema, receiveItemSchema } from '@awesomejm/contracts';
@@ -11,6 +12,8 @@ export function ReceiveForm({
   onClose: () => void;
   onSaved: () => void;
 }) {
+  useLanguage();
+
   const [fields, setFields] = useState({
     itemCode: '',
     name: '',
@@ -67,71 +70,72 @@ export function ReceiveForm({
     }
   }
   return (
-    <Dialog title="Receive a piece" onClose={onClose} busy={busy}>
+    <Dialog title={t('Receive a piece')} onClose={onClose} busy={busy}>
       <p className="dialog-description">
-        Create one stock record per physical piece. All weights are entered in
-        grams.
+        {t(
+          'Create one stock record per physical piece. All weights are entered in grams.',
+        )}
       </p>
       <form onSubmit={(event) => void submit(event)}>
         <fieldset disabled={busy} className="form-grid">
           <label>
-            Item code
+            {t('Item code')}
             <input
               autoFocus
               required
               maxLength={40}
-              placeholder="e.g. GLD-001"
+              placeholder={t('e.g. GLD-001')}
               {...field('itemCode')}
             />
           </label>
           <label>
-            Category
+            {t('Category')}
             <input
               required
               maxLength={60}
-              placeholder="e.g. Ring"
+              placeholder={t('e.g. Ring')}
               {...field('category')}
               list="categories"
             />
           </label>
           <datalist id="categories">
-            <option>Ring</option>
-            <option>Necklace</option>
-            <option>Earrings</option>
-            <option>Bangle</option>
-            <option>Chain</option>
-            <option>Coin</option>
+            <option value="Ring">{t('Ring')}</option>
+            <option value="Necklace">{t('Necklace')}</option>
+            <option value="Earrings">{t('Earrings')}</option>
+            <option value="Bangle">{t('Bangle')}</option>
+            <option value="Chain">{t('Chain')}</option>
+            <option value="Coin">{t('Coin')}</option>
           </datalist>
           <label className="full-width">
-            Item name
+            {t('Item name')}
             <input
               required
               maxLength={120}
-              placeholder="e.g. Traditional gold ring"
+              placeholder={t('e.g. Traditional gold ring')}
               {...field('name')}
             />
           </label>
           <label>
-            Metal
+            {t('Metal')}
             <select {...field('metal')}>
-              <option value="GOLD">Gold · सुन</option>
-              <option value="SILVER">Silver · चाँदी</option>
+              <option value="GOLD">{t('Gold · सुन')}</option>
+              <option value="SILVER">{t('Silver · चाँदी')}</option>
             </select>
           </label>
           <label>
-            Purity / fineness (‰)
+            {t('Purity / fineness (‰)')}
             <input
               required
               inputMode="decimal"
-              placeholder="e.g. 916.667"
+              placeholder={t('e.g. 916.667')}
               {...field('fineness')}
             />
             <span className="field-hint">
-              22K ≈ 916.667‰. Use the piece’s actual purity.
+              {t('22K ≈ 916.667‰. Use the piece’s actual purity.')}
             </span>
           </label>
           <label>
-            Gross weight (g)
+            {t('Gross weight (g)')}
             <input
               required
               inputMode="decimal"
@@ -140,7 +144,7 @@ export function ReceiveForm({
             />
           </label>
           <label>
-            Stone / other weight (g)
+            {t('Stone / other weight (g)')}
             <input
               required
               inputMode="decimal"
@@ -149,27 +153,35 @@ export function ReceiveForm({
           </label>
           <div className="weight-preview full-width">
             <div>
-              <span>Net metal weight</span>
-              <strong>{preview ? `${preview.netWeightGrams} g` : '—'}</strong>
+              <span>{t('Net metal weight')}</span>
+              <strong>
+                {preview
+                  ? t('{value0} g', { value0: preview.netWeightGrams })
+                  : '—'}
+              </strong>
             </div>
             <div>
-              <span>Fine-metal equivalent</span>
-              <strong>{preview ? `${preview.fineWeightGrams} g` : '—'}</strong>
+              <span>{t('Fine-metal equivalent')}</span>
+              <strong>
+                {preview
+                  ? t('{value0} g', { value0: preview.fineWeightGrams })
+                  : '—'}
+              </strong>
             </div>
           </div>
           <label className="full-width">
-            Notes (optional)
+            {t('Notes (optional)')}
             <textarea
               rows={2}
               maxLength={1000}
-              placeholder="Design, size or receipt reference"
+              placeholder={t('Design, size or receipt reference')}
               {...field('notes')}
             />
           </label>
         </fieldset>
         {error && (
           <p className="error" role="alert">
-            {error}
+            {message(error)}
           </p>
         )}
         <div className="dialog-actions">
@@ -179,10 +191,10 @@ export function ReceiveForm({
             onClick={onClose}
             disabled={busy}
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button className="button primary" disabled={busy}>
-            {busy ? 'Saving…' : 'Receive piece'}
+            {busy ? t('Saving…') : t('Receive piece')}
             <Icon name="arrow" size={18} />
           </button>
         </div>

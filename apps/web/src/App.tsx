@@ -17,12 +17,26 @@ const Purchases = lazy(() =>
     default: module.Purchases,
   })),
 );
-import { Inventory } from './inventory/Inventory';
+const Inventory = lazy(() =>
+  import('./inventory/Inventory').then((module) => ({
+    default: module.Inventory,
+  })),
+);
 import { useEffect, useState } from 'react';
-import { Rates } from './rates/Rates';
-import { Customers } from './customers/Customers';
-import { Orders } from './orders/Orders';
-import { Sales } from './sales/Sales';
+const Rates = lazy(() =>
+  import('./rates/Rates').then((module) => ({ default: module.Rates })),
+);
+const Customers = lazy(() =>
+  import('./customers/Customers').then((module) => ({
+    default: module.Customers,
+  })),
+);
+const Orders = lazy(() =>
+  import('./orders/Orders').then((module) => ({ default: module.Orders })),
+);
+const Sales = lazy(() =>
+  import('./sales/Sales').then((module) => ({ default: module.Sales })),
+);
 
 export function App() {
   const [route, setRoute] = useState(() => globalThis.location.hash);

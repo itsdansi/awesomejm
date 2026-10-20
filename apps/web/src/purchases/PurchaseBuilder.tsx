@@ -1,3 +1,4 @@
+import { t, message, useLanguage } from '../i18n/language';
 import { useState, type FormEvent } from 'react';
 import {
   customerListSchema,
@@ -39,6 +40,8 @@ type Outgoing = {
   stonesNpr: string;
 };
 export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
+  useLanguage();
+
   const [requestId] = useState(() => globalThis.crypto.randomUUID()),
     [date, setDate] = useState(() => nepalToday()),
     [picked, setPicked] = useState<Customer | null>(null);
@@ -143,7 +146,7 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
       setError(
         parsed.error.issues
           .map((i) => `${i.path.join('.')}: ${i.message}`)
-          .join(' '),
+          .join('\n'),
       );
       return;
     }
@@ -194,17 +197,17 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
     return (
       <AppShell section="Purchases">
         <a className="back-link" href={`#/orders/${orderId}`}>
-          ← Back to order
+          {t('← Back to order')}
         </a>
         <div className="empty-state">
           <h2>
             {order.loading
-              ? 'Loading order…'
-              : 'The order must be Ready before delivery'}
+              ? t('Loading order…')
+              : t('The order must be Ready before delivery')}
           </h2>
           {order.error && (
             <p className="error" role="alert">
-              {order.error}
+              {message(order.error)}
             </p>
           )}
         </div>
@@ -213,31 +216,38 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
   return (
     <AppShell section="Purchases">
       <a className="back-link" href="#/purchases">
-        ← Purchase register
+        {t('← Purchase register')}
       </a>
       <div className="page-heading">
         <div>
-          <p className="eyebrow">WEIGH · VALUE · SETTLE</p>
+          <p className="eyebrow">{t('WEIGH · VALUE · SETTLE')}</p>
           <h1>
-            {review ? 'Review settlement' : 'Buy or exchange metal'}
+            {review ? t('Review settlement') : t('Buy or exchange metal')}
             <span>.</span>
           </h1>
           <p className="description">
             {review
-              ? 'Check incoming metal, outgoing pieces and the complete account effect.'
-              : 'Record the assessed metal and the amount agreed with the customer.'}
+              ? t(
+                  'Check incoming metal, outgoing pieces and the complete account effect.',
+                )
+              : t(
+                  'Record the assessed metal and the amount agreed with the customer.',
+                )}
           </p>
         </div>
         <span className="manual-badge">
-          {review ? '02 / REVIEW' : '01 / DETAILS'}
+          {review ? t('02 / REVIEW') : t('01 / DETAILS')}
         </span>
       </div>
       {order.data && (
         <div className="order-delivery-banner">
-          Delivering{' '}
-          <a href={`#/orders/${orderId}`}>{order.data.order.orderCode}</a>.
-          Select all {order.data.order.pieceCount} ordered pieces. Check design
-          and size against the order before posting.
+          {t('Delivering')}{' '}
+          <a href={`#/orders/${orderId}`}>{order.data.order.orderCode}</a>
+          {t('. Select all ')}
+          {order.data.order.pieceCount}{' '}
+          {t(
+            ' ordered pieces. Check design and size against the order before posting.',
+          )}
         </div>
       )}
       {review ? (
@@ -247,8 +257,9 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
               <div>
                 <h2>{review.quote.customer.name}</h2>
                 <p>
-                  {date} AD · {exchange ? 'Exchange' : 'Old-metal purchase'} ·
-                  NPR
+                  {date} {t(' AD · ')}
+                  {exchange ? t('Exchange') : t('Old-metal purchase')}{' '}
+                  {t(' · NPR')}
                 </p>
               </div>
             </div>
@@ -263,20 +274,21 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
               balanceAfterNpr={review.quote.balanceAfterNpr}
             />
             <p className="sale-review-reference">
-              Purchase reference: {reference || 'Not entered'} · Method:{' '}
+              {t('Purchase reference: ')}
+              {reference || t('Not entered')} {t(' · Method:')}{' '}
               {Number(payout) > 0 || Number(received) > 0
                 ? method.replaceAll('_', ' ')
-                : 'Account credit only'}
+                : t('Account credit only')}
             </p>
           </section>
           <p className="account-scope-note">
-            Posting receives the complete physical net metal into old-metal lots
-            and records the credit, optional jewellery sale and settlement
-            together. This internal record does not issue an official invoice.
+            {t(
+              'Posting receives the complete physical net metal into old-metal lots and records the credit, optional jewellery sale and settlement together. This internal record does not issue an official invoice.',
+            )}
           </p>
           {error && (
             <p className="error" role="alert">
-              {error}
+              {message(error)}
             </p>
           )}
           <div className="sale-page-actions">
@@ -289,14 +301,14 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                 setRevision((v) => v + 1);
               }}
             >
-              Back to details
+              {t('Back to details')}
             </button>
             <button
               className="button primary"
               disabled={busy}
               onClick={() => void post()}
             >
-              {busy ? 'Posting…' : 'Post settlement'}
+              {busy ? t('Posting…') : t('Post settlement')}
               <Icon name="arrow" size={18} />
             </button>
           </div>
@@ -307,14 +319,18 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
             <section className="stock-panel">
               <div className="stock-heading">
                 <div>
-                  <h2>Customer & date</h2>
-                  <p>The purchase credits this customer’s existing account.</p>
+                  <h2>{t('Customer & date')}</h2>
+                  <p>
+                    {t(
+                      'The purchase credits this customer’s existing account.',
+                    )}
+                  </p>
                 </div>
                 <span className="register-label">01</span>
               </div>
               <div className="sale-form-content">
                 <label className="date-filter">
-                  Purchase / exchange date (AD)
+                  {t('Purchase / exchange date (AD)')}
                   <input
                     required
                     type="date"
@@ -329,8 +345,8 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                     <div>
                       <strong>{customer.name}</strong>
                       <small>
-                        {customer.customerCode} · {account.label}: NPR{' '}
-                        {account.amount}
+                        {customer.customerCode} · {t(account.label)}
+                        {t(': NPR')} {account.amount}
                       </small>
                     </div>
                     {!orderId && (
@@ -339,7 +355,7 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                         type="button"
                         onClick={() => setPicked(null)}
                       >
-                        Change customer
+                        {t('Change customer')}
                       </button>
                     )}
                   </div>
@@ -348,8 +364,8 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                     <label className="search">
                       <Icon name="search" size={18} />
                       <input
-                        aria-label="Find purchase customer"
-                        placeholder="Search customer name, phone or code…"
+                        aria-label={t('Find purchase customer')}
+                        placeholder={t('Search customer name, phone or code…')}
                         maxLength={120}
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
@@ -357,10 +373,10 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                     </label>
                     <div className="sale-picker-list">
                       {customers.loading ? (
-                        <p className="muted">Loading customers…</p>
+                        <p className="muted">{t('Loading customers…')}</p>
                       ) : customers.error ? (
                         <p className="error" role="alert">
-                          {customers.error}
+                          {message(customers.error)}
                         </p>
                       ) : customers.data?.items.length ? (
                         customers.data.items.map((item) => (
@@ -373,7 +389,8 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                             <span>
                               <strong>{item.name}</strong>
                               <small>
-                                {item.customerCode} · {item.phone || 'No phone'}
+                                {item.customerCode} ·{' '}
+                                {item.phone || t('No phone')}
                               </small>
                             </span>
                             <Icon name="arrow" size={17} />
@@ -381,14 +398,16 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                         ))
                       ) : (
                         <p className="muted">
-                          No matching customer.{' '}
-                          <a href="#/customers">Add the customer first.</a>
+                          {t('No matching customer.')}{' '}
+                          <a href="#/customers">
+                            {t('Add the customer first.')}
+                          </a>
                         </p>
                       )}
                     </div>
                     {customers.data && customers.data.total > 20 && (
                       <p className="field-hint">
-                        Showing 20 matches. Refine your search.
+                        {t('Showing 20 matches. Refine your search.')}
                       </p>
                     )}
                   </>
@@ -398,10 +417,11 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
             <section className="stock-panel">
               <div className="stock-heading">
                 <div>
-                  <h2>Incoming old metal</h2>
+                  <h2>{t('Incoming old metal')}</h2>
                   <p>
-                    Enter physical measurements and the assessed purity. The
-                    buying quote already applies to that purity.
+                    {t(
+                      'Enter physical measurements and the assessed purity. The buying quote already applies to that purity.',
+                    )}
                   </p>
                 </div>
                 <button
@@ -409,13 +429,13 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                   className="text-button"
                   onClick={() => setRevision((v) => v + 1)}
                 >
-                  Refresh rates
+                  {t('Refresh rates')}
                 </button>
               </div>
               <div className="sale-form-content">
                 {rates.error && (
                   <p className="error" role="alert">
-                    {rates.error}
+                    {message(rates.error)}
                   </p>
                 )}
                 {lines.map((line, index) => {
@@ -423,11 +443,16 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                   return (
                     <article className="order-spec-editor" key={line.key}>
                       <div className="sale-line-heading">
-                        <strong>Incoming lot {index + 1}</strong>
+                        <strong>
+                          {t('Incoming lot ')}
+                          {index + 1}
+                        </strong>
                         <button
                           type="button"
                           className="icon-button"
-                          aria-label={`Remove incoming lot ${index + 1}`}
+                          aria-label={t('Remove incoming lot {value0}', {
+                            value0: index + 1,
+                          })}
                           disabled={lines.length === 1}
                           onClick={() =>
                             setLines(lines.filter((l) => l.key !== line.key))
@@ -438,9 +463,11 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                       </div>
                       <div className="form-grid">
                         <label>
-                          Description
+                          {t('Description')}
                           <input
-                            aria-label={`Incoming description ${index + 1}`}
+                            aria-label={t('Incoming description {value0}', {
+                              value0: index + 1,
+                            })}
                             required
                             maxLength={120}
                             value={line.name}
@@ -450,9 +477,11 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                           />
                         </label>
                         <label>
-                          Metal
+                          {t('Metal')}
                           <select
-                            aria-label={`Incoming metal ${index + 1}`}
+                            aria-label={t('Incoming metal {value0}', {
+                              value0: index + 1,
+                            })}
                             value={line.metal}
                             onChange={(e) =>
                               lineChange(line.key, {
@@ -462,14 +491,16 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                               })
                             }
                           >
-                            <option value="GOLD">Gold</option>
-                            <option value="SILVER">Silver</option>
+                            <option value="GOLD">{t('Gold')}</option>
+                            <option value="SILVER">{t('Silver')}</option>
                           </select>
                         </label>
                         <label>
-                          Assessed purity (‰)
+                          {t('Assessed purity (‰)')}
                           <input
-                            aria-label={`Incoming purity ${index + 1}`}
+                            aria-label={t('Incoming purity {value0}', {
+                              value0: index + 1,
+                            })}
                             required
                             inputMode="decimal"
                             value={line.fineness}
@@ -479,9 +510,11 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                           />
                         </label>
                         <label>
-                          Gross weight (g)
+                          {t('Gross weight (g)')}
                           <input
-                            aria-label={`Incoming gross weight ${index + 1}`}
+                            aria-label={t('Incoming gross weight {value0}', {
+                              value0: index + 1,
+                            })}
                             required
                             inputMode="decimal"
                             value={line.grossWeightGrams}
@@ -493,9 +526,11 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                           />
                         </label>
                         <label>
-                          Stone / other weight (g)
+                          {t('Stone / other weight (g)')}
                           <input
-                            aria-label={`Incoming stone weight ${index + 1}`}
+                            aria-label={t('Incoming stone weight {value0}', {
+                              value0: index + 1,
+                            })}
                             required
                             inputMode="decimal"
                             value={line.nonMetalWeightGrams}
@@ -507,9 +542,12 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                           />
                         </label>
                         <label>
-                          Agreed weight deduction (g)
+                          {t('Agreed weight deduction (g)')}
                           <input
-                            aria-label={`Incoming weight deduction ${index + 1}`}
+                            aria-label={t(
+                              'Incoming weight deduction {value0}',
+                              { value0: index + 1 },
+                            )}
                             required
                             inputMode="decimal"
                             value={line.deductedWeightGrams}
@@ -521,9 +559,11 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                           />
                         </label>
                         <label>
-                          Other deduction (NPR)
+                          {t('Other deduction (NPR)')}
                           <input
-                            aria-label={`Incoming money deduction ${index + 1}`}
+                            aria-label={t('Incoming money deduction {value0}', {
+                              value0: index + 1,
+                            })}
                             required
                             inputMode="decimal"
                             value={line.deductionNpr}
@@ -535,9 +575,11 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                           />
                         </label>
                         <label>
-                          Deduction reason
+                          {t('Deduction reason')}
                           <input
-                            aria-label={`Deduction reason ${index + 1}`}
+                            aria-label={t('Deduction reason {value0}', {
+                              value0: index + 1,
+                            })}
                             maxLength={500}
                             value={line.deductionReason}
                             onChange={(e) =>
@@ -548,9 +590,11 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                           />
                         </label>
                         <label className="full-width">
-                          Assay method / assessment notes
+                          {t('Assay method / assessment notes')}
                           <textarea
-                            aria-label={`Assay notes ${index + 1}`}
+                            aria-label={t('Assay notes {value0}', {
+                              value0: index + 1,
+                            })}
                             required
                             minLength={3}
                             maxLength={500}
@@ -566,10 +610,18 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                       </div>
                       <p className={rate ? 'field-hint' : 'error'}>
                         {rates.loading
-                          ? 'Loading quote…'
+                          ? t('Loading quote…')
                           : rate
-                            ? `Buying quote: NPR ${money(rate.buyRatePerTola)} / tola · ${rate.gramsPerTola} g/tola`
-                            : 'No matching buying quote on this date. Set the exact purity in Metal rates first.'}
+                            ? t(
+                                'Buying quote: NPR {value0} / tola · {value1} g/tola',
+                                {
+                                  value0: money(rate.buyRatePerTola),
+                                  value1: rate.gramsPerTola,
+                                },
+                              )
+                            : t(
+                                'No matching buying quote on this date. Set the exact purity in Metal rates first.',
+                              )}
                       </p>
                     </article>
                   );
@@ -581,21 +633,23 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                   onClick={() => setLines([...lines, blank()])}
                 >
                   <Icon name="plus" size={16} />
-                  Add incoming lot
+                  {t('Add incoming lot')}
                 </button>
                 <p className="field-hint">
-                  Deductions reduce payable value. They do not remove physical
-                  net metal from the received lot.
+                  {t(
+                    'Deductions reduce payable value. They do not remove physical net metal from the received lot.',
+                  )}
                 </p>
               </div>
             </section>
             <section className="stock-panel">
               <div className="stock-heading">
                 <div>
-                  <h2>Exchange for jewellery</h2>
+                  <h2>{t('Exchange for jewellery')}</h2>
                   <p>
-                    Select available pieces when supplying new jewellery against
-                    this purchase.
+                    {t(
+                      'Select available pieces when supplying new jewellery against this purchase.',
+                    )}
                   </p>
                 </div>
                 <label className="overdue-toggle">
@@ -605,7 +659,7 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                     disabled={orderId !== null}
                     onChange={(e) => setExchange(e.target.checked)}
                   />
-                  Include jewellery sale
+                  {t('Include jewellery sale')}
                 </label>
               </div>
               {exchange && (
@@ -613,8 +667,8 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                   <label className="search">
                     <Icon name="search" size={18} />
                     <input
-                      aria-label="Find exchange stock"
-                      placeholder="Search available pieces…"
+                      aria-label={t('Find exchange stock')}
+                      placeholder={t('Search available pieces…')}
                       maxLength={120}
                       value={stockSearch}
                       onChange={(e) => setStockSearch(e.target.value)}
@@ -622,10 +676,10 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                   </label>
                   <div className="sale-picker-list">
                     {stock.loading ? (
-                      <p className="muted">Loading stock…</p>
+                      <p className="muted">{t('Loading stock…')}</p>
                     ) : stock.error ? (
                       <p className="error" role="alert">
-                        {stock.error}
+                        {message(stock.error)}
                       </p>
                     ) : (
                       stock.data?.items.map((item) => {
@@ -639,19 +693,23 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                               <strong>{item.name}</strong>
                               <small>
                                 {item.itemCode} · {item.fineness}‰ ·{' '}
-                                {item.netWeightGrams} g
+                                {item.netWeightGrams} {t(' g')}
                               </small>
                               <small>
                                 {rate
-                                  ? `Selling quote NPR ${money(rate.sellRatePerTola)} / tola`
-                                  : 'Set a matching selling quote first.'}
+                                  ? t('Selling quote NPR {value0} / tola', {
+                                      value0: money(rate.sellRatePerTola),
+                                    })
+                                  : t('Set a matching selling quote first.')}
                               </small>
                             </span>
                             <button
                               type="button"
                               className="button secondary compact"
                               disabled={added || !rate || outgoing.length >= 20}
-                              aria-label={`Exchange ${item.itemCode}`}
+                              aria-label={t('Exchange {value0}', {
+                                value0: item.itemCode,
+                              })}
                               onClick={() =>
                                 setOutgoing([
                                   ...outgoing,
@@ -664,7 +722,7 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                                 ])
                               }
                             >
-                              {added ? 'Added' : 'Add piece'}
+                              {added ? t('Added') : t('Add piece')}
                             </button>
                           </div>
                         );
@@ -673,12 +731,12 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                   </div>
                   {stock.data && stock.data.total > 20 && (
                     <p className="field-hint">
-                      Showing 20 matches. Refine your search.
+                      {t('Showing 20 matches. Refine your search.')}
                     </p>
                   )}
                   {stock.data?.total === 0 && (
                     <p className="muted">
-                      Receive finished pieces in Inventory first.
+                      {t('Receive finished pieces in Inventory first.')}
                     </p>
                   )}
                   {outgoing.map((line) => (
@@ -687,14 +745,16 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                         <div>
                           <strong>{line.item.name}</strong>
                           <small>
-                            {line.item.itemCode} · {line.item.netWeightGrams} g
-                            net
+                            {line.item.itemCode} · {line.item.netWeightGrams}{' '}
+                            {t(' g net')}
                           </small>
                         </div>
                         <button
                           type="button"
                           className="icon-button"
-                          aria-label={`Remove outgoing ${line.item.itemCode}`}
+                          aria-label={t('Remove outgoing {value0}', {
+                            value0: line.item.itemCode,
+                          })}
                           onClick={() =>
                             setOutgoing(
                               outgoing.filter(
@@ -708,9 +768,11 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                       </div>
                       <div className="sale-charge-inputs">
                         <label>
-                          Billed wastage (g)
+                          {t('Billed wastage (g)')}
                           <input
-                            aria-label={`Exchange wastage ${line.item.itemCode}`}
+                            aria-label={t('Exchange wastage {value0}', {
+                              value0: line.item.itemCode,
+                            })}
                             required
                             inputMode="decimal"
                             value={line.wastageGrams}
@@ -722,9 +784,11 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                           />
                         </label>
                         <label>
-                          Making (NPR)
+                          {t('Making (NPR)')}
                           <input
-                            aria-label={`Exchange making ${line.item.itemCode}`}
+                            aria-label={t('Exchange making {value0}', {
+                              value0: line.item.itemCode,
+                            })}
                             required
                             inputMode="decimal"
                             value={line.makingNpr}
@@ -736,9 +800,11 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                           />
                         </label>
                         <label>
-                          Stones (NPR)
+                          {t('Stones (NPR)')}
                           <input
-                            aria-label={`Exchange stones ${line.item.itemCode}`}
+                            aria-label={t('Exchange stones {value0}', {
+                              value0: line.item.itemCode,
+                            })}
                             required
                             inputMode="decimal"
                             value={line.stonesNpr}
@@ -754,7 +820,7 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                   ))}
                   <div className="form-grid order-dates">
                     <label>
-                      Sale discount (NPR)
+                      {t('Sale discount (NPR)')}
                       <input
                         required
                         inputMode="decimal"
@@ -763,7 +829,7 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                       />
                     </label>
                     <label>
-                      Tax / fees from official bill (NPR)
+                      {t('Tax / fees from official bill (NPR)')}
                       <input
                         required
                         inputMode="decimal"
@@ -772,7 +838,7 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                       />
                     </label>
                     <label className="full-width">
-                      Official sale bill reference (optional)
+                      {t('Official sale bill reference (optional)')}
                       <input
                         maxLength={160}
                         value={bill}
@@ -786,10 +852,11 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
             <section className="stock-panel">
               <div className="stock-heading">
                 <div>
-                  <h2>Settlement</h2>
+                  <h2>{t('Settlement')}</h2>
                   <p>
-                    Leave both amounts at zero to retain the balance on the
-                    customer account.
+                    {t(
+                      'Leave both amounts at zero to retain the balance on the customer account.',
+                    )}
                   </p>
                 </div>
                 <span className="register-label">04</span>
@@ -797,7 +864,7 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
               <div className="sale-form-content form-grid">
                 {exchange && (
                   <label>
-                    Money received now (NPR)
+                    {t('Money received now (NPR)')}
                     <input
                       required
                       inputMode="decimal"
@@ -807,7 +874,7 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                   </label>
                 )}
                 <label>
-                  Money paid out now (NPR)
+                  {t('Money paid out now (NPR)')}
                   <input
                     required
                     inputMode="decimal"
@@ -816,7 +883,7 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                   />
                 </label>
                 <label>
-                  Settlement method
+                  {t('Settlement method')}
                   <select
                     value={method}
                     disabled={
@@ -825,13 +892,15 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                     }
                     onChange={(e) => setMethod(e.target.value)}
                   >
-                    <option value="CASH">Cash</option>
-                    <option value="BANK">Bank</option>
-                    <option value="DIGITAL_WALLET">Digital wallet</option>
+                    <option value="CASH">{t('Cash')}</option>
+                    <option value="BANK">{t('Bank')}</option>
+                    <option value="DIGITAL_WALLET">
+                      {t('Digital wallet')}
+                    </option>
                   </select>
                 </label>
                 <label>
-                  Payment / payout reference
+                  {t('Payment / payout reference')}
                   <input
                     maxLength={160}
                     value={paymentReference}
@@ -839,7 +908,7 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                   />
                 </label>
                 <label>
-                  Purchase reference (optional)
+                  {t('Purchase reference (optional)')}
                   <input
                     maxLength={160}
                     value={reference}
@@ -847,7 +916,7 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                   />
                 </label>
                 <label className="full-width">
-                  Notes (optional)
+                  {t('Notes (optional)')}
                   <textarea
                     maxLength={500}
                     rows={2}
@@ -859,18 +928,18 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
             </section>
           </fieldset>
           <p className="account-scope-note">
-            The credit first reduces earlier customer dues. A payout is limited
-            to the remaining credit after any jewellery sale. Record one
-            direction of money movement for this settlement.
+            {t(
+              'The credit first reduces earlier customer dues. A payout is limited to the remaining credit after any jewellery sale. Record one direction of money movement for this settlement.',
+            )}
           </p>
           {error && (
             <p className="error" role="alert">
-              {error}
+              {message(error)}
             </p>
           )}
           <div className="sale-page-actions">
             <a className="button secondary" href="#/purchases">
-              Back to register
+              {t('Back to register')}
             </a>
             <button
               className="button primary"
@@ -882,7 +951,7 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                 (exchange && !outgoing.length)
               }
             >
-              {busy ? 'Calculating…' : 'Review settlement'}
+              {busy ? t('Calculating…') : t('Review settlement')}
               <Icon name="arrow" size={18} />
             </button>
           </div>
