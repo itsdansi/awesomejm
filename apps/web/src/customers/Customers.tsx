@@ -1,3 +1,4 @@
+import { Permission } from '../auth/Permission';
 import { useEffect, useState } from 'react';
 import {
   customerListSchema,
@@ -80,10 +81,12 @@ function CustomerRegister() {
             Keep customer details, dues and advances in one place.
           </p>
         </div>
-        <button className="button primary" onClick={() => setCreating(true)}>
-          <Icon name="plus" size={18} />
-          Add a customer
-        </button>
+        <Permission name="customers.write">
+          <button className="button primary" onClick={() => setCreating(true)}>
+            <Icon name="plus" size={18} />
+            Add a customer
+          </button>
+        </Permission>
       </div>
       <section className="summary-cards" aria-label="Customer account totals">
         <article className="summary-card">
@@ -259,13 +262,15 @@ function CustomerRegister() {
                 : 'Add a customer and bring forward their existing dues or advance.'}
             </p>
             {!term && filter === 'ALL' && (
-              <button
-                className="button secondary"
-                onClick={() => setCreating(true)}
-              >
-                <Icon name="plus" size={17} />
-                Add first customer
-              </button>
+              <Permission name="customers.write">
+                <button
+                  className="button secondary"
+                  onClick={() => setCreating(true)}
+                >
+                  <Icon name="plus" size={17} />
+                  Add first customer
+                </button>
+              </Permission>
             )}
           </div>
         )}

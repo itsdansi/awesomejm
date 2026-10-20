@@ -22,7 +22,13 @@
     "db:up": "docker compose up -d --wait db",
     "db:stop": "docker compose stop db",
     "db:migrate": "pnpm --filter @awesomejm/api db:migrate",
-    "test:integration": "pnpm build && pnpm --filter @awesomejm/api test:integration"
+    "test:integration": "pnpm build && pnpm --filter @awesomejm/api test:integration",
+    "staff:owner": "pnpm --filter @awesomejm/api staff:owner",
+    "staff:reset": "pnpm --filter @awesomejm/api staff:reset",
+    "db:backup": "pnpm --filter @awesomejm/api db:backup",
+    "db:backup-key": "pnpm --filter @awesomejm/api db:backup-key",
+    "db:verify-backup": "pnpm --filter @awesomejm/api db:verify-backup",
+    "db:restore": "pnpm --filter @awesomejm/api db:restore"
   },
   "keywords": [],
   "author": "Dansi Acharya",

@@ -1,3 +1,4 @@
+import { authenticatedFetch } from './helpers/auth.mjs';
 import 'reflect-metadata';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -31,6 +32,7 @@ test('inventory persists exact weights and preserves stock history', async (t) =
       });
     migrate();
     migrate(); // Re-running migrations must preserve existing data.
+    const fetch = await authenticatedFetch(db);
     app = await NestFactory.create(AppModule, { logger: false });
     app.setGlobalPrefix('api/v1');
     await app.listen(0, '127.0.0.1');

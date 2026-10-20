@@ -1,3 +1,4 @@
+import { Permission } from '../auth/Permission';
 import { useState } from 'react';
 import { dashboardSchema } from '@awesomejm/contracts';
 import { AppShell } from '../shared/AppShell';
@@ -31,18 +32,24 @@ export function Dashboard() {
         </button>
       </div>
       <div className="dashboard-quick-actions">
-        <a className="button primary" href="#/sales/new">
-          <Icon name="plus" size={17} />
-          Record a sale
-        </a>
-        <a className="button secondary" href="#/purchases/new">
-          Buy / exchange metal
-          <Icon name="arrow" size={17} />
-        </a>
-        <a className="button secondary" href="#/orders/new">
-          Book an order
-          <Icon name="arrow" size={17} />
-        </a>
+        <Permission name="sales.write">
+          <a className="button primary" href="#/sales/new">
+            <Icon name="plus" size={17} />
+            Record a sale
+          </a>
+        </Permission>
+        <Permission name="purchases.write">
+          <a className="button secondary" href="#/purchases/new">
+            Buy / exchange metal
+            <Icon name="arrow" size={17} />
+          </a>
+        </Permission>
+        <Permission name="orders.write">
+          <a className="button secondary" href="#/orders/new">
+            Book an order
+            <Icon name="arrow" size={17} />
+          </a>
+        </Permission>
         <a className="text-button" href="#/reports">
           Open reports →
         </a>

@@ -10,7 +10,13 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src scripts test",
     "db:migrate": "node --env-file-if-exists=.env scripts/migrate.mjs",
-    "test:integration": "node --env-file-if-exists=.env --test test/*.test.mjs"
+    "test:integration": "node --env-file-if-exists=.env --test test/*.test.mjs",
+    "staff:owner": "node --env-file-if-exists=.env scripts/staff.mjs owner",
+    "staff:reset": "node --env-file-if-exists=.env scripts/staff.mjs reset",
+    "db:backup": "node --env-file-if-exists=.env scripts/backup.mjs",
+    "db:backup-key": "node --env-file-if-exists=.env scripts/backup.mjs keygen",
+    "db:verify-backup": "node --env-file-if-exists=.env scripts/restore.mjs verify",
+    "db:restore": "node --env-file-if-exists=.env scripts/restore.mjs restore"
   },
   "dependencies": {
     "@awesomejm/calculations": "workspace:*",

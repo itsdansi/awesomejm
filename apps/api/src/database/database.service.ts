@@ -1,3 +1,4 @@
+import { staffContext } from '../auth/context.js';
 import {
   ConflictException,
   HttpException,
@@ -28,8 +29,16 @@ export class DatabaseService implements OnApplicationShutdown {
     transaction = false,
   ): Promise<T> {
     let client: pg.PoolClient | undefined;
+    let actorSet = false;
     try {
       client = await this.pool.connect();
+      const actor = staffContext.getStore()?.actorId;
+      if (actor) {
+        await client.query("SELECT set_config('app.staff_id',$1,false)", [
+          actor,
+        ]);
+        actorSet = true;
+      }
       if (transaction) await client.query('BEGIN');
       const result = await operation(client);
       if (transaction) await client.query('COMMIT');
@@ -47,7 +56,14 @@ export class DatabaseService implements OnApplicationShutdown {
         'Storage is unavailable. Start the database and run migrations.',
       );
     } finally {
-      client?.release();
+      if (client) {
+        try {
+          if (actorSet) await client.query('RESET app.staff_id');
+          client.release();
+        } catch {
+          client.release(true);
+        }
+      }
     }
   }
 

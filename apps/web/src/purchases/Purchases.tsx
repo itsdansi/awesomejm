@@ -1,3 +1,4 @@
+import { Permission } from '../auth/Permission';
 import { useState } from 'react';
 import { purchasesListSchema } from '@awesomejm/contracts';
 import { AppShell } from '../shared/AppShell';
@@ -43,10 +44,12 @@ function PurchaseRegister() {
             the customer.
           </p>
         </div>
-        <a href="#/purchases/new" className="button primary">
-          <Icon name="plus" size={18} />
-          Buy / exchange metal
-        </a>
+        <Permission name="purchases.write">
+          <a href="#/purchases/new" className="button primary">
+            <Icon name="plus" size={18} />
+            Buy / exchange metal
+          </a>
+        </Permission>
       </div>
       <p className="account-scope-note">
         Old metal is kept in separate lots. Exchange sales, account credit and
@@ -190,9 +193,11 @@ function PurchaseRegister() {
             <p>
               Buy old gold or silver, or exchange it for available jewellery.
             </p>
-            <a className="button secondary" href="#/purchases/new">
-              Buy / exchange metal
-            </a>
+            <Permission name="purchases.write">
+              <a className="button secondary" href="#/purchases/new">
+                Buy / exchange metal
+              </a>
+            </Permission>
           </div>
         )}
         <div className="table-footer">

@@ -1,3 +1,4 @@
+import { authenticatedFetch } from './helpers/auth.mjs';
 import 'reflect-metadata';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -31,6 +32,7 @@ test('old-metal purchases, exchanges, dashboard and dated reports stay consisten
       });
     migrate();
     migrate();
+    const fetch = await authenticatedFetch(db);
     async function start() {
       app = await NestFactory.create(AppModule, { logger: false });
       app.setGlobalPrefix('api/v1');

@@ -1,3 +1,4 @@
+import { Permission } from '../auth/Permission';
 import { useEffect, useState, type FormEvent } from 'react';
 import { gramsToTola } from '@awesomejm/calculations';
 import {
@@ -180,12 +181,14 @@ export function ItemDetails({
         ) : (
           <div className="detail-footer">
             <span className="muted">Entered something incorrectly?</span>
-            <button
-              className="text-button danger-text"
-              onClick={() => setCorrecting(true)}
-            >
-              Void this receipt
-            </button>
+            <Permission name="records.correct">
+              <button
+                className="text-button danger-text"
+                onClick={() => setCorrecting(true)}
+              >
+                Void this receipt
+              </button>
+            </Permission>
           </div>
         ))}
       {error && (

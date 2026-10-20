@@ -1,3 +1,4 @@
+import { useAuth } from '../auth/AuthContext';
 import type { ReactNode } from 'react';
 import { Icon } from './ui';
 
@@ -13,9 +14,12 @@ export function AppShell({
     | 'Orders'
     | 'Purchases'
     | 'Reports'
-    | 'Dashboard';
+    | 'Dashboard'
+    | 'Account'
+    | 'Staff & recovery';
   children: ReactNode;
 }) {
+  const { user, can, logout } = useAuth();
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -31,8 +35,8 @@ export function AppShell({
         <div className="shop-switch">
           <span className="shop-avatar">S</span>
           <div>
-            <strong>First shop</strong>
-            <small>Single-shop workspace</small>
+            <strong>{user.shopName}</strong>
+            <small>{user.role.toLowerCase()} access</small>
           </div>
         </div>
         <p className="nav-label">WORKSPACE</p>
@@ -85,6 +89,15 @@ export function AppShell({
               <span>{item.index}</span>
             </a>
           ))}
+          {can('staff.manage') && (
+            <a
+              className={`nav-item ${section === 'Staff & recovery' ? 'active' : ''}`}
+              href="#/staff"
+            >
+              <Icon name="users" />
+              Staff & recovery<span>08</span>
+            </a>
+          )}
         </nav>
         <div className="sidebar-bottom">
           <span className="tiny-diamond">◇</span>
@@ -99,10 +112,14 @@ export function AppShell({
             Workspace <span className="breadcrumb-separator">/</span>
             <strong>{section}</strong>
           </span>
-          <span className="workspace-chip">
-            <span />
-            Local workspace
-          </span>
+          <div className="staff-topbar">
+            <a className="text-button" href="#/account">
+              {user.name} · {user.role.toLowerCase()}
+            </a>
+            <button className="text-button" onClick={() => void logout()}>
+              Sign out
+            </button>
+          </div>
         </header>
         <main className="workspace">
           {children}

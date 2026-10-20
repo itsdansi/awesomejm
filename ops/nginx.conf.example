@@ -1,0 +1,27 @@
+# Place inside the existing HTTPS server block for the shop hostname.
+# Provision and renew the TLS certificate through your hosting platform.
+root /srv/awesomejm/apps/web/dist;
+index index.html;
+add_header X-Content-Type-Options nosniff always;
+add_header Referrer-Policy same-origin always;
+add_header X-Frame-Options DENY always;
+add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'" always;
+add_header Strict-Transport-Security "max-age=31536000" always;
+location /api/ {
+    proxy_pass http://127.0.0.1:3001;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-Proto https;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_no_cache 1;
+    proxy_cache_bypass 1;
+    client_max_body_size 128k;
+}
+location /assets/ {
+    expires 1y;
+    try_files $uri =404;
+}
+location / {
+    expires -1;
+    try_files $uri $uri/ /index.html;
+}

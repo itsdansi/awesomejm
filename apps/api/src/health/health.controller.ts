@@ -1,3 +1,4 @@
+import { Public } from '../auth/policy.js';
 import { Controller, Get } from '@nestjs/common';
 import {
   healthResponseSchema,
@@ -6,6 +7,7 @@ import {
 
 @Controller('health')
 export class HealthController {
+  @Public()
   @Get()
   getHealth(): HealthResponse {
     return healthResponseSchema.parse({

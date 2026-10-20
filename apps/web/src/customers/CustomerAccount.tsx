@@ -1,3 +1,4 @@
+import { Permission } from '../auth/Permission';
 import { useEffect, useState } from 'react';
 import {
   customerDetailSchema,
@@ -97,21 +98,25 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
           </p>
         </div>
         <div className="account-actions">
-          <button
-            className="button secondary"
-            disabled={!customer || loading}
-            onClick={() => setEditing(true)}
-          >
-            Edit profile
-          </button>
-          <button
-            className="button primary"
-            disabled={!customer || loading}
-            onClick={() => setPayment('PAYMENT')}
-          >
-            <Icon name="plus" size={17} />
-            Record payment
-          </button>
+          <Permission name="customers.write">
+            <button
+              className="button secondary"
+              disabled={!customer || loading}
+              onClick={() => setEditing(true)}
+            >
+              Edit profile
+            </button>
+          </Permission>
+          <Permission name="customers.write">
+            <button
+              className="button primary"
+              disabled={!customer || loading}
+              onClick={() => setPayment('PAYMENT')}
+            >
+              <Icon name="plus" size={17} />
+              Record payment
+            </button>
+          </Permission>
         </div>
       </div>
       {notice && (
@@ -171,13 +176,15 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
                     ? 'Customer funds held by the shop.'
                     : 'No outstanding dues or advance.'}
               </p>
-              <button
-                className="text-button"
-                disabled={account.className !== 'advance' || loading}
-                onClick={() => setPayment('ADVANCE_REFUND')}
-              >
-                Record advance refund →
-              </button>
+              <Permission name="records.correct">
+                <button
+                  className="text-button"
+                  disabled={account.className !== 'advance' || loading}
+                  onClick={() => setPayment('ADVANCE_REFUND')}
+                >
+                  Record advance refund →
+                </button>
+              </Permission>
             </article>
           </section>
           <section

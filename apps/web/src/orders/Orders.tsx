@@ -1,3 +1,4 @@
+import { Permission } from '../auth/Permission';
 import { useState } from 'react';
 import { ordersListSchema, ordersSummarySchema } from '@awesomejm/contracts';
 import { AppShell } from '../shared/AppShell';
@@ -42,10 +43,12 @@ function OrderRegister() {
             view.
           </p>
         </div>
-        <a className="button primary" href="#/orders/new">
-          <Icon name="plus" size={18} />
-          Book an order
-        </a>
+        <Permission name="orders.write">
+          <a className="button primary" href="#/orders/new">
+            <Icon name="plus" size={18} />
+            Book an order
+          </a>
+        </Permission>
       </div>
       <section className="summary-cards" aria-label="Order totals">
         {[
@@ -248,9 +251,11 @@ function OrderRegister() {
               Book the design, expected weight and delivery date for your
               customer.
             </p>
-            <a className="button secondary" href="#/orders/new">
-              Book an order
-            </a>
+            <Permission name="orders.write">
+              <a className="button secondary" href="#/orders/new">
+                Book an order
+              </a>
+            </Permission>
           </div>
         )}
         <div className="table-footer">

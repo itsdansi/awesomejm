@@ -1,3 +1,4 @@
+import { Permission } from '../auth/Permission';
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import {
   createCustomerSchema,
@@ -176,8 +177,12 @@ export function CustomerForm({
                   }
                 >
                   <option value="NONE">Settled · No balance</option>
-                  <option value="DUE">Customer owes the shop</option>
-                  <option value="ADVANCE">Shop holds an advance</option>
+                  <Permission name="records.correct">
+                    <option value="DUE">Customer owes the shop</option>
+                  </Permission>
+                  <Permission name="records.correct">
+                    <option value="ADVANCE">Shop holds an advance</option>
+                  </Permission>
                 </select>
               </label>
               {fields.openingType !== 'NONE' && (

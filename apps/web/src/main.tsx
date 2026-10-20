@@ -1,3 +1,4 @@
+import { AuthGate } from './auth/AuthGate';
 import { StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './App';
@@ -15,7 +16,9 @@ createRoot(root).render(
         </div>
       }
     >
-      <App />
+      <AuthGate>
+        <App />
+      </AuthGate>
     </Suspense>
   </StrictMode>,
 );

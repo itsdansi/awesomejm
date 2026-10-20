@@ -1,3 +1,4 @@
+import { Permission } from '../auth/Permission';
 import { useState, type FormEvent } from 'react';
 import {
   accountMutationSchema,
@@ -208,12 +209,14 @@ export function EntryDetails({
         ) : (
           <div className="detail-footer">
             <span className="muted">Recorded incorrectly?</span>
-            <button
-              className="text-button danger-text"
-              onClick={() => setCorrecting(true)}
-            >
-              Reverse this entry
-            </button>
+            <Permission name="records.correct">
+              <button
+                className="text-button danger-text"
+                onClick={() => setCorrecting(true)}
+              >
+                Reverse this entry
+              </button>
+            </Permission>
           </div>
         ))}
       {error && (

@@ -1,3 +1,4 @@
+import { Permission } from '../auth/Permission';
 import { useState, type FormEvent } from 'react';
 import {
   cancelPurchaseSchema,
@@ -178,12 +179,14 @@ export function PurchaseDetails({ purchaseId }: { purchaseId: string }) {
                 )}
               </div>
               {detail.purchase.status === 'POSTED' && (
-                <button
-                  className="text-button danger-text"
-                  onClick={() => setCorrecting(true)}
-                >
-                  Correct erroneous settlement
-                </button>
+                <Permission name="records.correct">
+                  <button
+                    className="text-button danger-text"
+                    onClick={() => setCorrecting(true)}
+                  >
+                    Correct erroneous settlement
+                  </button>
+                </Permission>
               )}
             </div>
             {correcting && (

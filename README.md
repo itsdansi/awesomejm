@@ -20,6 +20,8 @@ fnm use
 pnpm install
 pnpm db:up
 pnpm db:migrate
+pnpm build
+pnpm staff:owner # first owner setup in your interactive terminal
 pnpm dev
 ```
 
@@ -222,10 +224,18 @@ Use `groupBy=MONTH` for monthly buckets. CSV exports reflect the successfully lo
 
 ## Scope and deployment
 
-The health endpoint confirms application startup, not database readiness. These are local, single-shop development modules: authentication, staff attribution, authorization and production tenant isolation are still required before hosting customer data. Inventory, rates, sales, order and customer queries are scoped to a server-selected shop, but authenticated shop selection and PostgreSQL row-level security are not implemented. Keep the API on loopback while developing. Delivered-item returns, customer-metal custody, artisan job work, suppliers, cost valuation, barcode printing, stocktaking and official billing remain future modules.
+The health endpoint confirms application startup, not database readiness. Staff authentication, API permissions, transaction attribution and encrypted backup/restore verification are implemented. Hosting, HTTPS, restricted runtime credentials, scheduled backups, off-site copies and recovery monitoring must still be configured for production. All modules require staff sign-in and are scoped to one configured shop per dedicated deployment/database; shared-database tenant switching and PostgreSQL row-level security are not implemented. Keep the API on loopback while developing. Delivered-item returns, customer-metal custody, artisan job work, suppliers, cost valuation, barcode printing, stocktaking and official billing remain future modules.
 
 The conversion uses the first client's stated **11.664 grams per tola**, retained on every piece. Confirm that convention before importing business stock. The first receive form accepts grams; alternate unit entry and shop-specific conversion settings can follow. Physical stone/other weight is distinct from a commercial wastage charge.
 
 The Docker Compose credentials are for local development. Production needs separate credentials, TLS, access controls, backups with restore verification, and an explicit migration step.
 
 Frontend and backend can be deployed separately. In production, configure the web host/reverse proxy to route `/api` to the backend; the Vite development proxy is not a production gateway. Build the API with `pnpm build`, then start it with `pnpm --filter @awesomejm/api start`. Production API environments must set an appropriate `HOST` and `PORT`.
+
+## Staff access and recovery
+
+The app now requires sign-in. After migrating/building, run `pnpm staff:owner` in your terminal to choose the initial owner credentials. There are no default passwords or public registration. Owners manage individual staff accounts under **Staff & recovery** (`/#/staff`); everyone can change their own password under **Account** (`/#/account`). Roles are Owner, Manager, Cashier and Viewer, enforced by the API. Temporary passwords require replacement, and disabling/editing/resetting staff revokes their sessions. Business writes append staff-attributed audit events atomically.
+
+`pnpm db:backup` creates an encrypted PostgreSQL archive; `pnpm db:backup --verify` additionally restores and compares it in a disposable database. `pnpm db:restore ARCHIVE.ajmbak ajm_recovered_NAME` creates a new verified recovery database and revokes restored sessions. Commands require private operator configuration and PostgreSQL 18 tools; they never overwrite the application database. The owner screen shows recorded backup and verification times.
+
+See [the production access and recovery runbook](ops/production.md) for the permission matrix, owner recovery, HTTPS configuration, restricted database grants, keys, backup scheduling/off-site retention and the incident restore procedure. Local tests do not establish that production backups or off-site storage are configured.

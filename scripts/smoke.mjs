@@ -47,6 +47,9 @@ try {
   );
   const apiResponse = await fetch(`${apiUrl}/api/v1/health`);
   assert.equal(apiResponse.status, 200);
+  const unauthorized = await fetch(`${apiUrl}/api/v1/dashboard`);
+  assert.equal(unauthorized.status, 401);
+  assert.equal(unauthorized.headers.get('cache-control'), 'no-store');
   const health = await apiResponse.json();
   assert.equal(health.status, 'ok');
   assert.equal(health.service, 'awesomejm-api');
@@ -69,8 +72,9 @@ try {
   const proxied = await fetch(`${webUrl}/api/v1/health`);
   assert.equal(proxied.status, 200);
   assert.equal((await proxied.json()).service, 'awesomejm-api');
+  assert.equal((await fetch(`${webUrl}/api/v1/dashboard`)).status, 401);
   console.info(
-    'Smoke passed: Node 24 API, frontend and frontend-to-API proxy.',
+    'Smoke passed: Node 24 API, frontend and frontend-to-API proxy, and anonymous access blocked.',
   );
 } finally {
   for (const child of children) child.kill('SIGTERM');

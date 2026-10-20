@@ -1,3 +1,4 @@
+import { Permission } from '../auth/Permission';
 import { useEffect, useState } from 'react';
 import { ratePerGram } from '@awesomejm/calculations';
 import {
@@ -116,17 +117,19 @@ export function Rates() {
             Your shop’s buying and selling rates, with every revision preserved.
           </p>
         </div>
-        <button
-          className="button primary"
-          disabled={!date || date > today}
-          onClick={() => {
-            setForm({});
-            setNotice('');
-          }}
-        >
-          <Icon name="plus" size={18} />
-          Set a rate
-        </button>
+        <Permission name="rates.write">
+          <button
+            className="button primary"
+            disabled={!date || date > today}
+            onClick={() => {
+              setForm({});
+              setNotice('');
+            }}
+          >
+            <Icon name="plus" size={18} />
+            Set a rate
+          </button>
+        </Permission>
       </div>
       <div className="rate-intro">
         <div>
@@ -267,16 +270,18 @@ export function Rates() {
                       </time>
                     </td>
                     <td>
-                      <button
-                        className="button secondary compact"
-                        aria-label={`Revise ${rate.metal.toLowerCase()} ${rate.fineness}`}
-                        onClick={() => {
-                          setForm({ rate });
-                          setNotice('');
-                        }}
-                      >
-                        Revise
-                      </button>
+                      <Permission name="rates.write">
+                        <button
+                          className="button secondary compact"
+                          aria-label={`Revise ${rate.metal.toLowerCase()} ${rate.fineness}`}
+                          onClick={() => {
+                            setForm({ rate });
+                            setNotice('');
+                          }}
+                        >
+                          Revise
+                        </button>
+                      </Permission>
                     </td>
                   </tr>
                 ))}
@@ -293,14 +298,16 @@ export function Rates() {
               Set a quote for each metal and purity you trade. Previous dates
               are available in history.
             </p>
-            <button
-              className="button secondary"
-              disabled={!date || date > today}
-              onClick={() => setForm({})}
-            >
-              <Icon name="plus" size={17} />
-              Set first rate
-            </button>
+            <Permission name="rates.write">
+              <button
+                className="button secondary"
+                disabled={!date || date > today}
+                onClick={() => setForm({})}
+              >
+                <Icon name="plus" size={17} />
+                Set first rate
+              </button>
+            </Permission>
           </div>
         )}
         <div className="rate-book-footnote">

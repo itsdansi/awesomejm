@@ -1,4 +1,9 @@
 import {
+  requirePermission,
+  type AuthRequest,
+  RequirePermission,
+} from '../auth/policy.js';
+import {
   BadRequestException,
   Body,
   Controller,
@@ -7,6 +12,7 @@ import {
   ParseUUIDPipe,
   Post,
   Query,
+  Req,
 } from '@nestjs/common';
 import {
   createOrderSchema,
@@ -35,28 +41,41 @@ function parse<T>(
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly orders: OrdersService) {}
-  @Get() list(@Query() query: unknown) {
+  @RequirePermission('workspace.read')
+  @Get()
+  list(@Query() query: unknown) {
     return this.orders.list(parse(ordersQuerySchema, query));
   }
-  @Get('summary') summary() {
+  @RequirePermission('workspace.read')
+  @Get('summary')
+  summary() {
     return this.orders.summary();
   }
-  @Get(':id') get(@Param('id', new ParseUUIDPipe()) id: string) {
+  @RequirePermission('workspace.read')
+  @Get(':id')
+  get(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.orders.get(id);
   }
-  @Post() create(@Body() body: unknown) {
+  @RequirePermission('orders.write')
+  @Post()
+  create(@Body() body: unknown) {
     return this.orders.create(parse(createOrderSchema, body));
   }
-  @Post(':id/status') status(
+  @RequirePermission('orders.write')
+  @Post(':id/status')
+  status(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() body: unknown,
+    @Req() req: AuthRequest,
   ) {
-    return this.orders.updateStatus(id, parse(updateOrderStatusSchema, body));
+    const input = parse(updateOrderStatusSchema, body);
+    if (input.status === 'CANCELLED')
+      requirePermission(req.user!, 'records.correct');
+    return this.orders.updateStatus(id, input);
   }
-  @Post(':id/payments') payment(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() body: unknown,
-  ) {
+  @RequirePermission('orders.write')
+  @Post(':id/payments')
+  payment(@Param('id', new ParseUUIDPipe()) id: string, @Body() body: unknown) {
     return this.orders.payment(id, parse(orderPaymentSchema, body));
   }
 }

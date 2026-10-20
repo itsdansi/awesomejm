@@ -1,3 +1,8 @@
+import { Account } from './auth/Account';
+import { useAuth } from './auth/AuthContext';
+const Staff = lazy(() =>
+  import('./staff/Staff').then((m) => ({ default: m.Staff })),
+);
 import { lazy } from 'react';
 const Dashboard = lazy(() =>
   import('./dashboard/Dashboard').then((module) => ({
@@ -26,6 +31,17 @@ export function App() {
     globalThis.addEventListener('hashchange', navigate);
     return () => globalThis.removeEventListener('hashchange', navigate);
   }, []);
+  const { can } = useAuth();
+  if (route === '#/account') return <Account />;
+  if (route === '#/staff') return can('staff.manage') ? <Staff /> : <Account />;
+  const required = route.startsWith('#/sales/new')
+    ? 'sales.write'
+    : route.startsWith('#/purchases/new')
+      ? 'purchases.write'
+      : route.startsWith('#/orders/new')
+        ? 'orders.write'
+        : null;
+  if (required && !can(required)) return <Account />;
   if (route.startsWith('#/customers'))
     return <Customers customerId={route.split('/')[2]} />;
   const [path, query] = route.split('?');

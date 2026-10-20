@@ -1,3 +1,4 @@
+import { RequirePermission } from '../auth/policy.js';
 import {
   BadRequestException,
   Body,
@@ -17,7 +18,9 @@ import { RatesService } from './rates.service.js';
 export class RatesController {
   constructor(private readonly rates: RatesService) {}
 
-  @Get() book(@Query() query: unknown) {
+  @RequirePermission('workspace.read')
+  @Get()
+  book(@Query() query: unknown) {
     const parsed = rateQuerySchema.safeParse(query);
     if (!parsed.success)
       throw new BadRequestException(
@@ -25,7 +28,9 @@ export class RatesController {
       );
     return this.rates.book(parsed.data);
   }
-  @Get('history') history(@Query() query: unknown) {
+  @RequirePermission('workspace.read')
+  @Get('history')
+  history(@Query() query: unknown) {
     const parsed = rateHistoryQuerySchema.safeParse(query);
     if (!parsed.success)
       throw new BadRequestException(
@@ -33,7 +38,9 @@ export class RatesController {
       );
     return this.rates.history(parsed.data);
   }
-  @Post() publish(@Body() body: unknown) {
+  @RequirePermission('rates.write')
+  @Post()
+  publish(@Body() body: unknown) {
     const parsed = publishRateSchema.safeParse(body);
     if (!parsed.success)
       throw new BadRequestException(

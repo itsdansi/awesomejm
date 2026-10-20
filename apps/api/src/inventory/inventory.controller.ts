@@ -1,3 +1,4 @@
+import { RequirePermission } from '../auth/policy.js';
 import {
   BadRequestException,
   Body,
@@ -20,7 +21,9 @@ import { InventoryService } from './inventory.service.js';
 export class InventoryController {
   constructor(private readonly inventory: InventoryService) {}
 
-  @Get('items') list(@Query() query: unknown) {
+  @RequirePermission('workspace.read')
+  @Get('items')
+  list(@Query() query: unknown) {
     const parsed = inventoryQuerySchema.safeParse(query);
     if (!parsed.success)
       throw new BadRequestException(
@@ -28,10 +31,14 @@ export class InventoryController {
       );
     return this.inventory.list(parsed.data);
   }
-  @Get('summary') summary() {
+  @RequirePermission('workspace.read')
+  @Get('summary')
+  summary() {
     return this.inventory.summary();
   }
-  @Post('items') receive(@Body() body: unknown) {
+  @RequirePermission('inventory.write')
+  @Post('items')
+  receive(@Body() body: unknown) {
     const parsed = receiveItemSchema.safeParse(body);
     if (!parsed.success)
       throw new BadRequestException(
@@ -41,13 +48,14 @@ export class InventoryController {
       );
     return this.inventory.receive(parsed.data);
   }
-  @Get('items/:id/history') history(
-    @Param('id', new ParseUUIDPipe()) id: string,
-  ) {
+  @RequirePermission('workspace.read')
+  @Get('items/:id/history')
+  history(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.inventory.history(id);
   }
   @Post('items/:id/void')
   @HttpCode(200)
+  @RequirePermission('records.correct')
   voidReceipt(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() body: unknown,

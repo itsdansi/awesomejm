@@ -1,3 +1,4 @@
+import { RequirePermission } from '../auth/policy.js';
 import {
   BadRequestException,
   Body,
@@ -36,25 +37,34 @@ function parse<T>(
 @Controller('sales')
 export class SalesController {
   constructor(private readonly sales: SalesService) {}
-  @Get() list(@Query() query: unknown) {
+  @RequirePermission('workspace.read')
+  @Get()
+  list(@Query() query: unknown) {
     return this.sales.list(parse(salesQuerySchema, query));
   }
-  @Get('summary') summary() {
+  @RequirePermission('workspace.read')
+  @Get('summary')
+  summary() {
     return this.sales.summary();
   }
-  @Get(':id') detail(@Param('id', new ParseUUIDPipe()) id: string) {
+  @RequirePermission('workspace.read')
+  @Get(':id')
+  detail(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.sales.get(id);
   }
-  @Post('preview') preview(@Body() body: unknown) {
+  @RequirePermission('sales.write')
+  @Post('preview')
+  preview(@Body() body: unknown) {
     return this.sales.preview(parse(saleDraftSchema, body));
   }
-  @Post() post(@Body() body: unknown) {
+  @RequirePermission('sales.write')
+  @Post()
+  post(@Body() body: unknown) {
     return this.sales.post(parse(postSaleSchema, body));
   }
-  @Post(':id/cancel') cancel(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() body: unknown,
-  ) {
+  @RequirePermission('records.correct')
+  @Post(':id/cancel')
+  cancel(@Param('id', new ParseUUIDPipe()) id: string, @Body() body: unknown) {
     return this.sales.cancel(id, parse(cancelSaleSchema, body));
   }
 }

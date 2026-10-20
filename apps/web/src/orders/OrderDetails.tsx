@@ -1,3 +1,5 @@
+import { useAuth } from '../auth/AuthContext';
+import { Permission } from '../auth/Permission';
 import { useState, type FormEvent } from 'react';
 import {
   nepalToday,
@@ -76,13 +78,15 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                   Print order slip
                 </button>
                 {!closed && (
-                  <button
-                    className="button primary"
-                    onClick={() => setAction('status')}
-                  >
-                    Update progress
-                    <Icon name="arrow" size={17} />
-                  </button>
+                  <Permission name="orders.write">
+                    <button
+                      className="button primary"
+                      onClick={() => setAction('status')}
+                    >
+                      Update progress
+                      <Icon name="arrow" size={17} />
+                    </button>
+                  </Permission>
                 )}
               </div>
             </div>
@@ -255,22 +259,26 @@ export function OrderDetails({ orderId }: { orderId: string }) {
               </div>
               <div className="order-followup-actions">
                 {!closed && (
-                  <button
-                    className="button secondary"
-                    onClick={() => setAction('payment')}
-                  >
-                    Record order advance
-                  </button>
+                  <Permission name="orders.write">
+                    <button
+                      className="button secondary"
+                      onClick={() => setAction('payment')}
+                    >
+                      Record order advance
+                    </button>
+                  </Permission>
                 )}
                 {detail.order.status === 'READY' && (
                   <>
-                    <a
-                      className="button primary"
-                      href={`#/sales/new?orderId=${detail.order.id}`}
-                    >
-                      Deliver through Sales
-                      <Icon name="arrow" size={17} />
-                    </a>
+                    <Permission name="sales.write">
+                      <a
+                        className="button primary"
+                        href={`#/sales/new?orderId=${detail.order.id}`}
+                      >
+                        Deliver through Sales
+                        <Icon name="arrow" size={17} />
+                      </a>
+                    </Permission>
                     <small>
                       Receive all finished pieces in Inventory first. Select the
                       ordered quantity, metal and purity in Sales.
@@ -278,12 +286,14 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                   </>
                 )}
                 {detail.order.status === 'READY' && (
-                  <a
-                    className="button secondary"
-                    href={`#/purchases/new?orderId=${detail.order.id}`}
-                  >
-                    Deliver with old-metal exchange →
-                  </a>
+                  <Permission name="purchases.write">
+                    <a
+                      className="button secondary"
+                      href={`#/purchases/new?orderId=${detail.order.id}`}
+                    >
+                      Deliver with old-metal exchange →
+                    </a>
+                  </Permission>
                 )}
                 {detail.order.activeSaleId && (
                   <a
@@ -442,6 +452,7 @@ function OrderAction({
     [reference, setReference] = useState('');
   const [busy, setBusy] = useState(false),
     [error, setError] = useState('');
+  const { can } = useAuth();
   const statuses =
     detail.order.status === 'BOOKED'
       ? ['IN_PROGRESS', 'READY', 'CANCELLED']
@@ -514,11 +525,16 @@ function OrderAction({
                   value={status}
                   onChange={(event) => setStatus(event.target.value)}
                 >
-                  {statuses.map((value) => (
-                    <option key={value} value={value}>
-                      {statusTitle[value as keyof typeof statusTitle]}
-                    </option>
-                  ))}
+                  {statuses
+                    .filter(
+                      (value) =>
+                        value !== 'CANCELLED' || can('records.correct'),
+                    )
+                    .map((value) => (
+                      <option key={value} value={value}>
+                        {statusTitle[value as keyof typeof statusTitle]}
+                      </option>
+                    ))}
                 </select>
               </label>
               {status === 'CANCELLED' && (

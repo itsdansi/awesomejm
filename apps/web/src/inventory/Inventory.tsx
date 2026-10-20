@@ -1,3 +1,4 @@
+import { Permission } from '../auth/Permission';
 import { AppShell } from '../shared/AppShell';
 import { useEffect, useState } from 'react';
 import { gramsToTola } from '@awesomejm/calculations';
@@ -101,16 +102,18 @@ export function Inventory() {
             Every piece accounted for. Every gram in its place.
           </p>
         </div>
-        <button
-          className="button primary"
-          onClick={() => {
-            setReceiving(true);
-            setNotice('');
-          }}
-        >
-          <Icon name="plus" size={18} />
-          Receive a piece
-        </button>
+        <Permission name="inventory.write">
+          <button
+            className="button primary"
+            onClick={() => {
+              setReceiving(true);
+              setNotice('');
+            }}
+          >
+            <Icon name="plus" size={18} />
+            Receive a piece
+          </button>
+        </Permission>
       </div>
       <section className="summary-cards" aria-label="Available stock totals">
         <article className="summary-card">
@@ -316,13 +319,15 @@ export function Inventory() {
                 : 'Receive your first gold or silver piece to start tracking your inventory.'}
             </p>
             {!searchTerm && !metal && status === 'AVAILABLE' && (
-              <button
-                className="button secondary"
-                onClick={() => setReceiving(true)}
-              >
-                <Icon name="plus" size={17} />
-                Receive first piece
-              </button>
+              <Permission name="inventory.write">
+                <button
+                  className="button secondary"
+                  onClick={() => setReceiving(true)}
+                >
+                  <Icon name="plus" size={17} />
+                  Receive first piece
+                </button>
+              </Permission>
             )}
           </div>
         )}

@@ -8,3 +8,8 @@ coverage/
 !.env.example
 *.log
 .DS_Store
+
+# Recovery archives, keys and evidence contain confidential data.
+backups/
+*.ajmbak*
+*.recovery-key

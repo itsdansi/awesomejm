@@ -1,3 +1,4 @@
+import { authenticatedFetch } from './helpers/auth.mjs';
 import 'reflect-metadata';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -32,6 +33,7 @@ test('sales atomically link immutable pricing, physical stock and customer accou
       });
     migrate();
     migrate();
+    const fetch = await authenticatedFetch(db);
     async function start() {
       app = await NestFactory.create(AppModule, { logger: false });
       app.setGlobalPrefix('api/v1');

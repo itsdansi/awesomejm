@@ -1,4 +1,9 @@
 import {
+  requirePermission,
+  type AuthRequest,
+  RequirePermission,
+} from '../auth/policy.js';
+import {
   BadRequestException,
   Body,
   Controller,
@@ -8,6 +13,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
 } from '@nestjs/common';
 import {
   accountPaymentSchema,
@@ -43,37 +49,57 @@ function parse<T>(
 @Controller('customers')
 export class CustomersController {
   constructor(private readonly customers: CustomersService) {}
-  @Get() list(@Query() query: unknown) {
+  @RequirePermission('workspace.read')
+  @Get()
+  list(@Query() query: unknown) {
     return this.customers.list(parse(customerQuerySchema, query));
   }
-  @Get('summary') summary() {
+  @RequirePermission('workspace.read')
+  @Get('summary')
+  summary() {
     return this.customers.summary();
   }
-  @Post() create(@Body() body: unknown) {
-    return this.customers.create(parse(createCustomerSchema, body));
+  @RequirePermission('customers.write')
+  @Post()
+  create(@Body() body: unknown, @Req() req: AuthRequest) {
+    const input = parse(createCustomerSchema, body);
+    if (input.openingType !== 'NONE')
+      requirePermission(req.user!, 'records.correct');
+    return this.customers.create(input);
   }
-  @Get(':id') detail(@Param('id', new ParseUUIDPipe()) id: string) {
+  @RequirePermission('workspace.read')
+  @Get(':id')
+  detail(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.customers.detail(id);
   }
-  @Patch(':id') update(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() body: unknown,
-  ) {
+  @RequirePermission('customers.write')
+  @Patch(':id')
+  update(@Param('id', new ParseUUIDPipe()) id: string, @Body() body: unknown) {
     return this.customers.update(id, parse(updateCustomerSchema, body));
   }
-  @Get(':id/ledger') statement(
+  @RequirePermission('workspace.read')
+  @Get(':id/ledger')
+  statement(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Query() query: unknown,
   ) {
     return this.customers.statement(id, parse(ledgerQuerySchema, query));
   }
-  @Post(':id/payments') post(
+  @RequirePermission('customers.write')
+  @Post(':id/payments')
+  post(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() body: unknown,
+    @Req() req: AuthRequest,
   ) {
-    return this.customers.post(id, parse(accountPaymentSchema, body));
+    const input = parse(accountPaymentSchema, body);
+    if (input.kind === 'ADVANCE_REFUND')
+      requirePermission(req.user!, 'records.correct');
+    return this.customers.post(id, input);
   }
-  @Post(':id/entries/:entryId/reverse') reverse(
+  @RequirePermission('records.correct')
+  @Post(':id/entries/:entryId/reverse')
+  reverse(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Param('entryId', new ParseUUIDPipe()) entryId: string,
     @Body() body: unknown,

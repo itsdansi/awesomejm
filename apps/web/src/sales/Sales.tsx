@@ -1,3 +1,4 @@
+import { Permission } from '../auth/Permission';
 import { useState } from 'react';
 import {
   nepalToday,
@@ -53,10 +54,12 @@ function SalesRegister() {
             Every piece sold, every charge and payment recorded together.
           </p>
         </div>
-        <a className="button primary" href="#/sales/new">
-          <Icon name="plus" size={18} />
-          Record a sale
-        </a>
+        <Permission name="sales.write">
+          <a className="button primary" href="#/sales/new">
+            <Icon name="plus" size={18} />
+            Record a sale
+          </a>
+        </Permission>
       </div>
       <section className="summary-cards" aria-label="All-time sales totals">
         <article className="summary-card">
@@ -258,9 +261,11 @@ function SalesRegister() {
                 : 'Ready for your first sale'}
             </h3>
             <p>Choose an available piece and a customer to record a sale.</p>
-            <a className="button secondary" href="#/sales/new">
-              Record a sale
-            </a>
+            <Permission name="sales.write">
+              <a className="button secondary" href="#/sales/new">
+                Record a sale
+              </a>
+            </Permission>
           </div>
         )}
         <div className="table-footer">

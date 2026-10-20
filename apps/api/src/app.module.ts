@@ -1,3 +1,8 @@
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { AuthService } from './auth/auth.service.js';
+import { AuthGuard } from './auth/auth.guard.js';
+import { AuditInterceptor } from './auth/audit.interceptor.js';
+import { AuthController } from './auth/auth.controller.js';
 import { PurchasesController } from './purchases/purchases.controller.js';
 import { PurchasesService } from './purchases/purchases.service.js';
 import { ReportsController } from './reports/reports.controller.js';
@@ -18,6 +23,7 @@ import { SalesService } from './sales/sales.service.js';
 
 @Module({
   controllers: [
+    AuthController,
     HealthController,
     InventoryController,
     RatesController,
@@ -28,6 +34,9 @@ import { SalesService } from './sales/sales.service.js';
     ReportsController,
   ],
   providers: [
+    AuthService,
+    { provide: APP_GUARD, useClass: AuthGuard },
+    { provide: APP_INTERCEPTOR, useClass: AuditInterceptor },
     DatabaseService,
     InventoryService,
     RatesService,
