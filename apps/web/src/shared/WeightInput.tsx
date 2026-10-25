@@ -6,6 +6,8 @@ import {
 } from '@awesomejm/calculations';
 import { t, useLanguage } from '../i18n/language';
 
+const canonicalGrams = /^(0|[1-9]\d{0,8})(\.\d{1,3})?$/;
+
 export function WeightInput({
   label,
   ariaLabel = label,
@@ -30,17 +32,20 @@ export function WeightInput({
   } | null>(null);
   let parts = { tola: '0', lal: '0.00' };
   try {
-    parts = gramsToTolaLal(value, gramsPerTola);
+    if (canonicalGrams.test(value)) parts = gramsToTolaLal(value, gramsPerTola);
   } catch {
     /* Incomplete input. */
   }
-  const fields = draft?.grams === value ? draft : { ...parts, invalid: false };
+  const fields =
+    draft?.grams === value
+      ? draft
+      : { ...parts, invalid: value !== '' && !canonicalGrams.test(value) };
   function change(tola: string, lal: string) {
     let grams: string;
     let invalid = false;
     try {
       grams = tolaLalToGrams(tola, lal, gramsPerTola);
-      if (!/^(0|[1-9]\d{0,8})(\.\d{1,3})?$/.test(grams)) throw new RangeError();
+      if (!canonicalGrams.test(grams)) throw new RangeError();
     } catch {
       invalid = true;
       grams = '';
@@ -133,6 +138,7 @@ function WeightEquivalent({
   grams: string;
   gramsPerTola: string;
 }) {
+  if (!canonicalGrams.test(grams)) return <>{'—'}</>;
   let parts;
   try {
     parts = gramsToTolaLal(grams, gramsPerTola);

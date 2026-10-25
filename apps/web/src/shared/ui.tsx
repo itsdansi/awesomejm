@@ -1,4 +1,3 @@
-import { LanguageSwitch } from '../i18n/LanguageSwitch';
 import { t, useLanguage } from '../i18n/language';
 import { useEffect, useRef, type ReactNode } from 'react';
 
@@ -151,18 +150,15 @@ export function Dialog({
           <p className="eyebrow">{eyebrow}</p>
           <h2>{title}</h2>
         </div>
-        <div className="dialog-tools">
-          <LanguageSwitch />
-          <button
-            type="button"
-            className="icon-button"
-            aria-label={t('common.labels.closeDialog')}
-            onClick={onClose}
-            disabled={busy}
-          >
-            <Icon name="close" />
-          </button>
-        </div>
+        <button
+          type="button"
+          className="icon-button"
+          aria-label={t('common.labels.closeDialog')}
+          onClick={onClose}
+          disabled={busy}
+        >
+          <Icon name="close" />
+        </button>
       </div>
       {children}
     </dialog>

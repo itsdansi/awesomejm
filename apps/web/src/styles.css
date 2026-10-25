@@ -3272,11 +3272,6 @@ button.sale-picker-row:hover {
   top: 24px;
   z-index: 5;
 }
-.dialog-tools {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
 html[lang='ne'] body {
   font-family:
     'Noto Sans Devanagari', 'Kohinoor Devanagari', 'Nirmala UI', system-ui,
@@ -3333,12 +3328,6 @@ html[lang='ne'] .auth-card h1 {
     flex-wrap: wrap;
     gap: 12px;
     padding: 12px 20px;
-  }
-  .dialog-tools {
-    gap: 5px;
-  }
-  .dialog-tools .language-switch button {
-    padding: 5px 7px;
   }
 }
 @media print {

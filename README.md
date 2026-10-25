@@ -244,7 +244,7 @@ See [the production access and recovery runbook](ops/production.md) for the perm
 
 ## English and Nepali interface
 
-Use the **English / नेपाली** switch on sign-in, the workspace header or an open dialog. The selection is remembered per browser origin and stays available across sign-out/reload. Without a saved choice, a Nepali browser language selects Nepali; other browser languages select English. Changing language re-renders the current screen without resetting drafts or closing dialogs.
+Use the **English / नेपाली** switch in the workspace navbar, or on sign-in screens. Dialogs use the selected language without repeating the switch. The selection is remembered per browser origin and stays available across sign-out/reload. Without a saved choice, a Nepali browser language selects Nepali; other browser languages select English. Changing language re-renders the current screen without resetting drafts or closing dialogs.
 
 Navigation, forms, status labels, dashboard, account/staff administration, validation messages and printable internal records use the selected language. Known API error messages are translated in the frontend; the API contracts and stored business data are unchanged. Customer/staff/shop names, item descriptions, categories, notes, codes and references are shown exactly as entered. Amounts and weights retain their exact decimal precision and Latin digits. Dates remain **AD/Gregorian**, with Nepal time for timestamps; this does not add a Bikram Sambat calendar. Report CSV field names and raw values retain their existing machine-readable format.
 
