@@ -68,7 +68,7 @@ Keep database access, credentials, authorisation and authoritative transaction p
 ## Inventory module
 
 - Receive individual gold/silver pieces with a unique item code, name, category, fineness, gross weight, stone/other weight and notes.
-- Stock is stored in exact decimal grams (3 decimal places). PostgreSQL derives net metal weight and fine-metal equivalent (6 decimal places). Fineness is parts per thousand; 22K is approximately 916.667‰, while the entered value should reflect the actual piece.
+- Stock is stored in exact decimal grams (3 decimal places). PostgreSQL derives net metal weight and fine-metal equivalent (6 decimal places). Fineness is parts per thousand. Shared gold presets use 24K = 999, 22K = 916, 18K = 750, 14K = 585 and 10K = 417; a Custom/assayed option retains actual fineness. New gold entries default to 916 and silver to 925.
 - Display net grams and tola, with separate available gold/silver totals. Fine-metal equivalent is visible in piece details.
 - Search code, name and category; filter by metal or available/sold/voided state; paginate results.
 - Correct a mistaken receipt by voiding it with a reason. The piece and its negative reversal remain in history, and its code cannot be reused. This correction is not a sale, return, exchange or physical stock write-off.
@@ -85,6 +85,12 @@ API routes under `/api/v1/inventory`:
 | POST   | `/items/:id/void`                                               | Void a mistaken receipt with `{ "reason": "..." }` |
 
 Run `pnpm db:migrate` after pulling new migrations. Applied migrations are tracked and serialized using a PostgreSQL advisory lock. Database changes are explicit rather than applied when the API starts. Migration source lives in `apps/api/migrations`; do not edit already-applied migrations.
+
+## Purity entry
+
+Inventory receipts, metal rates, custom-order designs and incoming old-metal purchases use one bilingual purity selector. Gold offers the five shop-approved commercial grades and **Custom / assayed fineness**. Percentage is derived directly from fineness (divide by 10), with enough precision to show custom assays such as 916.667 = 91.6667%. Silver retains numeric fineness entry and defaults to 925 = 92.5%.
+
+The selector never rounds custom assays into a karat grade. Existing stock, order, purchase and rate records retain their original fineness; a rate revision locks the original metal and purity. Legacy 916.667 rates remain distinct from the new 916 preset. Publish a quote for the exact fineness/date used by each new sale or purchase. Quoted rates already apply to their stated purity and must not receive a second purity multiplier. No purity migration or historical repricing occurs.
 
 ## Metal rates module
 

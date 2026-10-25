@@ -68,12 +68,7 @@ export function EntryDetails({
     entry.kind === 'ADVANCE_REFUND' ||
     entry.kind === 'PURCHASE_PAYOUT';
   return (
-    <Dialog
-      title={entry.entryCode}
-      eyebrow={t('common.labels.customerAccountEntry')}
-      busy={busy}
-      onClose={onClose}
-    >
+    <Dialog title={entry.entryCode} busy={busy} onClose={onClose}>
       <div className="receipt-print">
         <div className="receipt-brand">
           <span>

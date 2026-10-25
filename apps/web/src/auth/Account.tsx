@@ -9,7 +9,6 @@ export function Account() {
   const { user, refresh } = useAuth();
   return (
     <AppShell section="Account">
-      <p className="eyebrow">{t('auth.account.yourAccess')}</p>
       <h1>{t('auth.account.yourAccount')}</h1>
       <p>
         {user.name} · {user.username} · {t(roleKeys[user.role])}

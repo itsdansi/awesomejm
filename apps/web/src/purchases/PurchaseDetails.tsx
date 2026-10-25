@@ -264,7 +264,6 @@ function PurchaseCorrection({
   return (
     <Dialog
       title={t('common.labels.correct', { code: detail.purchase.purchaseCode })}
-      eyebrow={t('purchases.purchaseDetails.settlementCorrection')}
       busy={busy}
       onClose={onClose}
     >

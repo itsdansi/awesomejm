@@ -225,7 +225,6 @@ export function Staff() {
       <section className="panel recovery-panel">
         <div className="panel-heading">
           <div>
-            <p className="eyebrow">{t('staff.access.recoveryCheckpoint')}</p>
             <h2>{t('staff.access.backupsThatHaveBeenRestored')}</h2>
           </div>
         </div>
@@ -418,7 +417,6 @@ function StaffForm({
           ? t('staff.access.editStaffAccess')
           : t('staff.access.addStaffMember')
       }
-      eyebrow={t('staff.access.staffAdministration')}
       onClose={onClose}
       busy={busy}
     >
@@ -551,7 +549,6 @@ function ResetForm({
       title={t('staff.access.resetPasswordFor', { name: member.name })}
       onClose={onClose}
       busy={busy}
-      eyebrow={t('staff.access.staffRecovery')}
     >
       <form className="access-form" onSubmit={(e) => void submit(e)}>
         {error && (

@@ -96,10 +96,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
             <LanguageSwitch />
           </div>
           <section className="auth-card">
-            <p className="eyebrow">
-              {t('auth.signIn.welcome') + ' '}
-              {user.name}
-            </p>
+            <p>{user.name}</p>
             <h1>{t('auth.signIn.makeThisAccountYours')}</h1>
             <p>{t('auth.signIn.passwordChangeHelp')}</p>
             <PasswordForm
@@ -163,7 +160,6 @@ function Login({
         <span className="brand-mark">
           <Icon name="diamond" size={30} />
         </span>
-        <p className="eyebrow">{t('auth.signIn.awesomejmJewelleryManager')}</p>
         <h1>
           {t('auth.signIn.yourShop')}
           <br />

@@ -1,6 +1,11 @@
+import { PuritySelect } from '../shared/PuritySelect';
+import {
+  DEFAULT_GOLD_FINENESS,
+  DEFAULT_SILVER_FINENESS,
+  ratePerGram,
+} from '@awesomejm/calculations';
 import { t, message, useLanguage } from '../i18n/language';
 import { useState, type ChangeEvent, type FormEvent } from 'react';
-import { ratePerGram } from '@awesomejm/calculations';
 import {
   metalRateSchema,
   publishRateSchema,
@@ -27,7 +32,11 @@ export function RateForm({
   const [fields, setFields] = useState({
     rateDate: rate?.rateDate ?? date,
     metal: rate?.metal ?? initialMetal,
-    fineness: rate?.fineness ?? (initialMetal === 'SILVER' ? '925' : '916.667'),
+    fineness:
+      rate?.fineness ??
+      (initialMetal === 'SILVER'
+        ? DEFAULT_SILVER_FINENESS
+        : DEFAULT_GOLD_FINENESS),
     buyRatePerTola: rate?.buyRatePerTola ?? '',
     sellRatePerTola: rate?.sellRatePerTola ?? '',
     source: rate?.source ?? 'Shop-set rate',
@@ -86,7 +95,6 @@ export function RateForm({
           ? t('rates.rateForm.reviseARate')
           : t('rates.rateForm.setAMetalRate')
       }
-      eyebrow={t('rates.labels.goldSilverRates')}
       onClose={onClose}
       busy={busy}
     >
@@ -117,7 +125,10 @@ export function RateForm({
                 setFields({
                   ...fields,
                   metal: event.target.value as MetalRate['metal'],
-                  fineness: event.target.value === 'SILVER' ? '925' : '916.667',
+                  fineness:
+                    event.target.value === 'SILVER'
+                      ? DEFAULT_SILVER_FINENESS
+                      : DEFAULT_GOLD_FINENESS,
                 })
               }
             >
@@ -125,21 +136,13 @@ export function RateForm({
               <option value="SILVER">{t('common.labels.silver')}</option>
             </select>
           </label>
-          <label>
-            {t('common.labels.purityFineness')}
-            <input
-              required
-              inputMode="decimal"
-              {...field('fineness')}
-              readOnly={Boolean(rate)}
-            />
-            <span className="field-hint">
-              {fields.metal === 'GOLD'
-                ? t('rates.rateForm.purityHelp')
-                : t('rates.rateForm.sterlingSilverIs925')}{' '}
-              {t('rates.rateForm.enterActualQuotedPurity')}
-            </span>
-          </label>
+          <PuritySelect
+            metal={fields.metal}
+            label={t('common.labels.purityFineness')}
+            value={fields.fineness}
+            onChange={(value) => setFields({ ...fields, fineness: value })}
+            readOnly={Boolean(rate)}
+          />
           <label>
             {t('rates.rateForm.buyingRateNprTola')}
             <input

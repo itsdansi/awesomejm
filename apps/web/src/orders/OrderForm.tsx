@@ -1,3 +1,8 @@
+import { PuritySelect } from '../shared/PuritySelect';
+import {
+  DEFAULT_GOLD_FINENESS,
+  DEFAULT_SILVER_FINENESS,
+} from '@awesomejm/calculations';
 import { WeightInput } from '../shared/WeightInput';
 import { t, message, useLanguage } from '../i18n/language';
 import { useState, type FormEvent } from 'react';
@@ -20,7 +25,7 @@ const blankLine = () => ({
   design: '',
   size: '',
   metal: 'GOLD' as 'GOLD' | 'SILVER',
-  fineness: '916.667',
+  fineness: DEFAULT_GOLD_FINENESS,
   quantity: 1,
   expectedNetWeightGrams: '',
   plannedWastageGrams: '0',
@@ -107,7 +112,6 @@ export function OrderForm() {
         <div>
           <h1>{t('common.labels.bookAnOrder')}</h1>
         </div>
-        <span className="manual-badge">{t('orders.orderForm.newOrder')}</span>
       </div>
       <form onSubmit={(event) => void create(event)}>
         <fieldset disabled={busy} className="sale-builder-fields">
@@ -290,7 +294,9 @@ export function OrderForm() {
                           changeLine(line.key, {
                             metal: event.target.value as 'GOLD' | 'SILVER',
                             fineness:
-                              event.target.value === 'GOLD' ? '916.667' : '925',
+                              event.target.value === 'GOLD'
+                                ? DEFAULT_GOLD_FINENESS
+                                : DEFAULT_SILVER_FINENESS,
                           })
                         }
                       >
@@ -300,20 +306,17 @@ export function OrderForm() {
                         </option>
                       </select>
                     </label>
-                    <label>
-                      {t('orders.orderForm.purity')}
-                      <input
-                        aria-label={t('orders.orderForm.purity2', {
-                          position: index + 1,
-                        })}
-                        required
-                        inputMode="decimal"
-                        value={line.fineness}
-                        onChange={(event) =>
-                          changeLine(line.key, { fineness: event.target.value })
-                        }
-                      />
-                    </label>
+                    <PuritySelect
+                      metal={line.metal}
+                      label={t('orders.orderForm.purity')}
+                      ariaLabel={t('orders.orderForm.purity2', {
+                        position: index + 1,
+                      })}
+                      value={line.fineness}
+                      onChange={(value) =>
+                        changeLine(line.key, { fineness: value })
+                      }
+                    />
                     <label>
                       {t('common.fields.quantity')}
                       <input

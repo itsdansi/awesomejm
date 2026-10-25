@@ -205,9 +205,6 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
               : t('common.labels.recordASale')}
           </h1>
         </div>
-        <span className="manual-badge">
-          {review ? t('common.steps.review') : t('common.steps.details')}
-        </span>
       </div>
       {linkedOrder.data && (
         <p className="order-delivery-banner">
@@ -266,9 +263,6 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                   {review.quote.lines.length} {' ' + t('common.labels.pieces')}
                 </p>
               </div>
-              <span className="manual-badge">
-                {t('sales.saleBuilder.review')}
-              </span>
             </div>
             <SaleFigures lines={review.quote.lines} totals={review.quote} />
             <div className="sale-review-reference">

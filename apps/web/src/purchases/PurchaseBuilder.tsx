@@ -1,3 +1,8 @@
+import { PuritySelect } from '../shared/PuritySelect';
+import {
+  DEFAULT_GOLD_FINENESS,
+  DEFAULT_SILVER_FINENESS,
+} from '@awesomejm/calculations';
 import { WeightValue } from '../shared/WeightValue';
 import { WeightInput } from '../shared/WeightInput';
 import { DateValue } from '../settings/DateValue';
@@ -28,7 +33,7 @@ const blank = () => ({
   key: globalThis.crypto.randomUUID(),
   name: '',
   metal: 'GOLD' as 'GOLD' | 'SILVER',
-  fineness: '916.667',
+  fineness: DEFAULT_GOLD_FINENESS,
   grossWeightGrams: '',
   nonMetalWeightGrams: '0',
   deductedWeightGrams: '0',
@@ -231,9 +236,6 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
               : t('purchases.purchaseBuilder.buyOrExchangeMetal')}
           </h1>
         </div>
-        <span className="manual-badge">
-          {review ? t('common.steps.review') : t('common.steps.details')}
-        </span>
       </div>
       {order.data && (
         <div className="order-delivery-banner">
@@ -493,7 +495,9 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                               lineChange(line.key, {
                                 metal: e.target.value as 'GOLD' | 'SILVER',
                                 fineness:
-                                  e.target.value === 'GOLD' ? '916.667' : '925',
+                                  e.target.value === 'GOLD'
+                                    ? DEFAULT_GOLD_FINENESS
+                                    : DEFAULT_SILVER_FINENESS,
                               })
                             }
                           >
@@ -505,23 +509,20 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                             </option>
                           </select>
                         </label>
-                        <label>
-                          {t('purchases.purchaseBuilder.assessedPurity')}
-                          <input
-                            aria-label={t(
-                              'purchases.purchaseBuilder.incomingPurity',
-                              {
-                                position: index + 1,
-                              },
-                            )}
-                            required
-                            inputMode="decimal"
-                            value={line.fineness}
-                            onChange={(e) =>
-                              lineChange(line.key, { fineness: e.target.value })
-                            }
-                          />
-                        </label>
+                        <PuritySelect
+                          metal={line.metal}
+                          label={t('purchases.purchaseBuilder.assessedPurity')}
+                          ariaLabel={t(
+                            'purchases.purchaseBuilder.incomingPurity',
+                            {
+                              position: index + 1,
+                            },
+                          )}
+                          value={line.fineness}
+                          onChange={(value) =>
+                            lineChange(line.key, { fineness: value })
+                          }
+                        />
                         <WeightInput
                           label={t('weights.fields.gross')}
                           ariaLabel={t(

@@ -894,6 +894,15 @@ export interface TranslationSchema {
   'purchases.purchases.searchPurchasesOrCustomers': never;
   'purchases.purchases.typeStatus': never;
   'purchases.purchases.weighIncomingGoldAndSilverRetainItsValuation': never;
+  'purity.assayedFineness': never;
+  'purity.custom': never;
+  'purity.customFor': { field: TranslationValue };
+  'purity.invalidFineness': never;
+  'purity.percentage': { percent: TranslationValue };
+  'purity.presetOption': {
+    karat: TranslationValue;
+    fineness: TranslationValue;
+  };
   'rates.book.aClearRecordOfEveryQuote': never;
   'rates.book.buyingTola': never;
   'rates.book.dailyRateBook': never;

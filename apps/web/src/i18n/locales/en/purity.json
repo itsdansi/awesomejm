@@ -1,0 +1,8 @@
+{
+  "presetOption": "{karat} · {fineness}‰",
+  "custom": "Custom / assayed fineness",
+  "assayedFineness": "Assayed fineness (‰)",
+  "customFor": "{field} — assayed fineness",
+  "percentage": "Purity: {percent}%",
+  "invalidFineness": "Enter fineness greater than 0 and at most 1000, with up to 3 decimal places."
+}

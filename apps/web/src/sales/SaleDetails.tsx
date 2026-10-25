@@ -258,7 +258,6 @@ function CancelSale({
   return (
     <Dialog
       title={t('common.labels.correct', { code: sale.saleCode })}
-      eyebrow={t('sales.saleDetails.saleRecordCorrection')}
       busy={busy}
       onClose={onClose}
     >

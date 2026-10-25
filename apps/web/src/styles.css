@@ -700,10 +700,6 @@ footer {
   align-items: center;
   gap: 20px;
 }
-.dialog-heading .eyebrow {
-  font-size: 8px;
-  margin-bottom: 7px;
-}
 .dialog-heading h2 {
   font-size: 23px;
 }
@@ -3488,5 +3484,36 @@ html[lang='ne'] .auth-card h1 {
 }
 .weight-preview strong .weight-value > .weight-grams {
   font-size: 11px;
+  color: #718078;
+}
+
+.purity-selector {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+}
+.purity-selector label {
+  display: grid;
+  gap: 8px;
+  font-size: 11px;
+  color: #697b5c;
+}
+.purity-selector select,
+.purity-selector input {
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  padding: 10px 11px;
+  border: 1px solid #dfe5d7;
+  border-radius: 5px;
+  background: #fff;
+  color: #3a5039;
+  font: inherit;
+  font-size: 12px;
+}
+.purity-percentage {
+  font-size: 12px;
+  line-height: 1.5;
   color: #718078;
 }

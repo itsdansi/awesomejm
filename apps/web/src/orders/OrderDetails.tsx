@@ -564,10 +564,10 @@ function OrderAction({
           ? t('orders.orderDetails.updateOrderProgress')
           : t('orders.orderDetails.recordOrderAdvance')
       }
-      eyebrow={detail.order.orderCode}
       busy={busy}
       onClose={onClose}
     >
+      <p className="dialog-description">{detail.order.orderCode}</p>
       <form onSubmit={(event) => void save(event)}>
         <fieldset className="sale-builder-fields form-grid" disabled={busy}>
           {action === 'status' ? (

@@ -1,3 +1,5 @@
+import enPurity from './locales/en/purity.json' with { type: 'json' };
+import nePurity from './locales/ne/purity.json' with { type: 'json' };
 import enWeights from './locales/en/weights.json' with { type: 'json' };
 import neWeights from './locales/ne/weights.json' with { type: 'json' };
 import enSettings from './locales/en/settings.json' with { type: 'json' };
@@ -32,6 +34,7 @@ import neValidation from './locales/ne/validation.json' with { type: 'json' };
 // Register each namespace explicitly so the same resources work in Vite and Node tests.
 export const resources = {
   en: {
+    purity: enPurity,
     weights: enWeights,
     settings: enSettings,
     auth: enAuth,
@@ -49,6 +52,7 @@ export const resources = {
     validation: enValidation,
   },
   ne: {
+    purity: nePurity,
     weights: neWeights,
     settings: neSettings,
     auth: neAuth,

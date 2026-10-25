@@ -1,8 +1,13 @@
+import { PuritySelect } from '../shared/PuritySelect';
+import {
+  DEFAULT_GOLD_FINENESS,
+  DEFAULT_SILVER_FINENESS,
+  inventoryWeights,
+} from '@awesomejm/calculations';
 import { WeightValue } from '../shared/WeightValue';
 import { WeightInput } from '../shared/WeightInput';
 import { t, message, useLanguage } from '../i18n/language';
 import { useState, type ChangeEvent, type FormEvent } from 'react';
-import { inventoryWeights } from '@awesomejm/calculations';
 import { inventoryItemSchema, receiveItemSchema } from '@awesomejm/contracts';
 import { errorMessage, request } from './api';
 import { Dialog, Icon } from './ui';
@@ -20,8 +25,8 @@ export function ReceiveForm({
     itemCode: '',
     name: '',
     category: '',
-    metal: 'GOLD',
-    fineness: '916.667',
+    metal: 'GOLD' as 'GOLD' | 'SILVER',
+    fineness: DEFAULT_GOLD_FINENESS,
     grossWeightGrams: '',
     nonMetalWeightGrams: '0',
     notes: '',
@@ -125,23 +130,29 @@ export function ReceiveForm({
           </label>
           <label>
             {t('common.labels.metal')}
-            <select {...field('metal')}>
+            <select
+              {...field('metal')}
+              onChange={(event) =>
+                setFields({
+                  ...fields,
+                  metal: event.target.value as 'GOLD' | 'SILVER',
+                  fineness:
+                    event.target.value === 'GOLD'
+                      ? DEFAULT_GOLD_FINENESS
+                      : DEFAULT_SILVER_FINENESS,
+                })
+              }
+            >
               <option value="GOLD">{t('common.labels.gold')}</option>
               <option value="SILVER">{t('common.labels.silver')}</option>
             </select>
           </label>
-          <label>
-            {t('common.labels.purityFineness')}
-            <input
-              required
-              inputMode="decimal"
-              placeholder={t('inventory.receiveForm.purityPlaceholder')}
-              {...field('fineness')}
-            />
-            <span className="field-hint">
-              {t('inventory.receiveForm.purityHelp')}
-            </span>
-          </label>
+          <PuritySelect
+            metal={fields.metal}
+            label={t('common.labels.purityFineness')}
+            value={fields.fineness}
+            onChange={(value) => setFields({ ...fields, fineness: value })}
+          />
           <WeightInput
             label={t('weights.fields.gross')}
             value={fields.grossWeightGrams}

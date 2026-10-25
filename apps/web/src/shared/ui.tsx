@@ -118,13 +118,11 @@ export function Dialog({
   title,
   onClose,
   busy = false,
-  eyebrow = t('inventory.title'),
   children,
 }: {
   title: string;
   onClose: () => void;
   busy?: boolean;
-  eyebrow?: string;
   children: ReactNode;
 }) {
   useLanguage();
@@ -146,10 +144,7 @@ export function Dialog({
       }}
     >
       <div className="dialog-heading">
-        <div>
-          <p className="eyebrow">{eyebrow}</p>
-          <h2>{title}</h2>
-        </div>
+        <h2>{title}</h2>
         <button
           type="button"
           className="icon-button"

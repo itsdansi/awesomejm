@@ -1,0 +1,8 @@
+{
+  "presetOption": "{karat} · {fineness}‰",
+  "custom": "अन्य / जाँचिएको शुद्धता",
+  "assayedFineness": "जाँचिएको शुद्धता (‰)",
+  "customFor": "{field} — जाँचिएको शुद्धता",
+  "percentage": "शुद्धता: {percent}%",
+  "invalidFineness": "शुद्धता 0 भन्दा बढी र 1000 सम्म, बढीमा 3 दशमलव अङ्कमा राख्नुहोस्।"
+}

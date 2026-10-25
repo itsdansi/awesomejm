@@ -73,7 +73,6 @@ export function PaymentForm({
           ? t('customers.paymentForm.recordAPayment')
           : t('customers.paymentForm.recordAnAdvanceRefund')
       }
-      eyebrow={t('customers.labels.customerAccounts')}
       busy={busy}
       onClose={onClose}
     >

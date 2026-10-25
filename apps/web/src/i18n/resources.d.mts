@@ -1,5 +1,6 @@
 export const resources: {
   en: {
+    purity: typeof import('./locales/en/purity.json');
     weights: typeof import('./locales/en/weights.json');
     settings: typeof import('./locales/en/settings.json');
     auth: typeof import('./locales/en/auth.json');
@@ -17,6 +18,7 @@ export const resources: {
     validation: typeof import('./locales/en/validation.json');
   };
   ne: {
+    purity: typeof import('./locales/ne/purity.json');
     weights: typeof import('./locales/ne/weights.json');
     settings: typeof import('./locales/ne/settings.json');
     auth: typeof import('./locales/ne/auth.json');

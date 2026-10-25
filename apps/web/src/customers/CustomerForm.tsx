@@ -96,7 +96,6 @@ export function CustomerForm({
           ? t('customers.customerForm.editCustomer')
           : t('customers.labels.addACustomer')
       }
-      eyebrow={t('customers.labels.customerAccounts')}
       busy={busy}
       onClose={onClose}
     >
