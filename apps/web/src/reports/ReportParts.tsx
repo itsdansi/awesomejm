@@ -1,3 +1,4 @@
+import { WeightValue } from '../shared/WeightValue';
 import { t, useLanguage } from '../i18n/language';
 import type { BusinessReport } from '@awesomejm/contracts';
 import { money } from '../customers/format';
@@ -64,12 +65,12 @@ export function StockTable({ rows }: { rows: BusinessReport['stock'] }) {
         <thead>
           <tr>
             <th>{t('reports.reportParts.stockPurity')}</th>
-            <th className="numeric">{t('reports.reportParts.openingG')}</th>
-            <th className="numeric">{t('reports.reportParts.receivedG')}</th>
-            <th className="numeric">{t('reports.reportParts.soldG')}</th>
-            <th className="numeric">{t('reports.reportParts.correctionsG')}</th>
-            <th className="numeric">{t('reports.reportParts.closingNetG')}</th>
-            <th className="numeric">{t('reports.reportParts.closingFineG')}</th>
+            <th className="numeric">{t('weights.fields.opening')}</th>
+            <th className="numeric">{t('weights.fields.received')}</th>
+            <th className="numeric">{t('weights.fields.sold')}</th>
+            <th className="numeric">{t('weights.fields.corrections')}</th>
+            <th className="numeric">{t('weights.fields.closingNet')}</th>
+            <th className="numeric">{t('weights.fields.closingFine')}</th>
           </tr>
         </thead>
         <tbody>
@@ -89,21 +90,31 @@ export function StockTable({ rows }: { rows: BusinessReport['stock'] }) {
                 </small>
               </td>
               <td className="numeric">
-                {row.openingGrams}
+                <WeightValue grams={row.openingGrams} stacked />
                 <small className="rate-subline">
                   {row.openingCount} {' ' + t('common.labels.piecesLots')}
                 </small>
               </td>
-              <td className="numeric">{row.receivedGrams}</td>
-              <td className="numeric">{row.issuedGrams}</td>
-              <td className="numeric">{row.correctionGrams}</td>
               <td className="numeric">
-                <strong>{row.closingGrams}</strong>
+                <WeightValue grams={row.receivedGrams} stacked />
+              </td>
+              <td className="numeric">
+                <WeightValue grams={row.issuedGrams} stacked />
+              </td>
+              <td className="numeric">
+                <WeightValue grams={row.correctionGrams} stacked />
+              </td>
+              <td className="numeric">
+                <strong>
+                  <WeightValue grams={row.closingGrams} stacked />
+                </strong>
                 <small className="rate-subline">
                   {row.closingCount} {' ' + t('common.labels.piecesLots')}
                 </small>
               </td>
-              <td className="numeric">{row.closingFineGrams}</td>
+              <td className="numeric">
+                <WeightValue grams={row.closingFineGrams} stacked />
+              </td>
             </tr>
           ))}
         </tbody>

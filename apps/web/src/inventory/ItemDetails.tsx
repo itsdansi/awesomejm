@@ -1,8 +1,8 @@
+import { WeightValue } from '../shared/WeightValue';
 import { TimeValue } from '../settings/DateValue';
 import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useEffect, useState, type FormEvent } from 'react';
-import { gramsToTola } from '@awesomejm/calculations';
 import {
   inventoryHistorySchema,
   inventoryItemSchema,
@@ -90,29 +90,37 @@ export function ItemDetails({
         <div>
           <dt>{t('common.fields.grossWeight')}</dt>
           <dd>
-            {item.grossWeightGrams} {' ' + t('common.units.grams')}
+            <WeightValue
+              grams={item.grossWeightGrams}
+              gramsPerTola={item.gramsPerTola}
+            />
           </dd>
         </div>
         <div>
           <dt>{t('common.fields.nonMetalWeight')}</dt>
           <dd>
-            {item.nonMetalWeightGrams} {' ' + t('common.units.grams')}
+            <WeightValue
+              grams={item.nonMetalWeightGrams}
+              gramsPerTola={item.gramsPerTola}
+            />
           </dd>
         </div>
         <div>
           <dt>{t('inventory.labels.netMetalWeight')}</dt>
           <dd>
-            {item.netWeightGrams} {' ' + t('common.units.grams')}{' '}
-            <small>
-              ({gramsToTola(item.netWeightGrams, item.gramsPerTola)}{' '}
-              {' ' + t('inventory.itemDetails.tola')}
-            </small>
+            <WeightValue
+              grams={item.netWeightGrams}
+              gramsPerTola={item.gramsPerTola}
+            />{' '}
           </dd>
         </div>
         <div>
           <dt>{t('inventory.labels.fineMetalEquivalent')}</dt>
           <dd>
-            {item.fineWeightGrams} {' ' + t('common.units.grams')}
+            <WeightValue
+              grams={item.fineWeightGrams}
+              gramsPerTola={item.gramsPerTola}
+            />
           </dd>
         </div>
       </dl>
@@ -143,7 +151,10 @@ export function ItemDetails({
                 )}
               </strong>
               <span>
-                {entry.netWeightGrams} {' ' + t('common.units.grams')}
+                <WeightValue
+                  grams={entry.netWeightGrams}
+                  gramsPerTola={item.gramsPerTola}
+                />
               </span>
             </div>
             <p>{entry.reason}</p>

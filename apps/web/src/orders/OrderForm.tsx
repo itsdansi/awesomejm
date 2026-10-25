@@ -1,3 +1,4 @@
+import { WeightInput } from '../shared/WeightInput';
 import { t, message, useLanguage } from '../i18n/language';
 import { useState, type FormEvent } from 'react';
 import {
@@ -332,38 +333,26 @@ export function OrderForm() {
                         }
                       />
                     </label>
-                    <label>
-                      {t('orders.orderForm.expectedNetWeightPieceG')}
-                      <input
-                        aria-label={t('orders.orderForm.expectedNetWeight', {
-                          position: index + 1,
-                        })}
-                        required
-                        inputMode="decimal"
-                        value={line.expectedNetWeightGrams}
-                        onChange={(event) =>
-                          changeLine(line.key, {
-                            expectedNetWeightGrams: event.target.value,
-                          })
-                        }
-                      />
-                    </label>
-                    <label>
-                      {t('orders.orderForm.plannedBilledWastagePieceG')}
-                      <input
-                        aria-label={t('orders.orderForm.plannedWastage', {
-                          position: index + 1,
-                        })}
-                        inputMode="decimal"
-                        required
-                        value={line.plannedWastageGrams}
-                        onChange={(event) =>
-                          changeLine(line.key, {
-                            plannedWastageGrams: event.target.value,
-                          })
-                        }
-                      />
-                    </label>
+                    <WeightInput
+                      label={t('weights.fields.expectedPerPiece')}
+                      ariaLabel={t('orders.orderForm.expectedNetWeight', {
+                        position: index + 1,
+                      })}
+                      value={line.expectedNetWeightGrams}
+                      onChange={(value) =>
+                        changeLine(line.key, { expectedNetWeightGrams: value })
+                      }
+                    />
+                    <WeightInput
+                      label={t('weights.fields.wastagePerPiece')}
+                      ariaLabel={t('orders.orderForm.plannedWastage', {
+                        position: index + 1,
+                      })}
+                      value={line.plannedWastageGrams}
+                      onChange={(value) =>
+                        changeLine(line.key, { plannedWastageGrams: value })
+                      }
+                    />
                     <label>
                       {t('orders.orderForm.plannedMakingPieceNpr')}
                       <input

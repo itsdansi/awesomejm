@@ -1,3 +1,5 @@
+import { WeightValue } from '../shared/WeightValue';
+import { WeightInput } from '../shared/WeightInput';
 import { DateValue } from '../settings/DateValue';
 import { t, message, useLanguage } from '../i18n/language';
 import { useState, type FormEvent } from 'react';
@@ -239,10 +241,10 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                 {line.design}
                 <br />
                 {t('sales.saleBuilder.perPieceExpected') + ' '}
-                {line.expectedNetWeightGrams}{' '}
-                {' ' + t('sales.saleBuilder.gNetPlannedWastage') + ' '}
-                {line.plannedWastageGrams}{' '}
-                {' ' + t('sales.saleBuilder.gMakingNpr')}{' '}
+                <WeightValue grams={line.expectedNetWeightGrams} />{' '}
+                {' / ' + t('weights.fields.wastage') + ' '}
+                <WeightValue grams={line.plannedWastageGrams} />{' '}
+                {' / ' + t('sales.saleBuilder.makingChargeNpr')}{' '}
                 {money(line.plannedMakingNpr)}{' '}
                 {' ' + t('sales.saleBuilder.stonesNpr')}{' '}
                 {money(line.plannedStonesNpr)}
@@ -469,8 +471,11 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                               {item.metal === 'GOLD'
                                 ? t('common.metals.gold')
                                 : t('common.metals.silver')}{' '}
-                              {item.fineness}‰ · {item.netWeightGrams}{' '}
-                              {' ' + t('common.labels.gNet')}
+                              {item.fineness}‰ ·{' '}
+                              <WeightValue
+                                grams={item.netWeightGrams}
+                                gramsPerTola={item.gramsPerTola}
+                              />
                             </small>
                             <small className={rate ? '' : 'danger-text'}>
                               {rate
@@ -530,8 +535,11 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                       <div>
                         <strong>{line.item.name}</strong>
                         <small>
-                          {line.item.itemCode} · {line.item.netWeightGrams}{' '}
-                          {' ' + t('common.labels.gNet')}
+                          {line.item.itemCode} ·{' '}
+                          <WeightValue
+                            grams={line.item.netWeightGrams}
+                            gramsPerTola={line.item.gramsPerTola}
+                          />
                         </small>
                       </div>
                       <button
@@ -552,24 +560,17 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                       </button>
                     </div>
                     <div className="sale-charge-inputs">
-                      <label>
-                        {t('common.labels.billedWastageG')}
-                        <input
-                          aria-label={t('sales.saleBuilder.billedWastageFor', {
-                            itemCode: line.item.itemCode,
-                          })}
-                          required
-                          inputMode="decimal"
-                          value={line.wastageGrams}
-                          onChange={(event) =>
-                            updateLine(
-                              line.item.id,
-                              'wastageGrams',
-                              event.target.value,
-                            )
-                          }
-                        />
-                      </label>
+                      <WeightInput
+                        label={t('weights.fields.wastage')}
+                        ariaLabel={t('sales.saleBuilder.billedWastageFor', {
+                          itemCode: line.item.itemCode,
+                        })}
+                        value={line.wastageGrams}
+                        onChange={(value) =>
+                          updateLine(line.item.id, 'wastageGrams', value)
+                        }
+                        gramsPerTola={matchingRate(line.item)?.gramsPerTola}
+                      />
                       <label>
                         {t('sales.saleBuilder.makingChargeNpr')}
                         <input

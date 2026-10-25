@@ -1,3 +1,4 @@
+import { WeightValue } from '../shared/WeightValue';
 import { t, useLanguage } from '../i18n/language';
 import type { PurchasePreview, SaleDetail } from '@awesomejm/contracts';
 import { balance, money } from '../customers/format';
@@ -57,20 +58,35 @@ export function PurchaseFigures({
                   <small className="rate-subline">{line.assayNotes}</small>
                   <small className="rate-subline">
                     {t('common.labels.gross') + ' '}
-                    {line.grossWeightGrams}{' '}
-                    {' ' + t('purchases.purchaseFigures.gStoneOther')}{' '}
-                    {line.nonMetalWeightGrams} {' ' + t('common.units.grams')}
+                    <WeightValue
+                      grams={line.grossWeightGrams}
+                      gramsPerTola={line.rate.gramsPerTola}
+                    />{' '}
+                    {' / ' + t('weights.fields.nonMetal')}{' '}
+                    <WeightValue
+                      grams={line.nonMetalWeightGrams}
+                      gramsPerTola={line.rate.gramsPerTola}
+                    />
                   </small>
                 </td>
                 <td className="numeric">
-                  {line.netWeightGrams} {' ' + t('common.units.grams')}
+                  <WeightValue
+                    grams={line.netWeightGrams}
+                    gramsPerTola={line.rate.gramsPerTola}
+                  />
                   <small className="rate-subline">
                     {t('purchases.purchaseFigures.fineEquivalent') + ' '}
-                    {line.fineWeightGrams} {' ' + t('common.units.grams')}
+                    <WeightValue
+                      grams={line.fineWeightGrams}
+                      gramsPerTola={line.rate.gramsPerTola}
+                    />
                   </small>
                   <small className="rate-subline">
                     {t('purchases.purchaseFigures.payable') + ' '}
-                    {line.payableWeightGrams} {' ' + t('common.units.grams')}
+                    <WeightValue
+                      grams={line.payableWeightGrams}
+                      gramsPerTola={line.rate.gramsPerTola}
+                    />
                   </small>
                 </td>
                 <td className="numeric">
@@ -85,7 +101,10 @@ export function PurchaseFigures({
                   </small>
                 </td>
                 <td className="numeric">
-                  {line.deductedWeightGrams} {' ' + t('common.units.grams')}
+                  <WeightValue
+                    grams={line.deductedWeightGrams}
+                    gramsPerTola={line.rate.gramsPerTola}
+                  />
                   <small className="rate-subline">
                     {t('common.money.currency') + ' '}
                     {money(line.deductionNpr)}
@@ -115,9 +134,7 @@ export function PurchaseFigures({
               <thead>
                 <tr>
                   <th>{t('purchases.purchaseFigures.piece')}</th>
-                  <th className="numeric">
-                    {t('purchases.purchaseFigures.netGrams')}
-                  </th>
+                  <th className="numeric">{t('weights.fields.net')}</th>
                   <th className="numeric">
                     {t('purchases.purchaseFigures.metalWastage')}
                   </th>
@@ -138,7 +155,12 @@ export function PurchaseFigures({
                         {line.item.itemCode} · {line.item.fineness}‰
                       </code>
                     </td>
-                    <td className="numeric">{line.item.netWeightGrams}</td>
+                    <td className="numeric">
+                      <WeightValue
+                        grams={line.item.netWeightGrams}
+                        gramsPerTola={line.item.gramsPerTola}
+                      />
+                    </td>
                     <td className="numeric">
                       {money(line.metalNpr)}
                       <small className="rate-subline">

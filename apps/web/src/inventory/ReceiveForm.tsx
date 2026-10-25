@@ -1,3 +1,5 @@
+import { WeightValue } from '../shared/WeightValue';
+import { WeightInput } from '../shared/WeightInput';
 import { t, message, useLanguage } from '../i18n/language';
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { inventoryWeights } from '@awesomejm/calculations';
@@ -140,42 +142,35 @@ export function ReceiveForm({
               {t('inventory.receiveForm.purityHelp')}
             </span>
           </label>
-          <label>
-            {t('common.labels.grossWeightG')}
-            <input
-              required
-              inputMode="decimal"
-              placeholder="0.000"
-              {...field('grossWeightGrams')}
-            />
-          </label>
-          <label>
-            {t('common.labels.stoneOtherWeightG')}
-            <input
-              required
-              inputMode="decimal"
-              {...field('nonMetalWeightGrams')}
-            />
-          </label>
+          <WeightInput
+            label={t('weights.fields.gross')}
+            value={fields.grossWeightGrams}
+            onChange={(value) =>
+              setFields({ ...fields, grossWeightGrams: value })
+            }
+          />
+          <WeightInput
+            label={t('weights.fields.nonMetal')}
+            value={fields.nonMetalWeightGrams}
+            onChange={(value) =>
+              setFields({ ...fields, nonMetalWeightGrams: value })
+            }
+          />
           <div className="weight-preview full-width">
             <div>
               <span>{t('inventory.labels.netMetalWeight')}</span>
               <strong>
-                {preview
-                  ? t('inventory.receiveForm.g', {
-                      weight: preview.netWeightGrams,
-                    })
-                  : '—'}
+                {preview ? <WeightValue grams={preview.netWeightGrams} /> : '—'}
               </strong>
             </div>
             <div>
               <span>{t('inventory.labels.fineMetalEquivalent')}</span>
               <strong>
-                {preview
-                  ? t('inventory.receiveForm.g', {
-                      weight: preview.fineWeightGrams,
-                    })
-                  : '—'}
+                {preview ? (
+                  <WeightValue grams={preview.fineWeightGrams} />
+                ) : (
+                  '—'
+                )}
               </strong>
             </div>
           </div>

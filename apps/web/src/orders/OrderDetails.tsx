@@ -1,3 +1,4 @@
+import { WeightValue } from '../shared/WeightValue';
 import { DateValue } from '../settings/DateValue';
 import { t, message, useLanguage } from '../i18n/language';
 import { useAuth } from '../auth/AuthContext';
@@ -10,7 +11,6 @@ import {
   updateOrderStatusSchema,
   type OrderDetail,
 } from '@awesomejm/contracts';
-import { gramsToTola } from '@awesomejm/calculations';
 import { AppShell } from '../shared/AppShell';
 import { Dialog, Icon } from '../shared/ui';
 import { useResource } from '../shared/useResource';
@@ -216,19 +216,13 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                       <div>
                         <dt>{t('orders.orderDetails.expectedNetPiece')}</dt>
                         <dd>
-                          {line.expectedNetWeightGrams}{' '}
-                          {' ' + t('common.units.grams')}
-                          <small>
-                            ≈ {gramsToTola(line.expectedNetWeightGrams)}{' '}
-                            {' ' + t('orders.orderDetails.tola')}
-                          </small>
+                          <WeightValue grams={line.expectedNetWeightGrams} />
                         </dd>
                       </div>
                       <div>
                         <dt>{t('orders.orderDetails.plannedWastagePiece')}</dt>
                         <dd>
-                          {line.plannedWastageGrams}{' '}
-                          {' ' + t('common.labels.gBilled')}
+                          <WeightValue grams={line.plannedWastageGrams} />
                         </dd>
                       </div>
                       <div>

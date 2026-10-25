@@ -38,7 +38,7 @@
     "bangle": "Bangle",
     "chain": "Chain",
     "coin": "Coin",
-    "description": "Create one stock record per physical piece. All weights are entered in grams.",
+    "description": "Create one stock record per physical piece. 1 tola = 100 lal = 11.664 g.",
     "designSizeOrReceiptReference": "Design, size or receipt reference",
     "earrings": "Earrings",
     "itemName": "Item name",

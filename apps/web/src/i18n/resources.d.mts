@@ -1,5 +1,6 @@
 export const resources: {
   en: {
+    weights: typeof import('./locales/en/weights.json');
     settings: typeof import('./locales/en/settings.json');
     auth: typeof import('./locales/en/auth.json');
     common: typeof import('./locales/en/common.json');
@@ -16,6 +17,7 @@ export const resources: {
     validation: typeof import('./locales/en/validation.json');
   };
   ne: {
+    weights: typeof import('./locales/ne/weights.json');
     settings: typeof import('./locales/ne/settings.json');
     auth: typeof import('./locales/ne/auth.json');
     common: typeof import('./locales/ne/common.json');

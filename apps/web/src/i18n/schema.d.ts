@@ -1252,6 +1252,32 @@ export interface TranslationSchema {
   'validation.range.minimum': { count: TranslationValue };
   'validation.value.maximum': { count: TranslationValue };
   'validation.value.minimum': { count: TranslationValue };
+  'weights.convention': never;
+  'weights.entryUnitFor': { field: TranslationValue };
+  'weights.fields.closingFine': never;
+  'weights.fields.closingNet': never;
+  'weights.fields.corrections': never;
+  'weights.fields.deduction': never;
+  'weights.fields.expectedPerPiece': never;
+  'weights.fields.gross': never;
+  'weights.fields.net': never;
+  'weights.fields.nonMetal': never;
+  'weights.fields.opening': never;
+  'weights.fields.received': never;
+  'weights.fields.sold': never;
+  'weights.fields.wastage': never;
+  'weights.fields.wastagePerPiece': never;
+  'weights.grams': never;
+  'weights.gramsFor': { field: TranslationValue };
+  'weights.gramsInBrackets': { grams: TranslationValue };
+  'weights.invalidEntry': never;
+  'weights.lal': never;
+  'weights.lalFor': { field: TranslationValue };
+  'weights.storedGrams': { grams: TranslationValue };
+  'weights.tola': never;
+  'weights.tolaFor': { field: TranslationValue };
+  'weights.tolaLal': { tola: TranslationValue; lal: TranslationValue };
+  'weights.tolaLalUnit': never;
 }
 export type TranslationKey = keyof TranslationSchema;
 export type StaticTranslationKey = {

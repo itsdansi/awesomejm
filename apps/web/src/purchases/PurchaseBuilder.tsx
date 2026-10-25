@@ -1,3 +1,5 @@
+import { WeightValue } from '../shared/WeightValue';
+import { WeightInput } from '../shared/WeightInput';
 import { DateValue } from '../settings/DateValue';
 import { t, message, useLanguage } from '../i18n/language';
 import { useState, type FormEvent } from 'react';
@@ -520,63 +522,43 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                             }
                           />
                         </label>
-                        <label>
-                          {t('common.labels.grossWeightG')}
-                          <input
-                            aria-label={t(
-                              'purchases.purchaseBuilder.incomingGrossWeight',
-                              {
-                                position: index + 1,
-                              },
-                            )}
-                            required
-                            inputMode="decimal"
-                            value={line.grossWeightGrams}
-                            onChange={(e) =>
-                              lineChange(line.key, {
-                                grossWeightGrams: e.target.value,
-                              })
-                            }
-                          />
-                        </label>
-                        <label>
-                          {t('common.labels.stoneOtherWeightG')}
-                          <input
-                            aria-label={t(
-                              'purchases.purchaseBuilder.incomingStoneWeight',
-                              {
-                                position: index + 1,
-                              },
-                            )}
-                            required
-                            inputMode="decimal"
-                            value={line.nonMetalWeightGrams}
-                            onChange={(e) =>
-                              lineChange(line.key, {
-                                nonMetalWeightGrams: e.target.value,
-                              })
-                            }
-                          />
-                        </label>
-                        <label>
-                          {t(
-                            'purchases.purchaseBuilder.agreedWeightDeductionG',
+                        <WeightInput
+                          label={t('weights.fields.gross')}
+                          ariaLabel={t(
+                            'purchases.purchaseBuilder.incomingGrossWeight',
+                            {
+                              position: index + 1,
+                            },
                           )}
-                          <input
-                            aria-label={t(
-                              'purchases.purchaseBuilder.incomingWeightDeduction',
-                              { position: index + 1 },
-                            )}
-                            required
-                            inputMode="decimal"
-                            value={line.deductedWeightGrams}
-                            onChange={(e) =>
-                              lineChange(line.key, {
-                                deductedWeightGrams: e.target.value,
-                              })
-                            }
-                          />
-                        </label>
+                          value={line.grossWeightGrams}
+                          onChange={(value) =>
+                            lineChange(line.key, { grossWeightGrams: value })
+                          }
+                        />
+                        <WeightInput
+                          label={t('weights.fields.nonMetal')}
+                          ariaLabel={t(
+                            'purchases.purchaseBuilder.incomingStoneWeight',
+                            {
+                              position: index + 1,
+                            },
+                          )}
+                          value={line.nonMetalWeightGrams}
+                          onChange={(value) =>
+                            lineChange(line.key, { nonMetalWeightGrams: value })
+                          }
+                        />
+                        <WeightInput
+                          label={t('weights.fields.deduction')}
+                          ariaLabel={t(
+                            'purchases.purchaseBuilder.incomingWeightDeduction',
+                            { position: index + 1 },
+                          )}
+                          value={line.deductedWeightGrams}
+                          onChange={(value) =>
+                            lineChange(line.key, { deductedWeightGrams: value })
+                          }
+                        />
                         <label>
                           {t('purchases.purchaseBuilder.otherDeductionNpr')}
                           <input
@@ -724,8 +706,10 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                               <strong>{item.name}</strong>
                               <small>
                                 {item.itemCode} · {item.fineness}‰ ·{' '}
-                                {item.netWeightGrams}{' '}
-                                {' ' + t('common.units.grams')}
+                                <WeightValue
+                                  grams={item.netWeightGrams}
+                                  gramsPerTola={item.gramsPerTola}
+                                />
                               </small>
                               <small>
                                 {rate
@@ -791,8 +775,11 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                         <div>
                           <strong>{line.item.name}</strong>
                           <small>
-                            {line.item.itemCode} · {line.item.netWeightGrams}{' '}
-                            {' ' + t('common.labels.gNet')}
+                            {line.item.itemCode} ·{' '}
+                            <WeightValue
+                              grams={line.item.netWeightGrams}
+                              gramsPerTola={line.item.gramsPerTola}
+                            />
                           </small>
                         </div>
                         <button
@@ -816,25 +803,25 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                         </button>
                       </div>
                       <div className="sale-charge-inputs">
-                        <label>
-                          {t('common.labels.billedWastageG')}
-                          <input
-                            aria-label={t(
-                              'purchases.purchaseBuilder.exchangeWastage',
-                              {
-                                position: line.item.itemCode,
-                              },
-                            )}
-                            required
-                            inputMode="decimal"
-                            value={line.wastageGrams}
-                            onChange={(e) =>
-                              outgoingChange(line.item.id, {
-                                wastageGrams: e.target.value,
-                              })
-                            }
-                          />
-                        </label>
+                        <WeightInput
+                          label={t('weights.fields.wastage')}
+                          ariaLabel={t(
+                            'purchases.purchaseBuilder.exchangeWastage',
+                            {
+                              position: line.item.itemCode,
+                            },
+                          )}
+                          value={line.wastageGrams}
+                          onChange={(value) =>
+                            outgoingChange(line.item.id, {
+                              wastageGrams: value,
+                            })
+                          }
+                          gramsPerTola={
+                            match(line.item.metal, line.item.fineness)
+                              ?.gramsPerTola
+                          }
+                        />
                         <label>
                           {t('purchases.purchaseBuilder.makingNpr')}
                           <input

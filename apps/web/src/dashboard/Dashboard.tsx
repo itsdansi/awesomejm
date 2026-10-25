@@ -1,3 +1,4 @@
+import { WeightValue } from '../shared/WeightValue';
 import { DateValue } from '../settings/DateValue';
 import { useDates } from '../settings/useDates';
 import { t, message, useLanguage } from '../i18n/language';
@@ -180,13 +181,11 @@ export function Dashboard() {
                           </div>
                           <span className="dashboard-weight">
                             <strong>
-                              {row.closingGrams}{' '}
-                              <small>{t('common.units.grams')}</small>
+                              <WeightValue grams={row.closingGrams} />{' '}
                             </strong>
                             <small>
                               {t('dashboard.dashboard.fine') + ' '}
-                              {row.closingFineGrams}{' '}
-                              {' ' + t('common.units.grams')}
+                              <WeightValue grams={row.closingFineGrams} />
                             </small>
                           </span>
                         </div>

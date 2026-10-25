@@ -35,7 +35,7 @@
     "sales": "sales ·",
     "corrections2": "− corrections",
     "correctionDateHelp": "Net values include corrections on their recorded correction dates.",
-    "stockReconciliationHelp": "Opening + received − sold + corrections = closing. All weights are grams.",
+    "stockReconciliationHelp": "Opening + received − sold + corrections = closing. Tola/lal is shown alongside exact grams.",
     "customerBalanceHelp": "Separate customer balances, calculated through the end date.",
     "scopeHelp": "These are operational reports, not profit, inventory cost valuation or tax returns. Old-metal purchases are included; supplier jewellery invoices and refining are outside this version. Payouts include purchase payouts and customer advance refunds. Negative period values can result from corrections to earlier periods. Receipts/receipt voids use their Nepal recording date; sales, purchases and their corrections use the recorded business date."
   },

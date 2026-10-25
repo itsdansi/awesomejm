@@ -1,0 +1,30 @@
+{
+  "grams": "Grams",
+  "tola": "Tola",
+  "lal": "Lal",
+  "tolaLalUnit": "Tola / lal",
+  "tolaLal": "{tola} tola {lal} lal",
+  "gramsInBrackets": "({grams} g)",
+  "entryUnitFor": "Entry unit for {field}",
+  "gramsFor": "{field} — grams",
+  "tolaFor": "{field} — tola",
+  "lalFor": "{field} — lal",
+  "storedGrams": "{grams} g · rounded to 0.001 g for posting",
+  "invalidEntry": "Use whole tola and 0-99.99 lal. Converted grams must fit the allowed weight range.",
+  "convention": "1 tola = 100 lal = 11.664 g. Local-unit displays marked ≈ are rounded; grams remain exact.",
+  "fields": {
+    "gross": "Gross weight",
+    "nonMetal": "Stone / other weight",
+    "net": "Net weight",
+    "wastage": "Billed wastage",
+    "expectedPerPiece": "Expected net weight / piece",
+    "wastagePerPiece": "Planned wastage / piece",
+    "deduction": "Agreed weight deduction",
+    "opening": "Opening weight",
+    "received": "Received weight",
+    "sold": "Sold weight",
+    "corrections": "Weight corrections",
+    "closingNet": "Closing net weight",
+    "closingFine": "Closing fine weight"
+  }
+}

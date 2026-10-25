@@ -1,3 +1,4 @@
+import { WeightValue } from '../shared/WeightValue';
 import { t, useLanguage } from '../i18n/language';
 import type { SalePreview } from '@awesomejm/contracts';
 import { balance, money } from '../customers/format';
@@ -48,22 +49,33 @@ export function SaleFigures({
                   </small>
                   <small className="rate-subline">
                     {t('common.labels.gross') + ' '}
-                    {line.item.grossWeightGrams}{' '}
-                    {' ' + t('sales.saleFigures.gStoneOther')}{' '}
-                    {line.item.nonMetalWeightGrams}{' '}
-                    {' ' + t('common.units.grams')}
+                    <WeightValue
+                      grams={line.item.grossWeightGrams}
+                      gramsPerTola={line.item.gramsPerTola}
+                    />{' '}
+                    {' / ' + t('weights.fields.nonMetal')}{' '}
+                    <WeightValue
+                      grams={line.item.nonMetalWeightGrams}
+                      gramsPerTola={line.item.gramsPerTola}
+                    />
                   </small>
                 </td>
                 <td className="numeric">
                   {money(line.metalNpr)}
                   <small className="rate-subline">
-                    {line.item.netWeightGrams} {' ' + t('common.units.grams')}
+                    <WeightValue
+                      grams={line.item.netWeightGrams}
+                      gramsPerTola={line.item.gramsPerTola}
+                    />
                   </small>
                 </td>
                 <td className="numeric">
                   {money(line.wastageNpr)}
                   <small className="rate-subline">
-                    {line.wastageGrams} {' ' + t('common.labels.gBilled')}
+                    <WeightValue
+                      grams={line.wastageGrams}
+                      gramsPerTola={line.rate.gramsPerTola}
+                    />
                   </small>
                 </td>
                 <td className="numeric">{money(line.makingNpr)}</td>

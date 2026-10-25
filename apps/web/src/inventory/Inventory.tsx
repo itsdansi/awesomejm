@@ -3,7 +3,7 @@ import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { AppShell } from '../shared/AppShell';
 import { useEffect, useState } from 'react';
-import { gramsToTola } from '@awesomejm/calculations';
+import { WeightValue } from '../shared/WeightValue';
 import {
   inventoryListSchema,
   inventorySummarySchema,
@@ -147,8 +147,11 @@ export function Inventory() {
                 </span>
               </div>
               <strong>
-                {data ? (row?.netWeightGrams ?? '0.000') : '—'}
-                <small>{t('common.units.grams')}</small>
+                {data ? (
+                  <WeightValue grams={row?.netWeightGrams ?? '0.000'} stacked />
+                ) : (
+                  '—'
+                )}
               </strong>
               <p>
                 {data ? (row?.pieces ?? 0) : '—'} {t('common.labels.pieces')}
@@ -257,7 +260,7 @@ export function Inventory() {
                   <th>{t('common.labels.metalPurity')}</th>
                   <th>{t('inventory.labels.category')}</th>
                   <th className="numeric">{t('inventory.list.netWeight')}</th>
-                  <th className="numeric">{t('inventory.list.tola')}</th>
+                  <th className="numeric">{t('weights.tolaLalUnit')}</th>
                   <th>
                     <span className="sr-only">
                       {t('common.labels.details')}
@@ -293,7 +296,11 @@ export function Inventory() {
                       <small> {' ' + t('common.units.grams')}</small>
                     </td>
                     <td className="numeric muted">
-                      {gramsToTola(item.netWeightGrams, item.gramsPerTola)}
+                      <WeightValue
+                        grams={item.netWeightGrams}
+                        gramsPerTola={item.gramsPerTola}
+                        localOnly
+                      />
                     </td>
                     <td>
                       <button
