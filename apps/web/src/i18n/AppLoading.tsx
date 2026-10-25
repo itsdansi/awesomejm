@@ -1,8 +1,15 @@
 import { t, useLanguage } from './language';
-export function AppLoading() {
+export function AppLoading({
+  withinWorkspace = false,
+}: {
+  withinWorkspace?: boolean;
+}) {
   useLanguage();
   return (
-    <div className="app-loading" role="status">
+    <div
+      className={withinWorkspace ? 'workspace-loading' : 'app-loading'}
+      role="status"
+    >
       {t('common.feedback.loadingWorkspace')}
     </div>
   );

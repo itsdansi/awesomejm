@@ -1,9 +1,13 @@
 import { Account } from './auth/Account';
 import { useAuth } from './auth/AuthContext';
+import { lazy, Suspense, useEffect, useState, useTransition } from 'react';
+import { AppShell } from './shared/AppShell';
+import { resolveRoute } from './shared/routes';
+import { AppLoading } from './i18n/AppLoading';
+
 const Staff = lazy(() =>
   import('./staff/Staff').then((m) => ({ default: m.Staff })),
 );
-import { lazy } from 'react';
 const Dashboard = lazy(() =>
   import('./dashboard/Dashboard').then((module) => ({
     default: module.Dashboard,
@@ -22,7 +26,6 @@ const Inventory = lazy(() =>
     default: module.Inventory,
   })),
 );
-import { useEffect, useState } from 'react';
 const Rates = lazy(() =>
   import('./rates/Rates').then((module) => ({ default: module.Rates })),
 );
@@ -44,43 +47,57 @@ const Settings = lazy(() =>
 
 export function App() {
   const [route, setRoute] = useState(() => globalThis.location.hash);
+  const [pending, startTransition] = useTransition();
   useEffect(() => {
-    const navigate = () => setRoute(globalThis.location.hash);
+    const navigate = () => {
+      const nextRoute = globalThis.location.hash;
+      startTransition(() => setRoute(nextRoute));
+    };
     globalThis.addEventListener('hashchange', navigate);
     return () => globalThis.removeEventListener('hashchange', navigate);
-  }, []);
-  const { can } = useAuth();
-  if (route === '#/settings') return <Settings />;
-  if (route === '#/account') return <Account />;
-  if (route === '#/staff') return can('staff.manage') ? <Staff /> : <Account />;
-  const required = route.startsWith('#/sales/new')
-    ? 'sales.write'
-    : route.startsWith('#/purchases/new')
-      ? 'purchases.write'
-      : route.startsWith('#/orders/new')
-        ? 'orders.write'
-        : null;
-  if (required && !can(required)) return <Account />;
-  if (route.startsWith('#/customers'))
-    return <Customers customerId={route.split('/')[2]} />;
-  const [path, query] = route.split('?');
-  if (path?.startsWith('#/purchases'))
-    return (
-      <Purchases
-        purchaseId={path.split('/')[2]}
-        orderId={new URLSearchParams(query).get('orderId')}
-      />
-    );
-  if (path === '#/reports') return <Reports />;
-  if (path?.startsWith('#/orders'))
-    return <Orders orderId={path.split('/')[2]} />;
-  if (path?.startsWith('#/sales'))
-    return (
-      <Sales
-        saleId={path.split('/')[2]}
-        orderId={new URLSearchParams(query).get('orderId')}
-      />
-    );
-  if (route === '#/rates') return <Rates />;
-  return route === '#/inventory' ? <Inventory /> : <Dashboard />;
+  }, [startTransition]);
+  const { user } = useAuth();
+  const page = resolveRoute(route, user.permissions);
+  let content;
+  switch (page.section) {
+    case 'Settings':
+      content = <Settings />;
+      break;
+    case 'Account':
+      content = <Account />;
+      break;
+    case 'Staff & recovery':
+      content = <Staff />;
+      break;
+    case 'Customers':
+      content = <Customers customerId={page.recordId} />;
+      break;
+    case 'Purchases':
+      content = (
+        <Purchases purchaseId={page.recordId} orderId={page.orderId ?? null} />
+      );
+      break;
+    case 'Reports':
+      content = <Reports />;
+      break;
+    case 'Orders':
+      content = <Orders orderId={page.recordId} />;
+      break;
+    case 'Sales':
+      content = <Sales saleId={page.recordId} orderId={page.orderId ?? null} />;
+      break;
+    case 'Metal rates':
+      content = <Rates />;
+      break;
+    case 'Inventory':
+      content = <Inventory />;
+      break;
+    default:
+      content = <Dashboard />;
+  }
+  return (
+    <AppShell section={page.section} busy={pending}>
+      <Suspense fallback={<AppLoading withinWorkspace />}>{content}</Suspense>
+    </AppShell>
+  );
 }

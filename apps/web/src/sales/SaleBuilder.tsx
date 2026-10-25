@@ -18,7 +18,6 @@ import {
   type SaleDraft,
   type SalePreview,
 } from '@awesomejm/contracts';
-import { AppShell } from '../shared/AppShell';
 import { request, errorMessage } from '../shared/api';
 import { useDebounced, useResource } from '../shared/useResource';
 import { Icon } from '../shared/ui';
@@ -166,7 +165,7 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
       linkedOrder.data?.order.status !== 'READY')
   )
     return (
-      <AppShell section="Sales">
+      <>
         <a href={`#/orders/${orderId}`} className="back-link">
           {t('common.labels.backToOrder')}
         </a>
@@ -189,11 +188,11 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
             {t('common.actions.refresh')}
           </button>
         </div>
-      </AppShell>
+      </>
     );
   const pickedBalance = customer ? balance(customer.balanceNpr) : null;
   return (
-    <AppShell section="Sales">
+    <>
       <a className="back-link" href="#/sales">
         {t('sales.labels.salesRegister')}
       </a>
@@ -717,6 +716,6 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
           </div>
         </form>
       )}
-    </AppShell>
+    </>
   );
 }

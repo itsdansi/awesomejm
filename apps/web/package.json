@@ -9,8 +9,9 @@
     "preview": "vite preview",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src test scripts vite.config.ts",
-    "test": "node --test test/*.test.mjs",
-    "i18n:types": "node scripts/i18n-schema.mjs"
+    "test": "node --test test/*.test.mjs && pnpm test:ui",
+    "i18n:types": "node scripts/i18n-schema.mjs",
+    "test:ui": "vitest run test/navigation.test.tsx --environment jsdom"
   },
   "dependencies": {
     "@awesomejm/calculations": "workspace:*",
@@ -26,7 +27,9 @@
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "eslint": "catalog:",
+    "jsdom": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:"
+    "vite": "catalog:",
+    "vitest": "catalog:"
   }
 }

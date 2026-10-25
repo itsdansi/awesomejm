@@ -13,7 +13,6 @@ import {
   type CustomerDetail,
   type CustomerStatement,
 } from '@awesomejm/contracts';
-import { AppShell } from '../shared/AppShell';
 import { Icon } from '../shared/ui';
 import { request, errorMessage } from '../shared/api';
 import { CustomerForm } from './CustomerForm';
@@ -85,7 +84,7 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
     }
   }
   return (
-    <AppShell section="Customers">
+    <>
       <a className="back-link" href="#/customers">
         {t('customers.customerAccount.customerRegister')}
       </a>
@@ -468,6 +467,6 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
           }
         />
       )}
-    </AppShell>
+    </>
   );
 }

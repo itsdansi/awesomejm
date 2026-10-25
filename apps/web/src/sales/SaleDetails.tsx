@@ -9,7 +9,6 @@ import {
   saleDetailSchema,
   type SaleRecord,
 } from '@awesomejm/contracts';
-import { AppShell } from '../shared/AppShell';
 import { Dialog } from '../shared/ui';
 import { request, errorMessage } from '../shared/api';
 import { useResource } from '../shared/useResource';
@@ -29,7 +28,7 @@ export function SaleDetails({ saleId }: { saleId: string }) {
   );
   const detail = result.data;
   return (
-    <AppShell section="Sales">
+    <>
       <a className="back-link" href="#/sales">
         {t('sales.labels.salesRegister')}
       </a>
@@ -209,7 +208,7 @@ export function SaleDetails({ saleId }: { saleId: string }) {
           </>
         )
       )}
-    </AppShell>
+    </>
   );
 }
 function CancelSale({

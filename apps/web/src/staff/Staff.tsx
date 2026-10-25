@@ -24,7 +24,6 @@ import {
   type StaffRole,
 } from '@awesomejm/contracts';
 import { useAuth } from '../auth/AuthContext';
-import { AppShell } from '../shared/AppShell';
 import { Dialog } from '../shared/ui';
 import { errorMessage, request } from '../shared/api';
 const roles = ['OWNER', 'MANAGER', 'CASHIER', 'VIEWER'] as const;
@@ -135,7 +134,7 @@ export function Staff() {
     }
   }
   return (
-    <AppShell section="Staff & recovery">
+    <>
       <div className="page-heading">
         <div>
           <h1>{t('staff.access.peopleYouTrust')}</h1>
@@ -360,7 +359,7 @@ export function Staff() {
           }}
         />
       )}
-    </AppShell>
+    </>
   );
 }
 function StaffForm({

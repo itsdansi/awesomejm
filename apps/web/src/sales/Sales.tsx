@@ -8,7 +8,6 @@ import {
   salesListSchema,
   salesSummarySchema,
 } from '@awesomejm/contracts';
-import { AppShell } from '../shared/AppShell';
 import { Icon } from '../shared/ui';
 import { useDebounced, useResource } from '../shared/useResource';
 import { money } from '../customers/format';
@@ -48,7 +47,7 @@ function SalesRegister() {
   const list = useResource(`/sales?${query}`, salesListSchema, revision);
   const summary = useResource('/sales/summary', salesSummarySchema, revision);
   return (
-    <AppShell section="Sales">
+    <>
       <div className="page-heading">
         <div>
           <h1>{t('sales.list.salesRegister')}</h1>
@@ -287,6 +286,6 @@ function SalesRegister() {
           />
         </div>
       </section>
-    </AppShell>
+    </>
   );
 }

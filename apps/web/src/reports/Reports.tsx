@@ -8,7 +8,6 @@ import {
   reportsSchema,
   type ReportsQuery,
 } from '@awesomejm/contracts';
-import { AppShell } from '../shared/AppShell';
 import { useResource } from '../shared/useResource';
 import { money, methodTitle } from '../customers/format';
 import { ActivityCards, StockTable } from './ReportParts';
@@ -102,7 +101,7 @@ export function Reports() {
     );
   }
   return (
-    <AppShell section="Reports">
+    <>
       <div className="page-heading">
         <div>
           <h1>{t('reports.title')}</h1>
@@ -423,6 +422,6 @@ export function Reports() {
           </div>
         )
       )}
-    </AppShell>
+    </>
   );
 }

@@ -5,7 +5,6 @@ import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useState } from 'react';
 import { dashboardSchema } from '@awesomejm/contracts';
-import { AppShell } from '../shared/AppShell';
 import { Icon } from '../shared/ui';
 import { useResource } from '../shared/useResource';
 import { money } from '../customers/format';
@@ -18,7 +17,7 @@ export function Dashboard() {
     result = useResource('/dashboard', dashboardSchema, revision),
     data = result.data;
   return (
-    <AppShell section="Dashboard">
+    <>
       <div className="page-heading">
         <div>
           <h1>{t('dashboard.dashboard.shopOverview')}</h1>
@@ -328,6 +327,6 @@ export function Dashboard() {
           </>
         )
       )}
-    </AppShell>
+    </>
   );
 }

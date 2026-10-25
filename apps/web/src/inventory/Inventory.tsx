@@ -1,7 +1,6 @@
 import { Pagination } from '../shared/Pagination';
 import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
-import { AppShell } from '../shared/AppShell';
 import { useEffect, useState } from 'react';
 import { WeightValue } from '../shared/WeightValue';
 import {
@@ -95,7 +94,7 @@ export function Inventory() {
     0,
   );
   return (
-    <AppShell section="Inventory">
+    <>
       <div className="page-heading">
         <div>
           <h1>{t('inventory.title')}</h1>
@@ -393,6 +392,6 @@ export function Inventory() {
           }
         />
       )}
-    </AppShell>
+    </>
   );
 }

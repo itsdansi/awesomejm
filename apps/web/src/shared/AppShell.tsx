@@ -5,23 +5,15 @@ import { useAuth } from '../auth/AuthContext';
 import type { ReactNode } from 'react';
 import { Icon } from './ui';
 import { UserMenu } from './UserMenu';
+import type { AppSection } from './routes';
 
 export function AppShell({
   section,
   children,
+  busy = false,
 }: {
-  section:
-    | 'Inventory'
-    | 'Metal rates'
-    | 'Customers'
-    | 'Sales'
-    | 'Orders'
-    | 'Purchases'
-    | 'Reports'
-    | 'Dashboard'
-    | 'Account'
-    | 'Settings'
-    | 'Staff & recovery';
+  section: AppSection;
+  busy?: boolean;
   children: ReactNode;
 }) {
   useLanguage();
@@ -99,6 +91,7 @@ export function AppShell({
             <a
               className={`nav-item ${section === 'Staff & recovery' ? 'active' : ''}`}
               href="#/staff"
+              aria-current={section === 'Staff & recovery' ? 'page' : undefined}
             >
               <Icon name="users" />
               {t('common.navigation.staff')}
@@ -114,7 +107,9 @@ export function AppShell({
             <UserMenu />
           </div>
         </header>
-        <main className="workspace">{children}</main>
+        <main className="workspace" aria-busy={busy}>
+          {children}
+        </main>
       </div>
     </div>
   );

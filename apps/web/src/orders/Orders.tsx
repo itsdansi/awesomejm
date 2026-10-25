@@ -4,7 +4,6 @@ import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useState } from 'react';
 import { ordersListSchema, ordersSummarySchema } from '@awesomejm/contracts';
-import { AppShell } from '../shared/AppShell';
 import { Icon } from '../shared/ui';
 import { useDebounced, useResource } from '../shared/useResource';
 import { money } from '../customers/format';
@@ -36,7 +35,7 @@ function OrderRegister() {
   const list = useResource(`/orders?${query}`, ordersListSchema, revision),
     summary = useResource('/orders/summary', ordersSummarySchema, revision);
   return (
-    <AppShell section="Orders">
+    <>
       <div className="page-heading">
         <div>
           <h1>{t('orders.title')}</h1>
@@ -270,6 +269,6 @@ function OrderRegister() {
           />
         </div>
       </section>
-    </AppShell>
+    </>
   );
 }

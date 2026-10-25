@@ -43,10 +43,13 @@ The frontend proxies `/api` to the API during development. If the API port chang
 pnpm check       # Lint, type checks, calculation tests, builds, formatting
 pnpm smoke       # Start temporary API/web servers and verify their connection
 pnpm test:integration # Inventory/rates/customer/sales/orders/purchases/reports APIs + real PostgreSQL; database must be running
+pnpm --filter @awesomejm/web test:ui # Delayed-navigation rendering regression; no database or app server needed
 pnpm format      # Format source and configuration
 ```
 
 The smoke check uses ephemeral ports and stops its servers on completion. Integration tests create and remove a unique temporary schema, leaving development stock untouched. Set `TEST_DATABASE_URL` to use a different test database; the test role needs schema creation permission. CI runs these checks against PostgreSQL on Node 24.15.0 with frozen dependencies.
+
+Frontend tests include a Vitest/JSDOM navigation regression that renders the real app and layout with controlled page modules. It holds a lazy page load pending, checks that the previous page stays visible, and verifies that the same sidebar, topbar and avatar remain mounted during loading, after navigation and on browser Back. It runs with the existing Node tests through `pnpm test` and `pnpm check`.
 
 ## Workspace
 
@@ -62,6 +65,8 @@ scripts/               Runtime and integration checks
 ```
 
 Shared packages expose compiled ESM and type declarations through explicit package exports. Workspace dependencies are declared with `workspace:*`. Application packages stay at the ends of the dependency graph.
+
+The web app owns one persistent `AppShell` around its routed content. Module pages render content only. Lazy page loading is contained inside the workspace, and navigation transitions keep the current page visible while the next module loads, preserving the sidebar and topbar.
 
 Keep database access, credentials, authorisation and authoritative transaction posting in the API. The browser can use shared calculations for previews; the API must validate final business values. Domain modules such as inventory, sales, orders, exchanges and accounts should start inside `apps/api/src` and only become packages when another application needs them.
 

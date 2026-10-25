@@ -8,7 +8,6 @@ import {
   type CustomerList,
   type CustomerSummary,
 } from '@awesomejm/contracts';
-import { AppShell } from '../shared/AppShell';
 import { Icon } from '../shared/ui';
 import { request, errorMessage } from '../shared/api';
 import { CustomerForm } from './CustomerForm';
@@ -74,7 +73,7 @@ function CustomerRegister() {
     return () => controller.abort();
   }, [term, filter, page, key]);
   return (
-    <AppShell section="Customers">
+    <>
       <div className="page-heading">
         <div>
           <h1>{t('customers.labels.customerAccounts')}</h1>
@@ -308,6 +307,6 @@ function CustomerRegister() {
           }}
         />
       )}
-    </AppShell>
+    </>
   );
 }

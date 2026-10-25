@@ -4,7 +4,6 @@ import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useState } from 'react';
 import { purchasesListSchema } from '@awesomejm/contracts';
-import { AppShell } from '../shared/AppShell';
 import { useDebounced, useResource } from '../shared/useResource';
 import { Icon } from '../shared/ui';
 import { money } from '../customers/format';
@@ -37,7 +36,7 @@ function PurchaseRegister() {
     revision,
   );
   return (
-    <AppShell section="Purchases">
+    <>
       <div className="page-heading">
         <div>
           <h1>{t('purchases.purchases.purchasesExchanges')}</h1>
@@ -215,6 +214,6 @@ function PurchaseRegister() {
           />
         </div>
       </section>
-    </AppShell>
+    </>
   );
 }

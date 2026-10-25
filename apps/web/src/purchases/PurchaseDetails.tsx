@@ -9,7 +9,6 @@ import {
   purchaseDetailSchema,
   type PurchaseDetail,
 } from '@awesomejm/contracts';
-import { AppShell } from '../shared/AppShell';
 import { Dialog } from '../shared/ui';
 import { useResource } from '../shared/useResource';
 import { errorMessage, request } from '../shared/api';
@@ -28,7 +27,7 @@ export function PurchaseDetails({ purchaseId }: { purchaseId: string }) {
     ),
     detail = result.data;
   return (
-    <AppShell section="Purchases">
+    <>
       <a className="back-link" href="#/purchases">
         {t('purchases.labels.purchaseRegister')}
       </a>
@@ -211,7 +210,7 @@ export function PurchaseDetails({ purchaseId }: { purchaseId: string }) {
           </>
         )
       )}
-    </AppShell>
+    </>
   );
 }
 function PurchaseCorrection({

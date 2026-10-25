@@ -11,7 +11,6 @@ import {
   updateOrderStatusSchema,
   type OrderDetail,
 } from '@awesomejm/contracts';
-import { AppShell } from '../shared/AppShell';
 import { Dialog, Icon } from '../shared/ui';
 import { useResource } from '../shared/useResource';
 import { errorMessage, request } from '../shared/api';
@@ -35,7 +34,7 @@ export function OrderDetails({ orderId }: { orderId: string }) {
     detail?.order.status === 'CANCELLED';
   const currentBalance = detail ? balance(detail.customer.balanceNpr) : null;
   return (
-    <AppShell section="Orders">
+    <>
       <a className="back-link" href="#/orders">
         {t('orders.labels.orderBook')}
       </a>
@@ -472,7 +471,7 @@ export function OrderDetails({ orderId }: { orderId: string }) {
           </>
         )
       )}
-    </AppShell>
+    </>
   );
 }
 function OrderAction({

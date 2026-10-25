@@ -13,7 +13,6 @@ import {
   orderDetailSchema,
   type Customer,
 } from '@awesomejm/contracts';
-import { AppShell } from '../shared/AppShell';
 import { request, errorMessage } from '../shared/api';
 import { useDebounced, useResource } from '../shared/useResource';
 import { Icon } from '../shared/ui';
@@ -104,7 +103,7 @@ export function OrderForm() {
   }
   const account = customer ? balance(customer.balanceNpr) : null;
   return (
-    <AppShell section="Orders">
+    <>
       <a className="back-link" href="#/orders">
         {t('orders.labels.orderBook')}
       </a>
@@ -498,6 +497,6 @@ export function OrderForm() {
           </button>
         </div>
       </form>
-    </AppShell>
+    </>
   );
 }

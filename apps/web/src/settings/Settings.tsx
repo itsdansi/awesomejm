@@ -6,7 +6,6 @@ import {
 import { useAuth } from '../auth/AuthContext';
 import { message, t, useLanguage } from '../i18n/language';
 import { request, errorMessage } from '../shared/api';
-import { AppShell } from '../shared/AppShell';
 import { displayTime } from './dates.mjs';
 
 export function Settings() {
@@ -14,7 +13,7 @@ export function Settings() {
   const { user } = useAuth();
   const [notice, setNotice] = useState(false);
   return (
-    <AppShell section="Settings">
+    <>
       <h1>{t('settings.title')}</h1>
       {notice && (
         <p className="notice" role="status">
@@ -27,7 +26,7 @@ export function Settings() {
         key={JSON.stringify(user.displaySettings)}
         saved={user.displaySettings}
       />
-    </AppShell>
+    </>
   );
 }
 function SettingsForm({

@@ -12,7 +12,6 @@ import {
   type RateBook,
   type RateHistory,
 } from '@awesomejm/contracts';
-import { AppShell } from '../shared/AppShell';
 import { errorMessage, request } from '../shared/api';
 import { Icon } from '../shared/ui';
 import { RateForm } from './RateForm';
@@ -102,7 +101,7 @@ export function Rates() {
     setRevision((value) => value + 1);
   }
   return (
-    <AppShell section="Metal rates">
+    <>
       <div className="page-heading">
         <div>
           <h1>{t('rates.labels.goldSilverRates')}</h1>
@@ -454,6 +453,6 @@ export function Rates() {
           }}
         />
       )}
-    </AppShell>
+    </>
   );
 }

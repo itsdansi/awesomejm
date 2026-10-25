@@ -23,7 +23,6 @@ import {
   type PurchaseDraft,
   type PurchasePreview,
 } from '@awesomejm/contracts';
-import { AppShell } from '../shared/AppShell';
 import { request, errorMessage } from '../shared/api';
 import { useDebounced, useResource } from '../shared/useResource';
 import { Icon } from '../shared/ui';
@@ -203,7 +202,7 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
     (order.loading || order.error || order.data?.order.status !== 'READY')
   )
     return (
-      <AppShell section="Purchases">
+      <>
         <a className="back-link" href={`#/orders/${orderId}`}>
           {t('common.labels.backToOrder')}
         </a>
@@ -221,10 +220,10 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
             </p>
           )}
         </div>
-      </AppShell>
+      </>
     );
   return (
-    <AppShell section="Purchases">
+    <>
       <a className="back-link" href="#/purchases">
         {t('purchases.labels.purchaseRegister')}
       </a>
@@ -1003,6 +1002,6 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
           </div>
         </form>
       )}
-    </AppShell>
+    </>
   );
 }

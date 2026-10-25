@@ -1,6 +1,5 @@
 import { roleKeys } from '../i18n/labels';
 import { t, useLanguage } from '../i18n/language';
-import { AppShell } from '../shared/AppShell';
 import { useAuth } from './AuthContext';
 import { PasswordForm } from './PasswordForm';
 export function Account() {
@@ -8,7 +7,7 @@ export function Account() {
 
   const { user, refresh } = useAuth();
   return (
-    <AppShell section="Account">
+    <>
       <h1>{t('auth.account.yourAccount')}</h1>
       <p>
         {user.name} · {user.username} · {t(roleKeys[user.role])}
@@ -17,6 +16,6 @@ export function Account() {
         <h2>{t('auth.account.changePassword')}</h2>
         <PasswordForm onChanged={() => void refresh()} />
       </section>
-    </AppShell>
+    </>
   );
 }
