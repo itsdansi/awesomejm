@@ -13,6 +13,7 @@ import { AuthContext } from './AuthContext';
 import { setSessionCsrf } from './session';
 import { Icon } from '../shared/ui';
 import { PasswordForm } from './PasswordForm';
+import { authCopy } from './authCopy';
 export function AuthGate({ children }: { children: ReactNode }) {
   useLanguage();
 
@@ -153,19 +154,17 @@ function Login({
   }
   return (
     <div className="auth-page">
-      <div className="auth-language">
-        <LanguageSwitch />
-      </div>
       <section className="auth-card">
-        <span className="brand-mark">
-          <Icon name="diamond" size={30} />
-        </span>
-        <h1>
-          {t('auth.signIn.yourShop')}
-          <br />
-          {t('auth.signIn.yourWorkspace')}
-        </h1>
-        <p>{t('auth.signIn.signInWithYourStaffAccountToContinue')}</p>
+        <div className="auth-brand">
+          <span className="brand-mark-badge">
+            <Icon name="diamond" size={26} />
+          </span>
+          <div className="auth-brand-titles">
+            <strong className="auth-brand-name">{authCopy.brand}</strong>
+            <span className="auth-brand-tag">{authCopy.brandSubtitle}</span>
+          </div>
+        </div>
+        <h1 className="auth-subhead">{authCopy.subhead}</h1>
         {(error || connectionError) && (
           <p className="error-banner" role="alert">
             {message(error) || message(connectionError)}
@@ -173,19 +172,21 @@ function Login({
         )}
         <form className="access-form" onSubmit={(e) => void submit(e)}>
           <label>
-            {t('auth.fields.username')}
+            {authCopy.usernameLabel}
             <input
               autoComplete="username"
+              autoFocus
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
               maxLength={64}
               autoCapitalize="none"
               spellCheck={false}
+              placeholder={authCopy.usernameLabel}
             />
           </label>
           <label>
-            {t('auth.fields.password')}
+            {authCopy.passwordLabel}
             <input
               type="password"
               autoComplete="current-password"
@@ -193,24 +194,29 @@ function Login({
               onChange={(e) => setPassword(e.target.value)}
               required
               maxLength={128}
+              placeholder="••••••••••••"
             />
           </label>
           <button className="button primary" disabled={busy}>
-            {busy ? t('auth.signIn.signingIn') : t('auth.signIn.title')}
+            <span>
+              {busy ? authCopy.signingInButton : authCopy.signInButton}
+            </span>
             <Icon name="arrow" />
           </button>
         </form>
-        <p className="auth-help">
-          {t('auth.signIn.firstTimeSetupAndOwnerRecoveryAreHandled')}
-        </p>
       </section>
       <div className="auth-note">
-        <span>◇</span>
-        <h2>{t('common.labels.careInEveryDetail')}</h2>
-        <p>{t('common.labels.forGoldAndSilverBusinesses')}</p>
-        <small>
-          {t('auth.signIn.individualAccessAClearRecordOfEveryChange')}
-        </small>
+        <span className="auth-note-icon">◇</span>
+        <h2>{authCopy.slogan}</h2>
+        <p className="auth-tagline-ne">{authCopy.tagline}</p>
+        <div className="auth-pillars">
+          <span>{authCopy.pillars.purity}</span>
+          <span className="auth-bullet">◆</span>
+          <span>{authCopy.pillars.trust}</span>
+          <span className="auth-bullet">◆</span>
+          <span>{authCopy.pillars.security}</span>
+        </div>
+        <small className="auth-audit-en">{authCopy.auditNote}</small>
       </div>
     </div>
   );

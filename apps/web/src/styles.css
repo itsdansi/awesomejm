@@ -2929,15 +2929,62 @@ button.sale-picker-row:hover {
   grid-template-columns: 1fr 1fr;
   background: var(--bg, #f7f8f5);
 }
+.auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.brand-mark-badge {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(145deg, #264738, #1c362a);
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #dfdbb8;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(36, 66, 52, 0.22);
+}
+.auth-brand-titles {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.auth-brand-name {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #1e352b;
+}
+.auth-brand-tag {
+  font-size: 13.5px;
+  color: #667262;
+  font-weight: 400;
+}
 .auth-card {
   width: min(440px, calc(100% - 48px));
   margin: auto;
   padding: 56px 0;
 }
 .auth-card h1 {
-  font-size: 44px;
-  line-height: 1.12;
-  margin: 22px 0;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: #1e352b;
+  margin: 0 0 16px;
+}
+.auth-card h1.auth-subhead,
+.auth-subhead {
+  font-size: 15px;
+  font-weight: 400;
+  color: #687465;
+  line-height: 1.5;
+  letter-spacing: normal;
+  margin: 0 0 32px;
 }
 .auth-card form,
 .account-panel form {
@@ -2945,18 +2992,68 @@ button.sale-picker-row:hover {
   gap: 20px;
 }
 .auth-card form {
-  margin-top: 32px;
+  margin-top: 16px;
 }
 .auth-card label,
 .account-panel label {
   display: grid;
-  gap: 9px;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #3b4538;
 }
-.auth-help {
-  font-size: 12px;
-  line-height: 1.7;
-  margin-top: 32px;
-  color: #747b70;
+.auth-card input {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1px solid #dcdfd8;
+  border-radius: 8px;
+  background: #ffffff;
+  font-size: 15px;
+  color: #1b221a;
+  outline: none;
+  box-sizing: border-box;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.auth-card input:focus {
+  border-color: #244234;
+  box-shadow: 0 0 0 3px rgba(36, 66, 52, 0.12);
+}
+.auth-card input::placeholder {
+  color: #9ba697;
+  font-weight: 400;
+}
+.auth-card button.primary {
+  margin-top: 8px;
+  padding: 14px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 8px;
+  background: #244234;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(36, 66, 52, 0.2);
+  transition:
+    background 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.1s ease;
+}
+.auth-card button.primary:hover:not(:disabled) {
+  background: #1c362a;
+  box-shadow: 0 3px 8px rgba(36, 66, 52, 0.26);
+}
+.auth-card button.primary:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.auth-card button.primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 .auth-note {
   background: #263f35;
@@ -2968,18 +3065,55 @@ button.sale-picker-row:hover {
   padding: 48px;
   text-align: center;
 }
-.auth-note > span {
-  font-size: 120px;
+.auth-note-icon {
+  font-size: 80px;
   font-weight: 200;
   color: #bcb78d;
+  line-height: 1;
+  margin-bottom: 16px;
 }
 .auth-note h2 {
-  font-size: 32px;
-  color: inherit;
+  font-size: 36px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 12px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
 }
-.auth-note small {
-  margin-top: 48px;
-  opacity: 0.7;
+.auth-tagline-ne {
+  font-size: 18px;
+  font-weight: 500;
+  color: #bcb78d;
+  margin: 0 0 24px;
+  line-height: 1.4;
+}
+.auth-pillars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 8px 0 28px;
+  padding: 10px 24px;
+  background: rgba(188, 183, 141, 0.14);
+  border: 1px solid rgba(188, 183, 141, 0.3);
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #f0f0df;
+}
+.auth-bullet {
+  font-size: 8px;
+  color: #bcb78d;
+  opacity: 0.85;
+}
+.auth-audit-en {
+  color: #b7c4b0;
+  font-size: 13px;
+  line-height: 1.5;
+  opacity: 0.85;
+  margin-top: 20px;
+  display: block;
 }
 .account-panel {
   max-width: 620px;
@@ -3014,11 +3148,11 @@ button.sale-picker-row:hover {
   .auth-note {
     display: none;
   }
+  .auth-card h1:not(.auth-subhead) {
+    font-size: 24px;
+  }
   .staff-topbar {
     gap: 8px;
-  }
-  .auth-card h1 {
-    font-size: 36px;
   }
 }
 @media print {
@@ -3317,9 +3451,6 @@ html[lang='ne'] .auth-card h1 {
   .auth-language {
     right: 16px;
     top: 16px;
-  }
-  .auth-card {
-    padding-top: 90px;
   }
   .staff-topbar {
     justify-content: flex-end;
