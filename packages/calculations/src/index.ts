@@ -15,7 +15,7 @@ export function nonMetalGramsFromNet(
   const gross = weight(grossGrams),
     net = weight(netGrams);
   if (net.lte(0) || net.gt(gross))
-    throw new RangeError(s
+    throw new RangeError(
       'Net metal weight must be greater than zero and no greater than gross weight.',
     );
   return gross.minus(net).toFixed(3);
