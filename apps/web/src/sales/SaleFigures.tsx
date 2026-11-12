@@ -79,7 +79,14 @@ export function SaleFigures({
                   </small>
                 </td>
                 <td className="numeric">{money(line.makingNpr)}</td>
-                <td className="numeric">{money(line.stonesNpr)}</td>
+                <td className="numeric">
+                  {money(line.stonesNpr)}
+                  {line.item.nonMetalLabel && (
+                    <small className="rate-subline">
+                      {line.item.nonMetalLabel}
+                    </small>
+                  )}
+                </td>
                 <td className="numeric">
                   <strong>{money(line.lineTotalNpr)}</strong>
                 </td>

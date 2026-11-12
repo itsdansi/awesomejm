@@ -56,7 +56,7 @@ function GoldPurity(props: Props) {
             <option key={entry.fineness} value={entry.fineness}>
               {t('purity.presetOption', {
                 karat: entry.karat,
-                fineness: entry.fineness,
+                percent: finenessToPercentage(entry.fineness),
               })}
             </option>
           ))}

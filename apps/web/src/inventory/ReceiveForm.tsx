@@ -3,6 +3,7 @@ import {
   DEFAULT_GOLD_FINENESS,
   DEFAULT_SILVER_FINENESS,
   inventoryWeights,
+  nonMetalGramsFromNet,
 } from '@awesomejm/calculations';
 import { WeightValue } from '../shared/WeightValue';
 import { WeightInput } from '../shared/WeightInput';
@@ -28,7 +29,9 @@ export function ReceiveForm({
     metal: 'GOLD' as 'GOLD' | 'SILVER',
     fineness: DEFAULT_GOLD_FINENESS,
     grossWeightGrams: '',
-    nonMetalWeightGrams: '0',
+    netWeightGrams: '',
+    nonMetalValueNpr: '0',
+    nonMetalLabel: '',
     notes: '',
   });
   const [busy, setBusy] = useState(false);
@@ -37,7 +40,7 @@ export function ReceiveForm({
   try {
     preview = inventoryWeights(
       fields.grossWeightGrams,
-      fields.nonMetalWeightGrams,
+      nonMetalGramsFromNet(fields.grossWeightGrams, fields.netWeightGrams),
       fields.fineness,
     );
   } catch {
@@ -53,7 +56,21 @@ export function ReceiveForm({
   });
   async function submit(event: FormEvent) {
     event.preventDefault();
-    const parsed = receiveItemSchema.safeParse(fields);
+    const { netWeightGrams, ...receiptFields } = fields;
+    let nonMetalWeightGrams;
+    try {
+      nonMetalWeightGrams = nonMetalGramsFromNet(
+        fields.grossWeightGrams,
+        netWeightGrams,
+      );
+    } catch {
+      setError(t('inventory.receiveForm.invalidNetWeight'));
+      return;
+    }
+    const parsed = receiveItemSchema.safeParse({
+      ...receiptFields,
+      nonMetalWeightGrams,
+    });
     if (!parsed.success) {
       setError(
         parsed.error.issues
@@ -161,12 +178,33 @@ export function ReceiveForm({
             }
           />
           <WeightInput
-            label={t('weights.fields.nonMetal')}
-            value={fields.nonMetalWeightGrams}
+            label={t('inventory.labels.netMetalWeight')}
+            value={fields.netWeightGrams}
             onChange={(value) =>
-              setFields({ ...fields, nonMetalWeightGrams: value })
+              setFields({ ...fields, netWeightGrams: value })
             }
           />
+          <label>
+            {t('inventory.fields.nonMetalLabel')}
+            <input
+              maxLength={120}
+              placeholder={t('inventory.receiveForm.componentNamePlaceholder')}
+              {...field('nonMetalLabel')}
+            />
+          </label>
+          <label>
+            {fields.nonMetalLabel.trim()
+              ? t('common.money.namedCharge', {
+                  label: fields.nonMetalLabel.trim(),
+                })
+              : t('inventory.fields.nonMetalValueNpr')}
+            <input
+              required
+              inputMode="decimal"
+              pattern="(0|[1-9][0-9]{0,8})([.][0-9]{1,2})?"
+              {...field('nonMetalValueNpr')}
+            />
+          </label>
           <div className="weight-preview full-width">
             <div>
               <span>{t('inventory.labels.netMetalWeight')}</span>

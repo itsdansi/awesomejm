@@ -171,7 +171,8 @@ export function PurchaseFigures({
                     <td className="numeric">
                       {money(line.makingNpr)}
                       <small className="rate-subline">
-                        {t('common.labels.stones') + ' '}
+                        {(line.item.nonMetalLabel ||
+                          t('common.labels.stones')) + ' '}
                         {money(line.stonesNpr)}
                       </small>
                     </td>

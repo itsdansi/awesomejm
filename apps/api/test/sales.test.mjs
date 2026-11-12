@@ -98,6 +98,8 @@ test('sales atomically link immutable pricing, physical stock and customer accou
       fineness: '916.667',
       grossWeightGrams: '12.664',
       nonMetalWeightGrams: '1',
+      nonMetalValueNpr: '700.25',
+      nonMetalLabel: 'Pote',
       notes: 'Test only',
     };
     const item = await success('/inventory/items', piece);
@@ -152,6 +154,9 @@ test('sales atomically link immutable pricing, physical stock and customer accou
         assert.equal(preview.totalNpr, '154517.37');
         assert.equal(preview.advanceAppliedNpr, '1000.50');
         assert.equal(preview.lines[0].metalNpr, '150000.25');
+        assert.equal(preview.lines[0].item.nonMetalValueNpr, '700.25');
+        assert.equal(preview.lines[0].item.nonMetalLabel, 'Pote');
+        assert.equal(preview.lines[0].stonesNpr, '500.25');
         assert.equal((await success('/sales', undefined, 200)).total, 0);
         assert.equal(
           (await success(`/customers/${customer.id}/ledger`, undefined, 200))
@@ -283,6 +288,8 @@ test('sales atomically link immutable pricing, physical stock and customer accou
         for (const result of attempts)
           assert.equal(result.status, 201, JSON.stringify(result.body));
         sale = attempts[0].body;
+        assert.equal(sale.lines[0].item.nonMetalLabel, 'Pote');
+        assert.equal(sale.lines[0].stonesNpr, '500.25');
         assert.deepEqual(sale, attempts[1].body);
         assert.equal(sale.sale.saleCode, 'S-000001');
         assert.equal(sale.sale.totalNpr, '154517.37');

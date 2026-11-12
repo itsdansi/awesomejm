@@ -1,6 +1,6 @@
 export const authCopy = {
-  brand: 'AWESOMEJM',
-  brandSubtitle: 'Jewellery Manager',
+  brand: 'SAJILO',
+  brandSubtitle: 'Jwellery',
   subhead: 'Sign in with your credentials to continue.',
   usernameLabel: 'Username',
   passwordLabel: 'Password',

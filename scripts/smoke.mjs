@@ -68,7 +68,7 @@ try {
   );
   const page = await fetch(webUrl);
   assert.equal(page.status, 200);
-  assert.match(await page.text(), /<title>AwesomeJM<\/title>/);
+  assert.match(await page.text(), /<title>Sajilo Jwellery<\/title>/);
   const proxied = await fetch(`${webUrl}/api/v1/health`);
   assert.equal(proxied.status, 200);
   assert.equal((await proxied.json()).service, 'awesomejm-api');

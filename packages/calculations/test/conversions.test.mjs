@@ -1,6 +1,26 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { gramsToTola, tolaToGrams } from '../dist/index.js';
+import {
+  gramsToTola,
+  tolaToGrams,
+  nonMetalGramsFromNet,
+} from '../dist/index.js';
+
+test('gross minus net derives physical non-metal weight exactly without any price conversion', () => {
+  assert.equal(nonMetalGramsFromNet('12.664', '11.664'), '1.000');
+  assert.equal(nonMetalGramsFromNet('0.3', '0.1'), '0.200');
+  assert.equal(nonMetalGramsFromNet('11.664', '11.664'), '0.000');
+  assert.equal(nonMetalGramsFromNet('999999999.999', '999999999.998'), '0.001');
+  for (const [gross, net] of [
+    ['10', '11'],
+    ['10', '0'],
+    ['0', '0'],
+    ['10', '-1'],
+    ['10', '1.0001'],
+    ['', '1'],
+  ])
+    assert.throws(() => nonMetalGramsFromNet(gross, net), RangeError);
+});
 
 test('converts fractional weights with decimal arithmetic', () => {
   assert.equal(tolaToGrams('0.1'), '1.166');

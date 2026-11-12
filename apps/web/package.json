@@ -11,7 +11,7 @@
     "lint": "eslint src test scripts vite.config.ts",
     "test": "node --test test/*.test.mjs && pnpm test:ui",
     "i18n:types": "node scripts/i18n-schema.mjs",
-    "test:ui": "vitest run test/navigation.test.tsx --environment jsdom"
+    "test:ui": "vitest run .test.tsx --environment jsdom"
   },
   "dependencies": {
     "@awesomejm/calculations": "workspace:*",

@@ -49,7 +49,7 @@ if (process.argv[2] === 'keygen') {
       !tables.some((t) => t.table === 'schema_migrations')
     )
       throw new Error(
-        'The selected backup schema is not a migrated AwesomeJM database.',
+        'The selected backup schema is not a migrated Sajilo Jwellery database.',
       );
     await encryptDump(
       temporary,

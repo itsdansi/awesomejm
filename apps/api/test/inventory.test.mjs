@@ -58,6 +58,8 @@ test('inventory persists exact weights and preserves stock history', async (t) =
       fineness: '916.667',
       grossWeightGrams: '12.664',
       nonMetalWeightGrams: '1',
+      nonMetalValueNpr: '1250.75',
+      nonMetalLabel: '  Pote  ',
       notes: 'Opening stock',
     };
     let item;
@@ -69,6 +71,11 @@ test('inventory persists exact weights and preserves stock history', async (t) =
           { grossWeightGrams: '-1' },
           { grossWeightGrams: '1.0001' },
           { nonMetalWeightGrams: '12.664' },
+          { nonMetalValueNpr: '-1' },
+          { nonMetalValueNpr: '1.001' },
+          { nonMetalValueNpr: '1000000000' },
+          { nonMetalValueNpr: '1e3' },
+          { nonMetalLabel: 'x'.repeat(121) },
           { fineness: '1000.001' },
           { shopId: randomUUID() },
         ]) {
@@ -91,6 +98,12 @@ test('inventory persists exact weights and preserves stock history', async (t) =
         assert.equal(item.netWeightGrams, '11.664');
         assert.equal(item.fineWeightGrams, '10.692004');
         assert.equal(item.gramsPerTola, '11.66400');
+        assert.equal(item.nonMetalValueNpr, '1250.75');
+        assert.equal(item.nonMetalLabel, 'Pote');
+        assert.equal(
+          (await api('/items?search=GLD-001')).body.items[0].nonMetalValueNpr,
+          '1250.75',
+        );
         assert.equal((await api(`/items/${item.id}/history`)).body.length, 1);
         assert.equal((await api('/items?search=औँठी')).body.total, 1);
         assert.equal((await api('/items?search=%25')).body.total, 0);
@@ -116,14 +129,18 @@ test('inventory persists exact weights and preserves stock history', async (t) =
     await t.test(
       'separates gold and silver totals and scopes every read/write to the shop',
       async () => {
-        await api('/items', {
+        const silver = await api('/items', {
           ...receipt,
           itemCode: 'SLV-001',
           metal: 'SILVER',
           fineness: '925',
           grossWeightGrams: '20',
           nonMetalWeightGrams: '0',
+          nonMetalValueNpr: undefined,
+          nonMetalLabel: undefined,
         });
+        assert.equal(silver.body.nonMetalValueNpr, '0.00');
+        assert.equal(silver.body.nonMetalLabel, '');
         const otherShop = randomUUID();
         const otherItem = randomUUID();
         await db.query('INSERT INTO shops (id,name) VALUES ($1,$2)', [

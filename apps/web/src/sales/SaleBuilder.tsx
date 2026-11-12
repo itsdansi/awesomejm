@@ -494,7 +494,7 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                                   item,
                                   wastageGrams: '0',
                                   makingNpr: '0',
-                                  stonesNpr: '0',
+                                  stonesNpr: item.nonMetalValueNpr,
                                 },
                               ])
                             }
@@ -583,11 +583,22 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                         />
                       </label>
                       <label>
-                        {t('sales.saleBuilder.stoneChargeNpr')}
+                        {line.item.nonMetalLabel
+                          ? t('common.money.namedCharge', {
+                              label: line.item.nonMetalLabel,
+                            })
+                          : t('sales.saleBuilder.stoneChargeNpr')}
                         <input
-                          aria-label={t('sales.saleBuilder.stoneChargeFor', {
-                            itemCode: line.item.itemCode,
-                          })}
+                          aria-label={
+                            line.item.nonMetalLabel
+                              ? t('common.labels.componentChargeFor', {
+                                  label: line.item.nonMetalLabel,
+                                  itemCode: line.item.itemCode,
+                                })
+                              : t('sales.saleBuilder.stoneChargeFor', {
+                                  itemCode: line.item.itemCode,
+                                })
+                          }
                           required
                           inputMode="decimal"
                           value={line.stonesNpr}

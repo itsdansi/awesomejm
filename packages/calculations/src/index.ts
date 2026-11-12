@@ -5,6 +5,22 @@ export * from './sales.js';
 // agreed conversion without changing previously recorded transactions.
 export const DEFAULT_GRAMS_PER_TOLA = '11.664';
 
+export function nonMetalGramsFromNet(
+  grossGrams: string,
+  netGrams: string,
+): string {
+  const grams = /^(0|[1-9]\d{0,8})(\.\d{1,3})?$/;
+  if (!grams.test(grossGrams) || !grams.test(netGrams))
+    throw new RangeError('Enter grams with up to 3 decimal places.');
+  const gross = weight(grossGrams),
+    net = weight(netGrams);
+  if (net.lte(0) || net.gt(gross))
+    throw new RangeError(s
+      'Net metal weight must be greater than zero and no greater than gross weight.',
+    );
+  return gross.minus(net).toFixed(3);
+}
+
 // Display only: future transaction amounts must use the original per-tola rate,
 // avoiding another rounding step through this per-gram preview.
 export function ratePerGram(

@@ -74,7 +74,7 @@ export function Reports() {
       'netCashNpr',
     ] as const;
     downloadCsv(
-      `awesomejm-activity-$<DateValue value={report.from} />-$<DateValue value={report.to} />.csv`,
+      `sajilo-jwellery-activity-$<DateValue value={report.from} />-$<DateValue value={report.to} />.csv`,
       [...keys],
       report.series.map((row) => keys.map((key) => row[key])),
     );
@@ -95,7 +95,7 @@ export function Reports() {
       'closingFineGrams',
     ] as const;
     downloadCsv(
-      `awesomejm-stock-$<DateValue value={report.from} />-$<DateValue value={report.to} />.csv`,
+      `sajilo-jwellery-stock-$<DateValue value={report.from} />-$<DateValue value={report.to} />.csv`,
       [...keys],
       report.stock.map((row) => keys.map((key) => row[key])),
     );

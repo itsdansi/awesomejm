@@ -88,7 +88,7 @@
     "settlement": "हिसाब मिलान",
     "settlementMethod": "हिसाब मिलानको माध्यम",
     "showing20MatchesRefineYourSearch": "20 नतिजा देखाइएका छन्। खोजी थप स्पष्ट गर्नुहोस्।",
-    "stonesNpr": "पत्थर (रु.)",
+    "stonesNpr": "पत्थर / अन्य शुल्क (रु.)",
     "taxFeesFromOfficialBillNpr": "आधिकारिक बिलअनुसार कर / शुल्क (रु.)",
     "theCreditFirstReducesEarlierCustomerDuesA": "जम्मा रकमले पहिले ग्राहकको पुरानो बक्यौता घटाउँछ। गहना बिक्रीपछि बाँकी जम्माबाट मात्र रकम दिन मिल्छ। यस हिसाब मिलानमा रकम प्राप्त गर्ने वा दिने एउटा दिशा मात्र राख्नुहोस्।",
     "theOrderMustBeReadyBeforeDelivery": "बुझाउनुअघि अर्डर तयार हुनुपर्छ",
@@ -123,7 +123,7 @@
     "settlementCorrection": "हिसाब मिलान सुधार",
     "useThisToCorrectARecordingMistakeWhile": "पूरा आएको धातु र जाने गहना पसलमै हुँदा गलत अभिलेख सच्याउन प्रयोग गर्नुहोस्। यसले खरिद, सटही बिक्री र अभिलेखित रकमको आवागमन सँगै उल्ट्याउँछ। रकम वास्तवमै पठाउँदैन र बुझाइसकेको गहना फिर्ता लिँदैन।",
     "viewExchangeSale": "सटही बिक्री हेर्नुहोस् →",
-    "awesomejmPurchaseRecord": "AWESOMEJM / {shopName} · खरिद अभिलेख",
+    "awesomejmPurchaseRecord": "SAJILO JWELLERY / {shopName} · खरिद अभिलेख",
     "description": "आएका लट, मूल मूल्याङ्कन र अभिलेखित पूरा हिसाब मिलान।"
   },
   "purchases": {

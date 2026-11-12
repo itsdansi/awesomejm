@@ -12,6 +12,7 @@ import {
 } from '@awesomejm/contracts';
 import { errorMessage, request } from './api';
 import { Dialog, Icon } from './ui';
+import { money } from '../customers/format';
 
 export function ItemDetails({
   item,
@@ -112,6 +113,14 @@ export function ItemDetails({
               grams={item.netWeightGrams}
               gramsPerTola={item.gramsPerTola}
             />{' '}
+          </dd>
+        </div>
+        <div>
+          <dt>
+            {item.nonMetalLabel || t('inventory.fields.nonMetalValueNpr')}
+          </dt>
+          <dd>
+            {t('common.money.currency')} {money(item.nonMetalValueNpr)}
           </dd>
         </div>
         <div>

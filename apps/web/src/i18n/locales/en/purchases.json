@@ -88,7 +88,7 @@
     "settlement": "Settlement",
     "settlementMethod": "Settlement method",
     "showing20MatchesRefineYourSearch": "Showing 20 matches. Refine your search.",
-    "stonesNpr": "Stones (NPR)",
+    "stonesNpr": "Stone / other charge (NPR)",
     "taxFeesFromOfficialBillNpr": "Tax / fees from official bill (NPR)",
     "theCreditFirstReducesEarlierCustomerDuesA": "The credit first reduces earlier customer dues. A payout is limited to the remaining credit after any jewellery sale. Record one direction of money movement for this settlement.",
     "theOrderMustBeReadyBeforeDelivery": "The order must be Ready before delivery",
@@ -123,7 +123,7 @@
     "settlementCorrection": "SETTLEMENT CORRECTION",
     "useThisToCorrectARecordingMistakeWhile": "Use this to correct a recording mistake while the complete incoming metal and any outgoing jewellery are physically in the shop. It reverses the purchase, exchange sale and recorded money movements together. It does not transfer money or process a delivered-item return.",
     "viewExchangeSale": "View exchange sale →",
-    "awesomejmPurchaseRecord": "AWESOMEJM / {shopName} · PURCHASE RECORD",
+    "awesomejmPurchaseRecord": "SAJILO JWELLERY / {shopName} · PURCHASE RECORD",
     "description": "Incoming lots, original valuation and the complete recorded settlement."
   },
   "purchases": {

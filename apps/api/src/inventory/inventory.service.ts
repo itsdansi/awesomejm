@@ -66,7 +66,7 @@ export class InventoryService {
   async receive(input: ReceiveItem) {
     return this.database.run(async (client) => {
       const result = await client.query(
-        `INSERT INTO inventory_items (id, shop_id, item_code, name, category, metal, fineness, gross_weight_grams, non_metal_weight_grams, grams_per_tola, notes) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING ${columns}`,
+        `INSERT INTO inventory_items (id, shop_id, item_code, name, category, metal, fineness, gross_weight_grams, non_metal_weight_grams, grams_per_tola, notes, non_metal_value_npr, non_metal_label) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING ${columns}`,
         [
           randomUUID(),
           SHOP_ID,
@@ -79,6 +79,8 @@ export class InventoryService {
           input.nonMetalWeightGrams,
           DEFAULT_GRAMS_PER_TOLA,
           input.notes,
+          input.nonMetalValueNpr,
+          input.nonMetalLabel,
         ],
       );
       const item = inventoryItemSchema.parse(result.rows[0]);

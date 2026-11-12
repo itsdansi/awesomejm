@@ -78,6 +78,10 @@ export interface TranslationSchema {
   'common.labels.changeCustomer': never;
   'common.labels.clearDates': never;
   'common.labels.closeDialog': never;
+  'common.labels.componentChargeFor': {
+    label: TranslationValue;
+    itemCode: TranslationValue;
+  };
   'common.labels.correct': { code: TranslationValue };
   'common.labels.correctionDateAd': never;
   'common.labels.creditNpr': never;
@@ -161,6 +165,7 @@ export interface TranslationSchema {
   'common.metals.gold': never;
   'common.metals.silver': never;
   'common.money.currency': never;
+  'common.money.namedCharge': { label: TranslationValue };
   'common.money.perTola': { amount: TranslationValue };
   'common.money.symbol': never;
   'common.navigation.account': never;
@@ -520,6 +525,8 @@ export interface TranslationSchema {
   'errors.purchases.reviewRequired': never;
   'errors.requests.idempotencyConflict': never;
   'inventory.fields.itemCode': never;
+  'inventory.fields.nonMetalLabel': never;
+  'inventory.fields.nonMetalValueNpr': never;
   'inventory.itemDetails.available': never;
   'inventory.itemDetails.confirmVoidReceipt': never;
   'inventory.itemDetails.enterAReason': never;
@@ -580,10 +587,12 @@ export interface TranslationSchema {
   'inventory.receiveForm.categoryPlaceholder': never;
   'inventory.receiveForm.chain': never;
   'inventory.receiveForm.coin': never;
+  'inventory.receiveForm.componentNamePlaceholder': never;
   'inventory.receiveForm.description': never;
   'inventory.receiveForm.designSizeOrReceiptReference': never;
   'inventory.receiveForm.earrings': never;
   'inventory.receiveForm.g': { weight: TranslationValue };
+  'inventory.receiveForm.invalidNetWeight': never;
   'inventory.receiveForm.itemCodePlaceholder': never;
   'inventory.receiveForm.itemName': never;
   'inventory.receiveForm.namePlaceholder': never;
@@ -899,10 +908,7 @@ export interface TranslationSchema {
   'purity.customFor': { field: TranslationValue };
   'purity.invalidFineness': never;
   'purity.percentage': { percent: TranslationValue };
-  'purity.presetOption': {
-    karat: TranslationValue;
-    fineness: TranslationValue;
-  };
+  'purity.presetOption': { karat: TranslationValue; percent: TranslationValue };
   'rates.book.aClearRecordOfEveryQuote': never;
   'rates.book.buyingTola': never;
   'rates.book.dailyRateBook': never;

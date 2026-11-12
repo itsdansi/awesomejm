@@ -4,16 +4,17 @@
     "review": "02 / समीक्षा"
   },
   "labels": {
+    "componentChargeFor": "{itemCode} को {label} शुल्क",
     "npr": ": रु.",
     "ad": "ई.सं.",
-    "awesomejm": "AWESOMEJM",
+    "awesomejm": "SAJILO JWELLERY",
     "actions": "कार्यहरू",
     "active": "सक्रिय",
     "addPiece": "गहना थप्नुहोस्",
     "addTheCustomerInCustomersFirst": "पहिले ग्राहक खण्डमा ग्राहक थप्नुहोस्।",
     "added": "थपिएको",
     "advancesCreditHeld": "अग्रिम / जम्मा रकम",
-    "awesomejmHome": "AwesomeJM गृहपृष्ठ",
+    "awesomejmHome": "Sajilo Jwellery गृहपृष्ठ",
     "backToDetails": "विवरणमा फर्कनुहोस्",
     "backToRegister": "अभिलेख सूचीमा फर्कनुहोस्",
     "bank": "बैंक",
@@ -97,11 +98,11 @@
     "viewSale": "बिक्री हेर्नुहोस् →",
     "workspace": "कार्यस्थल",
     "access": "पहुँच",
-    "awesome": "awesome",
+    "awesome": "Sajilo ",
     "gBilled": "ग्राम बिलमा",
     "gNet": "ग्राम खुद",
     "gTola": "ग्राम/तोला",
-    "jm": "jm",
+    "jm": "Jwellery",
     "piece": "गहना",
     "pieces": "गहना",
     "piecesLots": "गहना/लट",
@@ -114,6 +115,7 @@
     "cancelled": "रद्द गरिएको"
   },
   "money": {
+    "namedCharge": "{label} (रु.)",
     "currency": "रु.",
     "symbol": "रु.",
     "perTola": "रु. {amount} / तोला"
@@ -132,7 +134,7 @@
     "reports": "प्रतिवेदन"
   },
   "print": {
-    "shopHeading": "AWESOMEJM / {shopName}"
+    "shopHeading": "SAJILO JWELLERY / {shopName}"
   },
   "fields": {
     "address": "ठेगाना",

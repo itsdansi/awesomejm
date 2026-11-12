@@ -40,7 +40,7 @@
     "useThisOnlyForAnErroneousEntryWhile": "सबै गहना पसलमै हुँदा गलत प्रविष्टि सच्याउन मात्र प्रयोग गर्नुहोस्। यसले गहना मौज्दातमा फर्काएर अभिलेखित बिक्री रकम र प्राप्त भुक्तानी सँगै उल्ट्याउँछ। मूल अभिलेख देखिइरहन्छ।",
     "viewCompleteSettlementCorrection": "पूरा हिसाब मिलान / सुधार हेर्नुहोस् →",
     "piecesNpr": "गहना · रु.",
-    "awesomejmInternalSaleRecord": "AWESOMEJM / {shopName} · आन्तरिक बिक्री अभिलेख"
+    "awesomejmInternalSaleRecord": "SAJILO JWELLERY / {shopName} · आन्तरिक बिक्री अभिलेख"
   },
   "saleBuilder": {
     "aMatchingRateIsRequiredFor": "यसका लागि मिल्ने दर आवश्यक छ",
@@ -81,7 +81,7 @@
     "saleDateAd": "बिक्री मिति (ई.सं.)",
     "searchAvailableItemCodeNameOrCategory": "उपलब्ध वस्तुको कोड, नाम वा प्रकार खोज्नुहोस्…",
     "showing20MatchesRefineYourSearchToFind": "20 नतिजा देखाइएका छन्। अर्को गहना खोज्न खोजी थप स्पष्ट गर्नुहोस्।",
-    "stoneChargeNpr": "पत्थर शुल्क (रु.)",
+    "stoneChargeNpr": "पत्थर / अन्य शुल्क (रु.)",
     "stoneChargeFor": "{itemCode} को पत्थर शुल्क",
     "taxFeesFromBillNpr": "बिलअनुसार कर / शुल्क (रु.)",
     "gNetPlannedWastage": "ग्राम खुद · योजनाबद्ध जर्ती",

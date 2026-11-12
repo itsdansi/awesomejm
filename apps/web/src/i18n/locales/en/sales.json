@@ -40,7 +40,7 @@
     "useThisOnlyForAnErroneousEntryWhile": "Use this only for an erroneous entry while all pieces are still in the shop. This restores the pieces and reverses the recorded charge and received payment together. The original record remains visible.",
     "viewCompleteSettlementCorrection": "View complete settlement / correction →",
     "piecesNpr": "pieces · NPR",
-    "awesomejmInternalSaleRecord": "AWESOMEJM / {shopName} · INTERNAL SALE RECORD"
+    "awesomejmInternalSaleRecord": "SAJILO JWELLERY / {shopName} · INTERNAL SALE RECORD"
   },
   "saleBuilder": {
     "aMatchingRateIsRequiredFor": "A matching rate is required for",
@@ -81,7 +81,7 @@
     "saleDateAd": "Sale date (AD)",
     "searchAvailableItemCodeNameOrCategory": "Search available item code, name or category…",
     "showing20MatchesRefineYourSearchToFind": "Showing 20 matches. Refine your search to find another piece.",
-    "stoneChargeNpr": "Stone charge (NPR)",
+    "stoneChargeNpr": "Stone / other charge (NPR)",
     "stoneChargeFor": "Stone charge for {itemCode}",
     "taxFeesFromBillNpr": "Tax / fees from bill (NPR)",
     "gNetPlannedWastage": "g net · planned wastage",

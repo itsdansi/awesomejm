@@ -35,6 +35,14 @@ export const receiveItemSchema = z
       ),
     grossWeightGrams: positiveGramsSchema,
     nonMetalWeightGrams: gramsSchema,
+    nonMetalLabel: z.string().trim().max(120).default(''),
+    nonMetalValueNpr: z
+      .string()
+      .regex(
+        /^(0|[1-9]\d{0,8})(\.\d{1,2})?$/,
+        'Enter NPR with up to 2 decimal places.',
+      )
+      .default('0'),
     notes: z.string().trim().max(1000).default(''),
   })
   .strict()
@@ -74,6 +82,8 @@ export const inventoryItemSchema = z.object({
   fineness: z.string(),
   grossWeightGrams: z.string(),
   nonMetalWeightGrams: z.string(),
+  nonMetalLabel: z.string().default(''),
+  nonMetalValueNpr: z.string().default('0.00'),
   netWeightGrams: z.string(),
   fineWeightGrams: z.string(),
   gramsPerTola: z.string(),

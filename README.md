@@ -1,4 +1,4 @@
-# AwesomeJM
+# Sajilo Jwellery
 
 A SaaS application for Nepali gold and silver shops. The workspace contains a React/Vite frontend, a NestJS API, PostgreSQL inventory, metal-rate, customer-account, sales, custom-order and old-metal purchase storage, shared public contracts and decimal calculation utilities.
 
@@ -72,7 +72,9 @@ Keep database access, credentials, authorisation and authoritative transaction p
 
 ## Inventory module
 
-- Receive individual gold/silver pieces with a unique item code, name, category, fineness, gross weight, stone/other weight and notes.
+- Receive individual gold/silver pieces with a unique item code, name, category, fineness, gross and net metal weights, a stone/other value in NPR, and notes. The form derives physical non-metal weight from gross minus net; it never converts the rupee amount into a weight.
+- The stone/other value is stored separately and becomes the editable default stone/other charge when adding that piece to a sale or exchange. Existing stock defaults to NPR 0.00, and historical sale charges remain unchanged. Apply migration `009_inventory_non_metal_value.sql` when upgrading.
+- An optional component name customizes that charge, for example **Pote — NPR 400**. The name follows the piece into sale/exchange forms and their recorded/printed details; unnamed components retain the generic label. Names are preserved as entered in either interface language. Apply migration `010_inventory_non_metal_label.sql` when upgrading.
 - Stock is stored in exact decimal grams (3 decimal places). PostgreSQL derives net metal weight and fine-metal equivalent (6 decimal places). Fineness is parts per thousand. Shared gold presets use 24K = 999, 22K = 916, 18K = 750, 14K = 585 and 10K = 417; a Custom/assayed option retains actual fineness. New gold entries default to 916 and silver to 925.
 - Display net grams and tola, with separate available gold/silver totals. Fine-metal equivalent is visible in piece details.
 - Search code, name and category; filter by metal or available/sold/voided state; paginate results.

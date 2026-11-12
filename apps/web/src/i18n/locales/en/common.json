@@ -4,16 +4,17 @@
     "review": "02 / REVIEW"
   },
   "labels": {
+    "componentChargeFor": "{label} charge for {itemCode}",
     "npr": ": NPR",
     "ad": "AD",
-    "awesomejm": "AWESOMEJM",
+    "awesomejm": "SAJILO JWELLERY",
     "actions": "Actions",
     "active": "Active",
     "addPiece": "Add piece",
     "addTheCustomerInCustomersFirst": "Add the customer in Customers first.",
     "added": "Added",
     "advancesCreditHeld": "Advances / credit held",
-    "awesomejmHome": "AwesomeJM home",
+    "awesomejmHome": "Sajilo Jwellery home",
     "backToDetails": "Back to details",
     "backToRegister": "Back to register",
     "bank": "Bank",
@@ -97,11 +98,11 @@
     "viewSale": "View sale →",
     "workspace": "WORKSPACE",
     "access": "access",
-    "awesome": "awesome",
+    "awesome": "Sajilo ",
     "gBilled": "g billed",
     "gNet": "g net",
     "gTola": "g/tola",
-    "jm": "jm",
+    "jm": "Jwellery",
     "piece": "piece",
     "pieces": "pieces",
     "piecesLots": "pieces/lots",
@@ -114,6 +115,7 @@
     "cancelled": "Cancelled"
   },
   "money": {
+    "namedCharge": "{label} (NPR)",
     "currency": "NPR",
     "symbol": "रु",
     "perTola": "NPR {amount} / tola"
@@ -132,7 +134,7 @@
     "reports": "Reports"
   },
   "print": {
-    "shopHeading": "AWESOMEJM / {shopName}"
+    "shopHeading": "SAJILO JWELLERY / {shopName}"
   },
   "fields": {
     "address": "Address",

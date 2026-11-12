@@ -1,5 +1,5 @@
 {
-  "presetOption": "{karat} · {fineness}‰",
+  "presetOption": "{karat} · {percent}%",
   "custom": "Custom / assayed fineness",
   "assayedFineness": "Assayed fineness (‰)",
   "customFor": "{field} — assayed fineness",

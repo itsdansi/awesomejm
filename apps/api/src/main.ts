@@ -26,7 +26,7 @@ async function bootstrap(): Promise<void> {
   app.getHttpAdapter().getInstance().disable('x-powered-by');
   app.enableShutdownHooks();
   await app.listen(port, process.env.HOST ?? '127.0.0.1');
-  console.info(`AwesomeJM API listening on ${await app.getUrl()}/api/v1`);
+  console.info(`Sajilo Jwellery API listening on ${await app.getUrl()}/api/v1`);
 }
 
 bootstrap().catch((error: unknown) => {

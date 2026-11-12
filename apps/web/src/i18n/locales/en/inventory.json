@@ -34,6 +34,8 @@
     "tolaConversion": "1 tola = 11.664 g"
   },
   "receiveForm": {
+    "componentNamePlaceholder": "e.g. Pote, stone, beads",
+    "invalidNetWeight": "Enter valid gross and net metal weights. Net metal weight must be greater than zero and no greater than gross weight.",
     "purityHelp": "22K ≈ 916.667‰. Use the piece’s actual purity.",
     "bangle": "Bangle",
     "chain": "Chain",
@@ -77,6 +79,8 @@
     "netMetalWeight": "Net metal weight"
   },
   "fields": {
+    "nonMetalLabel": "Component name (optional)",
+    "nonMetalValueNpr": "Stone / other value (NPR)",
     "itemCode": "Item code"
   },
   "title": "Jewellery inventory"

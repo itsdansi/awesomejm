@@ -1,5 +1,5 @@
 {
-  "presetOption": "{karat} · {fineness}‰",
+  "presetOption": "{karat} · {percent}%",
   "custom": "अन्य / जाँचिएको शुद्धता",
   "assayedFineness": "जाँचिएको शुद्धता (‰)",
   "customFor": "{field} — जाँचिएको शुद्धता",

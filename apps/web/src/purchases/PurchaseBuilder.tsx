@@ -741,7 +741,7 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                                     item,
                                     wastageGrams: '0',
                                     makingNpr: '0',
-                                    stonesNpr: '0',
+                                    stonesNpr: item.nonMetalValueNpr,
                                   },
                                 ])
                               }
@@ -842,14 +842,23 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                           />
                         </label>
                         <label>
-                          {t('purchases.purchaseBuilder.stonesNpr')}
+                          {line.item.nonMetalLabel
+                            ? t('common.money.namedCharge', {
+                                label: line.item.nonMetalLabel,
+                              })
+                            : t('purchases.purchaseBuilder.stonesNpr')}
                           <input
-                            aria-label={t(
-                              'purchases.purchaseBuilder.exchangeStones',
-                              {
-                                position: line.item.itemCode,
-                              },
-                            )}
+                            aria-label={
+                              line.item.nonMetalLabel
+                                ? t('common.labels.componentChargeFor', {
+                                    label: line.item.nonMetalLabel,
+                                    itemCode: line.item.itemCode,
+                                  })
+                                : t(
+                                    'purchases.purchaseBuilder.exchangeStones',
+                                    { position: line.item.itemCode },
+                                  )
+                            }
                             required
                             inputMode="decimal"
                             value={line.stonesNpr}

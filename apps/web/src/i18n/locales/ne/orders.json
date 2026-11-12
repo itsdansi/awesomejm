@@ -82,7 +82,7 @@
     "includesAllOrdersSalesAndPayments": "· सबै अर्डर, बिक्री र भुक्तानीसहित।",
     "overdue": "· म्याद नाघेको",
     "promised": "· कबुल मिति",
-    "awesomejmCustomOrder": "AWESOMEJM / {shopName} · अर्डर",
+    "awesomejmCustomOrder": "SAJILO JWELLERY / {shopName} · अर्डर",
     "pieceCount": "{count} {unit}",
     "negativeAmount": "− {amount}",
     "amount": "रु. {amount}",
