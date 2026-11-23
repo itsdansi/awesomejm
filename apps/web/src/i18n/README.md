@@ -74,7 +74,7 @@ Missing locale values fall back to the English value at runtime, while CI reject
 
 ## Date and time display
 
-Use `DateValue`, `TimeValue`, `PeriodValue` from `settings/DateValue.tsx`, or `useDates()` for interpolated date text. `DateValue` accepts an AD civil date without timezone shifting. `TimeValue` accepts an ISO instant and uses the saved shop timezone. Date-entry fields, validation, CSV exports and Nepal accounting boundaries remain AD. Monthly report rows display their actual Gregorian bucket endpoints in BS.
+Use `DateValue`, `TimeValue`, `PeriodValue` from `settings/DateValue.tsx`, or `useDates()` for interpolated date text. `DateValue` accepts an AD civil date without timezone shifting. `TimeValue` accepts an ISO instant and uses the saved shop timezone. Use `DateFilter` for date filters. It presents the saved calendar and passes AD civil dates to the caller. Report month shortcuts follow the selected calendar. Transaction forms, API dates and CSV dates use AD. Monthly report rows display their actual Gregorian bucket endpoints in BS.
 
 The MIT-licensed `nepali-date-converter` lookup table covers BS 2000–2090; conversion failures and out-of-range dates retain a labelled AD date. Keep the conversion dependency current as future BS month lengths are published. Do not implement BS with a year offset or the Intl Indian/Saka calendar.
 

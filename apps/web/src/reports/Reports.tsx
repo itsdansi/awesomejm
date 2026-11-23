@@ -1,3 +1,5 @@
+import { DateFilter } from '../settings/DateFilter';
+import { reportDateRange } from '../settings/dates.mjs';
 import { DateValue, PeriodValue } from '../settings/DateValue';
 import { useAuth } from '../auth/AuthContext';
 import { t, message, useLanguage } from '../i18n/language';
@@ -17,7 +19,9 @@ export function Reports() {
   const { user } = useAuth();
 
   const today = nepalToday(),
-    [from, setFrom] = useState(`${today.slice(0, 7)}-01`),
+    [from, setFrom] = useState(
+      () => reportDateRange(today, user.displaySettings.calendar, 'month').from,
+    ),
     [to, setTo] = useState(today),
     [groupBy, setGroupBy] = useState<'DAY' | 'MONTH'>('DAY');
   const [query, setQuery] = useState<ReportsQuery>({ from, to, groupBy }),
@@ -41,18 +45,10 @@ export function Reports() {
     setRevision((v) => v + 1);
   }
   function preset(kind: 'today' | 'month' | 'previous') {
-    let first = today,
-      last = today;
-    if (kind === 'month') first = `${today.slice(0, 7)}-01`;
-    if (kind === 'previous') {
-      const date = new Date(`${today.slice(0, 7)}-01T12:00:00Z`);
-      date.setUTCDate(0);
-      last = date.toISOString().slice(0, 10);
-      first = `${last.slice(0, 7)}-01`;
-    }
-    setFrom(first);
-    setTo(last);
-    setQuery({ from: first, to: last, groupBy });
+    const range = reportDateRange(today, user.displaySettings.calendar, kind);
+    setFrom(range.from);
+    setTo(range.to);
+    setQuery({ ...range, groupBy });
     setError('');
   }
   function exportActivity() {
@@ -156,28 +152,21 @@ export function Reports() {
           <span>{t('settings.range')}</span>
         </div>
         <div className="toolbar sales-toolbar">
-          <label className="date-filter">
-            {t('common.labels.fromAd')}
-            <input
-              required
-              type="date"
-              min="2000-01-01"
-              max={to || today}
-              value={from}
-              onChange={(e) => setFrom(e.target.value)}
-            />
-          </label>
-          <label className="date-filter">
-            {t('common.labels.toAd')}
-            <input
-              required
-              type="date"
-              min={from}
-              max={today}
-              value={to}
-              onChange={(e) => setTo(e.target.value)}
-            />
-          </label>
+          <DateFilter
+            label={t('common.dates.from')}
+            required
+            max={to || today}
+            value={from}
+            onChange={setFrom}
+          />
+          <DateFilter
+            label={t('common.dates.to')}
+            required
+            min={from}
+            max={today}
+            value={to}
+            onChange={setTo}
+          />
           <label className="filter-label">
             <span className="sr-only">
               {t('reports.overview.reportGrouping')}

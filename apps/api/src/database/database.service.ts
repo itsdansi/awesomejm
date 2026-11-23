@@ -19,8 +19,8 @@ export class DatabaseService implements OnApplicationShutdown {
   });
 
   constructor() {
-    this.pool.on('error', () =>
-      console.error('An idle database connection failed.'),
+    this.pool.on('error', (err) =>
+      console.error('An idle database connection failed:', err),
     );
   }
 
@@ -51,7 +51,7 @@ export class DatabaseService implements OnApplicationShutdown {
         throw new ConflictException(
           'This record already exists. Refresh and check the register before retrying.',
         );
-      console.error('Database operation failed.');
+      console.error('Database operation failed:', error);
       throw new ServiceUnavailableException(
         'Storage is unavailable. Start the database and run migrations.',
       );

@@ -1,3 +1,4 @@
+import { DateFilter } from '../settings/DateFilter';
 import { DateValue, TimeValue } from '../settings/DateValue';
 import { useDates } from '../settings/useDates';
 import { Pagination } from '../shared/Pagination';
@@ -228,34 +229,25 @@ export function CustomerAccount({ customerId }: { customerId: string }) {
               </button>
             </div>
             <div className="toolbar rate-toolbar history-toolbar">
-              <label className="date-filter">
-                {t('common.labels.fromAd')}
-                <input
-                  aria-label={t('customers.customerAccount.statementStartDate')}
-                  type="date"
-                  min="2000-01-01"
-                  max={to || nepalToday()}
-                  value={from}
-                  onChange={(event) => {
-                    setFrom(event.target.value);
-                    setPage(1);
-                  }}
-                />
-              </label>
-              <label className="date-filter">
-                {t('common.labels.toAd')}
-                <input
-                  aria-label={t('customers.customerAccount.statementEndDate')}
-                  type="date"
-                  min={from || '2000-01-01'}
-                  max={nepalToday()}
-                  value={to}
-                  onChange={(event) => {
-                    setTo(event.target.value);
-                    setPage(1);
-                  }}
-                />
-              </label>
+              <DateFilter
+                label={t('customers.customerAccount.statementStartDate')}
+                max={to || nepalToday()}
+                value={from}
+                onChange={(value) => {
+                  setFrom(value);
+                  setPage(1);
+                }}
+              />
+              <DateFilter
+                label={t('customers.customerAccount.statementEndDate')}
+                min={from}
+                max={nepalToday()}
+                value={to}
+                onChange={(value) => {
+                  setTo(value);
+                  setPage(1);
+                }}
+              />
               {(from || to) && (
                 <button
                   className="text-button"

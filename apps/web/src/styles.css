@@ -1213,7 +1213,9 @@ footer {
   color: #7e8b70;
   font-size: 10px;
 }
-.date-filter input {
+.date-filter input,
+.bs-date-trigger,
+.bs-calendar-controls select {
   font: inherit;
   color: #4f6545;
   font-size: 12px;
@@ -1222,6 +1224,51 @@ footer {
   padding: 9px 11px;
   background: white;
   min-height: 37px;
+}
+.bs-date-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.dialog:has(.bs-calendar) {
+  width: min(350px, calc(100% - 24px));
+}
+.bs-calendar-controls {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+}
+.bs-calendar-controls select {
+  flex: 1;
+}
+.bs-calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+  text-align: center;
+}
+.bs-calendar-days span {
+  font-size: 11px;
+  color: #617051;
+  padding-bottom: 6px;
+}
+.bs-calendar-days button {
+  min-height: 36px;
+  font-size: 14px;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+}
+.bs-calendar-days button[aria-pressed='false']:enabled:hover {
+  background: #eff3e8;
+}
+.bs-calendar-days button[aria-pressed='true'] {
+  background: #486044;
+  color: white;
+}
+.bs-calendar > .text-button {
+  margin-top: 10px;
 }
 .rate-toolbar {
   align-items: flex-end;

@@ -10,7 +10,7 @@
   "calendarLabels": { "ad": "AD", "bs": "BS" },
   "hours": { "h23": "24-hour (14:30)", "h12": "12-hour (2:30 PM)" },
   "preview": "Preview",
-  "dateEntryHelp": "Date entry and CSV exports use AD. Timezone affects timestamps; business dates and reporting periods stay on Nepal time.",
+  "dateEntryHelp": "Date filters use the selected calendar. Transaction forms and CSV exports use AD. The timezone applies to timestamps. Business dates follow Nepal time.",
   "bsRangeHelp": "BS conversion covers 2000-2090 BS. Dates outside that range display in AD.",
   "save": "Save settings",
   "saving": "Saving…",

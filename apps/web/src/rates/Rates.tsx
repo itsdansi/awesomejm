@@ -1,3 +1,4 @@
+import { DateFilter } from '../settings/DateFilter';
 import { DateValue, TimeValue } from '../settings/DateValue';
 import { Pagination } from '../shared/Pagination';
 import { locale, t, message, useLanguage } from '../i18n/language';
@@ -150,17 +151,13 @@ export function Rates() {
           </button>
         </div>
         <div className="toolbar rate-toolbar">
-          <label className="date-filter">
-            {t('rates.labels.rateDateAd')}
-            <input
-              aria-label={t('rates.book.rateBookDate')}
-              type="date"
-              min="2000-01-01"
-              max={today}
-              value={date}
-              onChange={(event) => setDate(event.target.value)}
-            />
-          </label>
+          <DateFilter
+            label={t('rates.book.rateBookDate')}
+            max={today}
+            value={date}
+            required
+            onChange={(value) => setDate(value || nepalToday())}
+          />
           <button className="text-button" onClick={() => setDate(nepalToday())}>
             {t('common.labels.today')}
           </button>
@@ -307,34 +304,25 @@ export function Rates() {
           <Icon name="history" size={19} />
         </div>
         <div className="toolbar rate-toolbar history-toolbar">
-          <label className="date-filter">
-            {t('common.labels.fromAd')}
-            <input
-              aria-label={t('rates.book.historyStartDate')}
-              type="date"
-              min="2000-01-01"
-              max={to || today}
-              value={from}
-              onChange={(event) => {
-                setFrom(event.target.value);
-                setPage(1);
-              }}
-            />
-          </label>
-          <label className="date-filter">
-            {t('common.labels.toAd')}
-            <input
-              aria-label={t('rates.book.historyEndDate')}
-              type="date"
-              min={from || '2000-01-01'}
-              max={today}
-              value={to}
-              onChange={(event) => {
-                setTo(event.target.value);
-                setPage(1);
-              }}
-            />
-          </label>
+          <DateFilter
+            label={t('rates.book.historyStartDate')}
+            max={to || today}
+            value={from}
+            onChange={(value) => {
+              setFrom(value);
+              setPage(1);
+            }}
+          />
+          <DateFilter
+            label={t('rates.book.historyEndDate')}
+            min={from}
+            max={today}
+            value={to}
+            onChange={(value) => {
+              setTo(value);
+              setPage(1);
+            }}
+          />
           {(from || to) && (
             <button
               className="text-button"

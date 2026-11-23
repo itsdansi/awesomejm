@@ -42,7 +42,6 @@
     "dismissMessage": "Dismiss message",
     "filterByMetal": "Filter by metal",
     "forGoldAndSilverBusinesses": "For gold and silver businesses",
-    "fromAd": "From (AD)",
     "gold": "Gold · सुन",
     "gross": "Gross",
     "grossWeightG": "Gross weight (g)",
@@ -91,7 +90,6 @@
     "stoneOtherWeightG": "Stone / other weight (g)",
     "stones": "Stones",
     "theRequestFailed": "The request failed.",
-    "toAd": "To (AD)",
     "today": "Today",
     "viewCustomerAccount": "View customer account →",
     "viewOrder": "View order →",
@@ -109,6 +107,13 @@
     "backToOrder": "← Back to order"
   },
   "dates": {
+    "from": "From",
+    "to": "To",
+    "filterLabel": "{label} ({calendar})",
+    "choose": "Choose date",
+    "clear": "Clear date",
+    "month": "Month",
+    "year": "Year",
     "adSeparator": "AD ·"
   },
   "status": {

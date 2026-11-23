@@ -1,3 +1,4 @@
+import { DateFilter } from '../settings/DateFilter';
 import { DateValue } from '../settings/DateValue';
 import { Pagination } from '../shared/Pagination';
 import { t, message, useLanguage } from '../i18n/language';
@@ -145,31 +146,25 @@ function SalesRegister() {
               <option value="CANCELLED">{t('common.status.cancelled')}</option>
             </select>
           </label>
-          <label className="date-filter">
-            {t('common.labels.fromAd')}
-            <input
-              type="date"
-              value={from}
-              max={to || nepalToday()}
-              onChange={(event) => {
-                setFrom(event.target.value);
-                setPage(1);
-              }}
-            />
-          </label>
-          <label className="date-filter">
-            {t('common.labels.toAd')}
-            <input
-              type="date"
-              value={to}
-              min={from}
-              max={nepalToday()}
-              onChange={(event) => {
-                setTo(event.target.value);
-                setPage(1);
-              }}
-            />
-          </label>
+          <DateFilter
+            label={t('common.dates.from')}
+            value={from}
+            max={to || nepalToday()}
+            onChange={(value) => {
+              setFrom(value);
+              setPage(1);
+            }}
+          />
+          <DateFilter
+            label={t('common.dates.to')}
+            value={to}
+            min={from}
+            max={nepalToday()}
+            onChange={(value) => {
+              setTo(value);
+              setPage(1);
+            }}
+          />
         </div>
         {list.loading ? (
           <div className="empty-state" role="status">

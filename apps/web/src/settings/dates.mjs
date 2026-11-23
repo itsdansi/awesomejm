@@ -5,25 +5,45 @@ const pad = (value) => String(value).padStart(2, '0');
 const label = (calendar, language) =>
   translate(`settings.calendarLabels.${calendar.toLowerCase()}`, {}, language);
 
-// Civil business dates are deliberately never interpreted as instants.
+export function toAD(date) {
+  const ad = date.getAD();
+  return `${ad.year}-${pad(ad.month + 1)}-${pad(ad.date)}`;
+}
+
+export function toBS(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || value < '1943-04-14') return null;
+  const [year, month, day] = value.split('-').map(Number);
+  try {
+    // The converter reads local civil fields, so construct a local date, not UTC midnight.
+    const converted = new NepaliDate(new Date(year, month - 1, day, 12));
+    return toAD(converted) === value ? converted : null;
+  } catch {
+    return null;
+  }
+}
+
 export function displayDate(value, settings, language = 'en') {
   if (!value) return '—';
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
-  const [year, month, day] = value.split('-').map(Number);
-  if (settings.calendar === 'BS' && value >= '1943-04-14') {
-    try {
-      // The converter reads local civil fields, so construct a local date, not UTC midnight.
-      const converted = new NepaliDate(new Date(year, month - 1, day, 12));
-      const ad = converted.getAD();
-      if (ad.year === year && ad.month === month - 1 && ad.date === day) {
-        const bs = converted.getBS();
-        return `${bs.year}-${pad(bs.month + 1)}-${pad(bs.date)} ${label('BS', language)}`;
-      }
-    } catch {
-      /* Outside the lookup table: retain the exact AD date. */
-    }
-  }
+  const bs = settings.calendar === 'BS' && toBS(value);
+  if (bs) return `${bs.format('YYYY-MM-DD', 'en')} ${label('BS', language)}`;
   return `${value} ${label('AD', language)}`;
+}
+
+export function reportDateRange(today, calendar, preset) {
+  function monthStart(value) {
+    const bs = calendar === 'BS' && toBS(value);
+    return bs
+      ? toAD(new NepaliDate(bs.getYear(), bs.getMonth(), 1))
+      : `${value.slice(0, 7)}-01`;
+  }
+  if (preset === 'today') return { from: today, to: today };
+  const start = monthStart(today);
+  if (preset === 'month') return { from: start, to: today };
+  const previous = new Date(`${start}T00:00:00Z`);
+  previous.setUTCDate(previous.getUTCDate() - 1);
+  const to = previous.toISOString().slice(0, 10);
+  return { from: monthStart(to), to };
 }
 
 export function displayTime(value, settings, language = 'en') {

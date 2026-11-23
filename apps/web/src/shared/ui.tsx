@@ -15,6 +15,7 @@ export function Icon({
     | 'close'
     | 'diamond'
     | 'history'
+    | 'calendar'
     | 'users'
     | 'user'
     | 'logout'
@@ -26,6 +27,12 @@ export function Icon({
   size?: number;
 }) {
   const paths = {
+    calendar: (
+      <>
+        <rect x="3" y="5" width="18" height="16" rx="2" />
+        <path d="M7 3v4m10-4v4M3 10h18" />
+      </>
+    ),
     settings: (
       <>
         <path d="M4 7h16M4 17h16" />

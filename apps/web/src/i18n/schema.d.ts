@@ -39,6 +39,16 @@ export interface TranslationSchema {
   'common.actions.tryAgain': never;
   'common.actions.viewRecord': { code: TranslationValue };
   'common.dates.adSeparator': never;
+  'common.dates.choose': never;
+  'common.dates.clear': never;
+  'common.dates.filterLabel': {
+    label: TranslationValue;
+    calendar: TranslationValue;
+  };
+  'common.dates.from': never;
+  'common.dates.month': never;
+  'common.dates.to': never;
+  'common.dates.year': never;
   'common.enums.gold': never;
   'common.enums.silver': never;
   'common.feedback.loadingWorkspace': never;
@@ -96,7 +106,6 @@ export interface TranslationSchema {
   'common.labels.dismissMessage': never;
   'common.labels.filterByMetal': never;
   'common.labels.forGoldAndSilverBusinesses': never;
-  'common.labels.fromAd': never;
   'common.labels.gBilled': never;
   'common.labels.gNet': never;
   'common.labels.gold': never;
@@ -153,7 +162,6 @@ export interface TranslationSchema {
   'common.labels.stoneOtherWeightG': never;
   'common.labels.stones': never;
   'common.labels.theRequestFailed': never;
-  'common.labels.toAd': never;
   'common.labels.today': never;
   'common.labels.viewCustomerAccount': never;
   'common.labels.viewOrder': never;

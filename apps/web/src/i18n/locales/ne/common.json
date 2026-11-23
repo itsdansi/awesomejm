@@ -42,7 +42,6 @@
     "dismissMessage": "सन्देश हटाउनुहोस्",
     "filterByMetal": "धातुअनुसार छान्नुहोस्",
     "forGoldAndSilverBusinesses": "सुनचाँदी व्यवसायको लागि",
-    "fromAd": "देखि (ई.सं.)",
     "gold": "सुन",
     "gross": "कुल",
     "grossWeightG": "कुल तौल (ग्राम)",
@@ -91,7 +90,6 @@
     "stoneOtherWeightG": "पत्थर / अन्य तौल (ग्राम)",
     "stones": "पत्थर",
     "theRequestFailed": "अनुरोध पूरा भएन।",
-    "toAd": "सम्म (ई.सं.)",
     "today": "आज",
     "viewCustomerAccount": "ग्राहक खाता हेर्नुहोस् →",
     "viewOrder": "अर्डर हेर्नुहोस् →",
@@ -109,6 +107,13 @@
     "backToOrder": "← अर्डरमा फर्कनुहोस्"
   },
   "dates": {
+    "from": "देखि",
+    "to": "सम्म",
+    "filterLabel": "{label} ({calendar})",
+    "choose": "मिति छान्नुहोस्",
+    "clear": "मिति हटाउनुहोस्",
+    "month": "महिना",
+    "year": "वर्ष",
     "adSeparator": "ई.सं. ·"
   },
   "status": {

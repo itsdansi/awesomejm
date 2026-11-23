@@ -4,6 +4,9 @@ import {
   displayDate,
   displayTime,
   displayPeriod,
+  toBS,
+  toAD,
+  reportDateRange,
 } from '../src/settings/dates.mjs';
 const ad = { calendar: 'AD', timeZone: 'Asia/Kathmandu', hourCycle: 'h23' };
 const bs = { ...ad, calendar: 'BS' };
@@ -37,6 +40,50 @@ test('BS conversion handles new year, lookup boundaries, leap days and localized
     '2083-07-03 \u0935\u093f.\u0938\u0902.',
   );
   assert.equal(displayDate(null, bs), '\u2014');
+});
+
+test('a 32-day BS month and both sides of the BS new year round-trip as civil dates', () => {
+  const previous = process.env.TZ;
+  try {
+    for (const zone of [
+      'Asia/Kathmandu',
+      'Pacific/Honolulu',
+      'Pacific/Kiritimati',
+    ]) {
+      process.env.TZ = zone;
+      for (const [civil, expected] of [
+        ['2024-04-12', '2080-12-30'],
+        ['2024-04-13', '2081-01-01'],
+        ['2024-06-14', '2081-02-32'],
+      ]) {
+        const date = toBS(civil);
+        assert.equal(date.format('YYYY-MM-DD'), expected);
+        assert.equal(toAD(date), civil);
+      }
+    }
+  } finally {
+    if (previous === undefined) delete process.env.TZ;
+    else process.env.TZ = previous;
+  }
+});
+
+test('report month shortcuts follow the selected calendar and return inclusive AD endpoints', () => {
+  assert.deepEqual(reportDateRange('2024-04-13', 'BS', 'previous'), {
+    from: '2024-03-14',
+    to: '2024-04-12',
+  });
+  assert.deepEqual(reportDateRange('2024-06-14', 'BS', 'month'), {
+    from: '2024-05-14',
+    to: '2024-06-14',
+  });
+  assert.deepEqual(reportDateRange('2024-03-01', 'AD', 'previous'), {
+    from: '2024-02-01',
+    to: '2024-02-29',
+  });
+  assert.deepEqual(reportDateRange('2024-06-14', 'BS', 'today'), {
+    from: '2024-06-14',
+    to: '2024-06-14',
+  });
 });
 
 test('timestamp formatting applies timezone midnight, daylight saving, and 12/24-hour selection', () => {
