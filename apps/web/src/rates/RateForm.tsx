@@ -13,6 +13,7 @@ import {
 } from '@awesomejm/contracts';
 import { errorMessage, request } from '../shared/api';
 import { Dialog, Icon } from '../shared/ui';
+import { DateFilter } from '../settings/DateFilter';
 
 export function RateForm({
   date,
@@ -107,15 +108,19 @@ export function RateForm({
       </p>
       <form onSubmit={(event) => void submit(event)}>
         <fieldset className="form-grid" disabled={busy}>
-          <label className="full-width">
-            {t('rates.labels.rateDateAd')}
-            <input
-              type="date"
+          <div className="full-width">
+            <DateFilter
+              label={t('rates.labels.rateDateAd').replace(
+                /\s*\([^)]*\)\s*$/,
+                '',
+              )}
+              required
+              max="2099-12-31"
               value={fields.rateDate}
+              onChange={() => undefined}
               readOnly
-              aria-readonly="true"
             />
-          </label>
+          </div>
           <label>
             {t('common.labels.metal')}
             <select

@@ -11,6 +11,7 @@ import {
 } from '@awesomejm/contracts';
 import { Dialog, Icon } from '../shared/ui';
 import { request, errorMessage } from '../shared/api';
+import { DateFilter } from '../settings/DateFilter';
 
 export function CustomerForm({
   customer,
@@ -158,16 +159,17 @@ export function CustomerForm({
                   )}
                 </p>
               </div>
-              <label>
-                {t('customers.customerForm.openingDateAd')}
-                <input
-                  type="date"
-                  required
-                  min="2000-01-01"
-                  max={nepalToday()}
-                  {...field('openedOn')}
-                />
-              </label>
+              <DateFilter
+                label={t('customers.customerForm.openingDateAd').replace(
+                  /\s*\([^)]*\)\s*$/,
+                  '',
+                )}
+                required
+                min="2000-01-01"
+                max={nepalToday()}
+                value={field('openedOn').value}
+                onChange={(value) => setFields({ ...fields, openedOn: value })}
+              />
               <label>
                 {t('customers.customerForm.balanceType')}
                 <select

@@ -23,6 +23,7 @@ import { useDebounced, useResource } from '../shared/useResource';
 import { Icon } from '../shared/ui';
 import { balance, money } from '../customers/format';
 import { SaleFigures } from './SaleFigures';
+import { DateFilter } from '../settings/DateFilter';
 
 type SelectedLine = {
   item: InventoryItem;
@@ -314,17 +315,17 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                 </div>
               </div>
               <div className="sale-form-content">
-                <label className="date-filter">
-                  {t('sales.saleBuilder.saleDateAd')}
-                  <input
-                    required
-                    type="date"
-                    min="2000-01-01"
-                    max={nepalToday()}
-                    value={date}
-                    onChange={(event) => setDate(event.target.value)}
-                  />
-                </label>
+                <DateFilter
+                  label={t('sales.saleBuilder.saleDateAd').replace(
+                    /\s*\([^)]*\)\s*$/,
+                    '',
+                  )}
+                  required
+                  min="2000-01-01"
+                  max={nepalToday()}
+                  value={date}
+                  onChange={setDate}
+                />
                 {customer && pickedBalance ? (
                   <div className="selected-customer">
                     <div>

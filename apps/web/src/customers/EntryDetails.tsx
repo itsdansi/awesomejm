@@ -11,6 +11,7 @@ import {
   type Customer,
 } from '@awesomejm/contracts';
 import { Dialog } from '../shared/ui';
+import { DateFilter } from '../settings/DateFilter';
 import { request, errorMessage } from '../shared/api';
 import { entryTitle, methodTitle, money } from './format';
 
@@ -174,18 +175,18 @@ export function EntryDetails({
             <p>
               {t('customers.entryDetails.thisAddsAnEqualAndOppositeEntryUse')}
             </p>
-            <label>
-              {t('customers.entryDetails.reversalDateAd')}
-              <input
-                type="date"
-                required
-                min={customer.latestEntryDate}
-                max={nepalToday()}
-                value={date}
-                onChange={(event) => setDate(event.target.value)}
-                disabled={busy}
-              />
-            </label>
+            <DateFilter
+              label={t('customers.entryDetails.reversalDateAd').replace(
+                /\s*\([^)]*\)\s*$/,
+                '',
+              )}
+              required
+              min={customer.latestEntryDate}
+              max={nepalToday()}
+              value={date}
+              onChange={setDate}
+              readOnly={busy}
+            />
             <label>
               {t('customers.entryDetails.reasonForReversal')}
               <textarea

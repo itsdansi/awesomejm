@@ -10,6 +10,7 @@ import {
 import { Dialog, Icon } from '../shared/ui';
 import { request, errorMessage } from '../shared/api';
 import { balance } from './format';
+import { DateFilter } from '../settings/DateFilter';
 
 export function PaymentForm({
   customer,
@@ -104,21 +105,21 @@ export function PaymentForm({
               onChange={(event) => setAmount(event.target.value)}
             />
           </label>
-          <label>
-            {t('customers.paymentForm.entryDateAd')}
-            <input
-              required
-              type="date"
-              min={customer.latestEntryDate}
-              max={nepalToday()}
-              value={date}
-              onChange={(event) => setDate(event.target.value)}
-            />
-            <span className="field-hint">
-              {t('customers.paymentForm.onOrAfter') + ' '}
-              {customer.latestEntryDate}.
-            </span>
-          </label>
+          <DateFilter
+            label={t('customers.paymentForm.entryDateAd').replace(
+              /\s*\([^)]*\)\s*$/,
+              '',
+            )}
+            required
+            min={customer.latestEntryDate}
+            max={nepalToday()}
+            value={date}
+            onChange={setDate}
+          />
+          <span className="field-hint">
+            {t('customers.paymentForm.onOrAfter') + ' '}
+            {customer.latestEntryDate}.
+          </span>
           <label>
             {t('common.labels.paymentMethod')}
             <select

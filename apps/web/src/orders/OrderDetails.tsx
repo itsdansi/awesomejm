@@ -13,6 +13,7 @@ import {
 } from '@awesomejm/contracts';
 import { Dialog, Icon } from '../shared/ui';
 import { useResource } from '../shared/useResource';
+import { DateFilter } from '../settings/DateFilter';
 import { errorMessage, request } from '../shared/api';
 import { balance, methodTitle, money } from '../customers/format';
 import { statusClass, statusTitle } from './format';
@@ -629,19 +630,17 @@ function OrderAction({
               </label>
             </>
           )}
-          <label className="full-width">
-            {action === 'status'
+          <DateFilter
+            label={(action === 'status'
               ? t('orders.orderDetails.progressDateAd')
-              : t('orders.orderDetails.paymentDateAd')}
-            <input
-              required
-              type="date"
-              min={minDate}
-              max={nepalToday()}
-              value={date}
-              onChange={(event) => setDate(event.target.value)}
-            />
-          </label>
+              : t('orders.orderDetails.paymentDateAd')
+            ).replace(/\s*\([^)]*\)\s*$/, '')}
+            required
+            min={minDate ?? '2000-01-01'}
+            max={nepalToday()}
+            value={date}
+            onChange={setDate}
+          />
           <label className="full-width">
             {action === 'status'
               ? t('orders.orderDetails.reasonProgressNote')

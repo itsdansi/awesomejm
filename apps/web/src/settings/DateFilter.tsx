@@ -12,7 +12,24 @@ type DateFilterProps = {
   min?: string;
   max: string;
   required?: boolean;
+  readOnly?: boolean;
 };
+
+function latestConvertibleDate(min: string, max: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(max) || max < min) return null;
+  const candidate = new Date(`${max}T12:00:00Z`);
+  for (let attempts = 0; attempts < 3660; attempts++) {
+    const value = candidate.toISOString().slice(0, 10);
+    if (value >= min) {
+      const bs = toBS(value);
+      if (bs) return { value, bs };
+    } else {
+      break;
+    }
+    candidate.setUTCDate(candidate.getUTCDate() - 1);
+  }
+  return null;
+}
 
 export function DateFilter({
   label,
@@ -21,6 +38,7 @@ export function DateFilter({
   min: from,
   max,
   required = false,
+  readOnly = false,
 }: DateFilterProps) {
   useLanguage();
   const { user } = useAuth();
@@ -29,9 +47,13 @@ export function DateFilter({
   const min = from || '2000-01-01';
   const prefersBS = user.displaySettings.calendar === 'BS';
   const earliest = prefersBS ? toBS(min) : null;
-  const latest = prefersBS ? toBS(max) : null;
+  const latestBoundary = prefersBS ? latestConvertibleDate(min, max) : null;
+  const latest = latestBoundary?.bs ?? null;
   const selected = prefersBS && value ? toBS(value) : null;
-  const showBS = earliest && latest && min <= max && (!value || selected);
+  const showBS =
+    prefersBS &&
+    (!value || selected) &&
+    (readOnly || Boolean(earliest && latest && min <= max));
   const title = t('common.dates.filterLabel', {
     label,
     calendar: t(
@@ -45,36 +67,48 @@ export function DateFilter({
         {title}
       </label>
       {showBS ? (
-        <>
-          <button
-            type="button"
-            id={id}
+        readOnly ? (
+          <span
+            id={`${id}-value`}
             className="bs-date-trigger"
-            aria-haspopup="dialog"
-            aria-expanded={open}
-            aria-labelledby={`${id}-label ${id}-value`}
-            onClick={() => setOpen(true)}
+            aria-readonly="true"
           >
-            <span id={`${id}-value`}>
-              {selected?.format('YYYY-MM-DD', 'en') ?? t('common.dates.choose')}
-            </span>
+            {selected?.format('YYYY-MM-DD', 'en') ?? t('common.dates.choose')}
             <Icon name="calendar" size={16} />
-          </button>
-          {open && (
-            <Dialog title={title} onClose={() => setOpen(false)}>
-              <BsCalendar
-                earliest={earliest}
-                latest={latest}
-                selected={selected}
-                clearable={!required && !!value}
-                onSelect={(date) => {
-                  onChange(date);
-                  setOpen(false);
-                }}
-              />
-            </Dialog>
-          )}
-        </>
+          </span>
+        ) : earliest && latest ? (
+          <>
+            <button
+              type="button"
+              id={id}
+              className="bs-date-trigger"
+              aria-haspopup="dialog"
+              aria-expanded={open}
+              aria-labelledby={`${id}-label ${id}-value`}
+              onClick={() => setOpen(true)}
+            >
+              <span id={`${id}-value`}>
+                {selected?.format('YYYY-MM-DD', 'en') ??
+                  t('common.dates.choose')}
+              </span>
+              <Icon name="calendar" size={16} />
+            </button>
+            {open && (
+              <Dialog title={title} onClose={() => setOpen(false)}>
+                <BsCalendar
+                  earliest={earliest}
+                  latest={latest}
+                  selected={selected}
+                  clearable={!required && !!value}
+                  onSelect={(date) => {
+                    onChange(date);
+                    setOpen(false);
+                  }}
+                />
+              </Dialog>
+            )}
+          </>
+        ) : null
       ) : (
         <input
           id={id}
@@ -82,6 +116,7 @@ export function DateFilter({
           min={min}
           max={max}
           required={required}
+          readOnly={readOnly}
           value={value}
           onChange={(event) => onChange(event.target.value)}
         />

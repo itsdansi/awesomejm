@@ -3,6 +3,7 @@ import { useAuth } from '../auth/AuthContext';
 import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useState, type FormEvent } from 'react';
+import { DateFilter } from '../settings/DateFilter';
 import {
   cancelSaleSchema,
   nepalToday,
@@ -270,18 +271,18 @@ function CancelSale({
             t('sales.saleDetails.theLinkedOrderReturnsToReady') + ' '}
           {t('sales.saleDetails.thisRecordsACorrectionForACustomerReturn')}
         </p>
-        <label>
-          {t('common.labels.correctionDateAd')}
-          <input
-            type="date"
-            required
-            min={sale.saleDate}
-            max={nepalToday()}
-            value={date}
-            onChange={(event) => setDate(event.target.value)}
-            disabled={busy}
-          />
-        </label>
+        <DateFilter
+          label={t('common.labels.correctionDateAd').replace(
+            /\s*\([^)]*\)\s*$/,
+            '',
+          )}
+          required
+          min={sale.saleDate}
+          max={nepalToday()}
+          value={date}
+          onChange={setDate}
+          readOnly={busy}
+        />
         <label>
           {t('common.labels.reasonForCorrection')}
           <textarea

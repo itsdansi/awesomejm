@@ -3,6 +3,7 @@ import { useAuth } from '../auth/AuthContext';
 import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useState, type FormEvent } from 'react';
+import { DateFilter } from '../settings/DateFilter';
 import {
   cancelPurchaseSchema,
   nepalToday,
@@ -272,18 +273,18 @@ function PurchaseCorrection({
             'purchases.purchaseDetails.useThisToCorrectARecordingMistakeWhile',
           )}
         </p>
-        <label>
-          {t('common.labels.correctionDateAd')}
-          <input
-            required
-            type="date"
-            min={detail.purchase.purchaseDate}
-            max={nepalToday()}
-            value={date}
-            disabled={busy}
-            onChange={(e) => setDate(e.target.value)}
-          />
-        </label>
+        <DateFilter
+          label={t('common.labels.correctionDateAd').replace(
+            /\s*\([^)]*\)\s*$/,
+            '',
+          )}
+          required
+          min={detail.purchase.purchaseDate}
+          max={nepalToday()}
+          value={date}
+          onChange={setDate}
+          readOnly={busy}
+        />
         <label>
           {t('common.fields.reason')}
           <textarea

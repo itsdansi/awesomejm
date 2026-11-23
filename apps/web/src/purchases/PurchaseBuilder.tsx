@@ -28,6 +28,7 @@ import { useDebounced, useResource } from '../shared/useResource';
 import { Icon } from '../shared/ui';
 import { balance, money } from '../customers/format';
 import { PurchaseFigures } from './PurchaseFigures';
+import { DateFilter } from '../settings/DateFilter';
 const blank = () => ({
   key: globalThis.crypto.randomUUID(),
   name: '',
@@ -324,17 +325,16 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                 </div>
               </div>
               <div className="sale-form-content">
-                <label className="date-filter">
-                  {t('purchases.purchaseBuilder.purchaseExchangeDateAd')}
-                  <input
-                    required
-                    type="date"
-                    max={nepalToday()}
-                    min={customer?.latestEntryDate ?? '2000-01-01'}
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                  />
-                </label>
+                <DateFilter
+                  label={t(
+                    'purchases.purchaseBuilder.purchaseExchangeDateAd',
+                  ).replace(/\s*\([^)]*\)\s*$/, '')}
+                  required
+                  max={nepalToday()}
+                  min={customer?.latestEntryDate ?? '2000-01-01'}
+                  value={date}
+                  onChange={setDate}
+                />
                 {customer && account ? (
                   <div className="selected-customer">
                     <div>

@@ -6,6 +6,7 @@ import {
 import { WeightInput } from '../shared/WeightInput';
 import { t, message, useLanguage } from '../i18n/language';
 import { useState, type FormEvent } from 'react';
+import { DateFilter } from '../settings/DateFilter';
 import {
   createOrderSchema,
   customerListSchema,
@@ -122,28 +123,28 @@ export function OrderForm() {
             </div>
             <div className="sale-form-content">
               <div className="form-grid order-dates">
-                <label>
-                  {t('orders.orderForm.orderDateAd')}
-                  <input
-                    required
-                    type="date"
-                    min={customer?.openedOn || '2000-01-01'}
-                    max={nepalToday()}
-                    value={orderDate}
-                    onChange={(event) => setOrderDate(event.target.value)}
-                  />
-                </label>
-                <label>
-                  {t('orders.orderForm.promisedDeliveryDateAd')}
-                  <input
-                    required
-                    type="date"
-                    min={orderDate}
-                    max="2099-12-31"
-                    value={dueDate}
-                    onChange={(event) => setDueDate(event.target.value)}
-                  />
-                </label>
+                <DateFilter
+                  label={t('orders.orderForm.orderDateAd').replace(
+                    /\s*\([^)]*\)\s*$/,
+                    '',
+                  )}
+                  required
+                  min={customer?.openedOn || '2000-01-01'}
+                  max={nepalToday()}
+                  value={orderDate}
+                  onChange={setOrderDate}
+                />
+                <DateFilter
+                  label={t('orders.orderForm.promisedDeliveryDateAd').replace(
+                    /\s*\([^)]*\)\s*$/,
+                    '',
+                  )}
+                  required
+                  min={orderDate}
+                  max="2099-12-31"
+                  value={dueDate}
+                  onChange={setDueDate}
+                />
               </div>
               {customer && account ? (
                 <div className="selected-customer">
