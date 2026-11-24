@@ -1,5 +1,6 @@
 import { WeightValue } from '../shared/WeightValue';
 import { t, useLanguage } from '../i18n/language';
+import { formatFineness } from '@awesomejm/calculations';
 import type { PurchasePreview, SaleDetail } from '@awesomejm/contracts';
 import { balance, money } from '../customers/format';
 export function PurchaseFigures({
@@ -53,7 +54,7 @@ export function PurchaseFigures({
                     {line.metal === 'GOLD'
                       ? t('common.metals.gold')
                       : t('common.metals.silver')}{' '}
-                    · {line.fineness}‰
+                    · {formatFineness(line.fineness)}
                   </code>
                   <small className="rate-subline">{line.assayNotes}</small>
                   <small className="rate-subline">
@@ -152,7 +153,8 @@ export function PurchaseFigures({
                     <td>
                       <strong>{line.item.name}</strong>
                       <code>
-                        {line.item.itemCode} · {line.item.fineness}‰
+                        {line.item.itemCode} ·{' '}
+                        {formatFineness(line.item.fineness)}
                       </code>
                     </td>
                     <td className="numeric">

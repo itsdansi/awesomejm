@@ -2,6 +2,7 @@ import { Pagination } from '../shared/Pagination';
 import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useEffect, useState } from 'react';
+import { formatFineness } from '@awesomejm/calculations';
 import { WeightValue } from '../shared/WeightValue';
 import {
   inventoryListSchema,
@@ -287,7 +288,9 @@ export function Inventory() {
                           ? t('common.metals.gold')
                           : t('common.metals.silver')}
                       </span>
-                      <span className="purity">{item.fineness}‰</span>
+                      <span className="purity">
+                        {formatFineness(item.fineness)}
+                      </span>
                     </td>
                     <td className="muted">{item.category}</td>
                     <td className="numeric weight-cell">

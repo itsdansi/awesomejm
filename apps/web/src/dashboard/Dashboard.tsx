@@ -4,6 +4,7 @@ import { useDates } from '../settings/useDates';
 import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useState } from 'react';
+import { formatFineness } from '@awesomejm/calculations';
 import { dashboardSchema } from '@awesomejm/contracts';
 import { Icon } from '../shared/ui';
 import { useResource } from '../shared/useResource';
@@ -168,7 +169,7 @@ export function Dashboard() {
                               {row.metal === 'GOLD'
                                 ? t('common.metals.gold')
                                 : t('common.metals.silver')}{' '}
-                              · {row.fineness}‰
+                              · {formatFineness(row.fineness)}
                             </strong>
                             <small>
                               {row.stockClass === 'JEWELLERY'

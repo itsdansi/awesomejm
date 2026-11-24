@@ -25,6 +25,9 @@ export function finenessToPercentage(value: string): string {
   const percentage = finenessValue(value).div(10);
   return percentage.toFixed(Math.max(1, percentage.decimalPlaces()));
 }
+export function formatFineness(value: string): string {
+  return `${finenessToPercentage(value)}%`;
+}
 export function goldPurityPreset(value: string) {
   try {
     const fineness = finenessValue(value);

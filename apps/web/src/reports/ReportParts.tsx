@@ -1,5 +1,6 @@
 import { WeightValue } from '../shared/WeightValue';
 import { t, useLanguage } from '../i18n/language';
+import { formatFineness } from '@awesomejm/calculations';
 import type { BusinessReport } from '@awesomejm/contracts';
 import { money } from '../customers/format';
 export function ActivityCards({
@@ -82,7 +83,9 @@ export function StockTable({ rows }: { rows: BusinessReport['stock'] }) {
                     ? t('common.metals.gold')
                     : t('common.metals.silver')}
                 </span>
-                <strong className="rate-purity">{row.fineness}‰</strong>
+                <strong className="rate-purity">
+                  {formatFineness(row.fineness)}
+                </strong>
                 <small className="rate-subline">
                   {row.stockClass === 'JEWELLERY'
                     ? t('reports.reportParts.jewellery')

@@ -3,6 +3,7 @@ import { TimeValue } from '../settings/DateValue';
 import { t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useEffect, useState, type FormEvent } from 'react';
+import { formatFineness } from '@awesomejm/calculations';
 import {
   inventoryHistorySchema,
   inventoryItemSchema,
@@ -86,7 +87,7 @@ export function ItemDetails({
         </div>
         <div>
           <dt>{t('common.fields.purity')}</dt>
-          <dd>{item.fineness}‰</dd>
+          <dd>{formatFineness(item.fineness)}</dd>
         </div>
         <div>
           <dt>{t('common.fields.grossWeight')}</dt>

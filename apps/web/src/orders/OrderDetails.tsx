@@ -4,6 +4,7 @@ import { t, message, useLanguage } from '../i18n/language';
 import { useAuth } from '../auth/AuthContext';
 import { Permission } from '../auth/Permission';
 import { useState, type FormEvent } from 'react';
+import { formatFineness } from '@awesomejm/calculations';
 import {
   nepalToday,
   orderDetailSchema,
@@ -205,7 +206,7 @@ export function OrderDetails({ orderId }: { orderId: string }) {
                     <dl>
                       <div>
                         <dt>{t('common.fields.purity')}</dt>
-                        <dd>{line.fineness}‰</dd>
+                        <dd>{formatFineness(line.fineness)}</dd>
                       </div>
                       <div>
                         <dt>{t('orders.orderDetails.sizeMeasurement')}</dt>

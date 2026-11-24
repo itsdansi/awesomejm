@@ -2,6 +2,7 @@ import { PuritySelect } from '../shared/PuritySelect';
 import {
   DEFAULT_GOLD_FINENESS,
   DEFAULT_SILVER_FINENESS,
+  formatFineness,
 } from '@awesomejm/calculations';
 import { WeightValue } from '../shared/WeightValue';
 import { WeightInput } from '../shared/WeightInput';
@@ -705,7 +706,7 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                             <span>
                               <strong>{item.name}</strong>
                               <small>
-                                {item.itemCode} · {item.fineness}‰ ·{' '}
+                                {item.itemCode} · {formatFineness(item.fineness)} ·{' '}
                                 <WeightValue
                                   grams={item.netWeightGrams}
                                   gramsPerTola={item.gramsPerTola}

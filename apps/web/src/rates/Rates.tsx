@@ -4,7 +4,7 @@ import { Pagination } from '../shared/Pagination';
 import { locale, t, message, useLanguage } from '../i18n/language';
 import { Permission } from '../auth/Permission';
 import { useEffect, useState } from 'react';
-import { ratePerGram } from '@awesomejm/calculations';
+import { formatFineness, ratePerGram } from '@awesomejm/calculations';
 import {
   nepalToday,
   rateBookSchema,
@@ -219,7 +219,9 @@ export function Rates() {
                           ? t('common.labels.gold')
                           : t('common.labels.silver')}
                       </span>
-                      <strong className="rate-purity">{rate.fineness}‰</strong>
+                      <strong className="rate-purity">
+                        {formatFineness(rate.fineness)}
+                      </strong>
                       <small className="rate-subline">
                         {t('common.labels.revision') + ' '}
                         {rate.revision}
@@ -369,7 +371,7 @@ export function Rates() {
                         {rate.metal === 'GOLD'
                           ? t('common.metals.gold')
                           : t('common.metals.silver')}{' '}
-                        · {rate.fineness}‰
+                        · {formatFineness(rate.fineness)}
                       </span>
                     </td>
                     <td className="numeric">

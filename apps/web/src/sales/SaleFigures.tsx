@@ -1,5 +1,6 @@
 import { WeightValue } from '../shared/WeightValue';
 import { t, useLanguage } from '../i18n/language';
+import { formatFineness } from '@awesomejm/calculations';
 import type { SalePreview } from '@awesomejm/contracts';
 import { balance, money } from '../customers/format';
 
@@ -39,7 +40,7 @@ export function SaleFigures({
                     {line.item.metal === 'GOLD'
                       ? t('common.metals.gold')
                       : t('common.metals.silver')}{' '}
-                    {line.item.fineness}‰
+                    {formatFineness(line.item.fineness)}
                   </code>
                   <small className="rate-subline">
                     {t('common.money.currency') + ' '}

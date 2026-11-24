@@ -4,6 +4,7 @@ import {
   GOLD_PURITY_PRESETS,
   DEFAULT_GOLD_FINENESS,
   DEFAULT_SILVER_FINENESS,
+  formatFineness,
   finenessToPercentage,
   goldPurityPreset,
   inventoryWeights,
@@ -26,6 +27,7 @@ test('shop-approved gold presets produce the agreed percentages and fine weights
   for (const [karat, fineness, percentage, fineWeight] of expected) {
     assert.equal(goldPurityPreset(`${fineness}.000`).karat, karat);
     assert.equal(finenessToPercentage(fineness), percentage);
+    assert.equal(formatFineness(fineness), `${percentage}%`);
     assert.equal(
       inventoryWeights('10', '0', fineness).fineWeightGrams,
       fineWeight,
@@ -46,6 +48,7 @@ test('custom and historical purities retain their exact fineness rather than rou
   ]) {
     assert.equal(goldPurityPreset(fineness), undefined);
     assert.equal(finenessToPercentage(fineness), percent);
+    assert.equal(formatFineness(fineness), `${percent}%`);
   }
   assert.equal(
     inventoryWeights('10', '0', '916.667').fineWeightGrams,

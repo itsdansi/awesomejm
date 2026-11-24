@@ -3,6 +3,7 @@ import { WeightInput } from '../shared/WeightInput';
 import { DateValue } from '../settings/DateValue';
 import { t, message, useLanguage } from '../i18n/language';
 import { useState, type FormEvent } from 'react';
+import { formatFineness } from '@awesomejm/calculations';
 import {
   customerListSchema,
   orderDetailSchema,
@@ -231,7 +232,7 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                 {line.metal === 'GOLD'
                   ? t('common.metals.gold')
                   : t('common.metals.silver')}{' '}
-                {line.fineness}
+                {formatFineness(line.fineness)}
                 {t('sales.saleBuilder.size') + ' '}
                 {line.size || t('sales.saleBuilder.notSpecified')}
                 <br />
@@ -465,7 +466,7 @@ export function SaleBuilder({ orderId }: { orderId: string | null }) {
                               {item.metal === 'GOLD'
                                 ? t('common.metals.gold')
                                 : t('common.metals.silver')}{' '}
-                              {item.fineness}‰ ·{' '}
+                              {formatFineness(item.fineness)} ·{' '}
                               <WeightValue
                                 grams={item.netWeightGrams}
                                 gramsPerTola={item.gramsPerTola}
