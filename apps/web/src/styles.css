@@ -3703,3 +3703,10 @@ html[lang='ne'] .auth-card h1 {
   line-height: 1.5;
   color: #718078;
 }
+.rate-fetch-error {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}

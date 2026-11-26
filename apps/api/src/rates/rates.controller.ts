@@ -50,4 +50,10 @@ export class RatesController {
       );
     return this.rates.publish(parsed.data);
   }
+
+  @RequirePermission('rates.write')
+  @Post('fetch-latest')
+  fetchLatest() {
+    return this.rates.fetchLatest();
+  }
 }

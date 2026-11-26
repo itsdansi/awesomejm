@@ -531,6 +531,7 @@ export interface TranslationSchema {
   'errors.purchases.exchangeCorrectionRequired': never;
   'errors.purchases.invalidValuation': never;
   'errors.purchases.reviewRequired': never;
+  'errors.rates.fetchFailed': never;
   'errors.requests.idempotencyConflict': never;
   'inventory.fields.itemCode': never;
   'inventory.fields.nonMetalLabel': never;
@@ -923,9 +924,19 @@ export interface TranslationSchema {
   'rates.book.datePurity': never;
   'rates.book.entries': never;
   'rates.book.entry': never;
+  'rates.book.fetchingLatestRates': never;
+  'rates.book.fetchLatestRates': never;
   'rates.book.historyEndDate': never;
   'rates.book.historyStartDate': never;
   'rates.book.initialRate': never;
+  'rates.book.latestRatesAlreadyUpToDate': {
+    gold: TranslationValue;
+    silver: TranslationValue;
+  };
+  'rates.book.latestRatesUpdated': {
+    gold: TranslationValue;
+    silver: TranslationValue;
+  };
   'rates.book.latestRevisionForEachPurityOnTheSelected': never;
   'rates.book.loadingRateHistory': never;
   'rates.book.loadingTheRateBook': never;

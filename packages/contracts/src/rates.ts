@@ -105,3 +105,74 @@ export const rateHistorySchema = z.object({
   pageSize: z.number().int(),
 });
 export type RateHistory = z.infer<typeof rateHistorySchema>;
+
+export const syncRateActionSchema = z.enum(['created', 'updated', 'unchanged']);
+export type SyncRateAction = z.infer<typeof syncRateActionSchema>;
+
+export const syncLatestRatesResultSchema = z.object({
+  rateDate: z.iso.date(),
+  sourceDate: z.iso.date().nullable(),
+  source: z.string(),
+  gold: metalRateSchema,
+  silver: metalRateSchema,
+  goldAction: syncRateActionSchema,
+  silverAction: syncRateActionSchema,
+});
+export type SyncLatestRatesResult = z.infer<typeof syncLatestRatesResultSchema>;
+
+const fenegosidaEntrySchema = z.object({
+  rateType: z.string(),
+  todayBaseRatePerGram: z.coerce.number().finite().positive(),
+  todayDate: z.string().optional(),
+});
+
+export function parseFenegosidaRates(payload: unknown): {
+  goldPerTola: string;
+  silverPerTola: string;
+  sourceDate: string | null;
+} {
+  const entries = z.array(fenegosidaEntrySchema).parse(payload);
+  const isTola = (text: string) =>
+    text.includes('तोल') || text.includes('tola');
+  const goldEntry =
+    entries.find((entry) => {
+      const text = entry.rateType.toLowerCase();
+      return (
+        isTola(text) &&
+        (text.includes('छापावाल') ||
+          text.includes('fine gold') ||
+          text.includes('hallmark'))
+      );
+    }) ??
+    entries.find((entry) => {
+      const text = entry.rateType.toLowerCase();
+      return (
+        isTola(text) &&
+        (text.includes('सुन') || text.includes('gold')) &&
+        !text.includes('तेजाबी') &&
+        !text.includes('tejabi')
+      );
+    });
+  const silverEntry = entries.find((entry) => {
+    const text = entry.rateType.toLowerCase();
+    return isTola(text) && (text.includes('चाँदी') || text.includes('silver'));
+  });
+  if (!goldEntry || !silverEntry) {
+    throw new Error('Missing gold or silver per-tola rate in FENEGOSIDA feed.');
+  }
+  const goldPerTola = moneySchema.parse(
+    goldEntry.todayBaseRatePerGram.toFixed(2),
+  );
+  const silverPerTola = moneySchema.parse(
+    silverEntry.todayBaseRatePerGram.toFixed(2),
+  );
+  const rawDate = goldEntry.todayDate ?? silverEntry.todayDate;
+  let sourceDate: string | null = null;
+  if (rawDate) {
+    const parsed = new Date(rawDate);
+    if (!Number.isNaN(parsed.getTime())) {
+      sourceDate = nepalToday(parsed);
+    }
+  }
+  return { goldPerTola, silverPerTola, sourceDate };
+}

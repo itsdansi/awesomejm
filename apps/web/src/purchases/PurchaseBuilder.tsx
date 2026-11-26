@@ -706,7 +706,8 @@ export function PurchaseBuilder({ orderId }: { orderId: string | null }) {
                             <span>
                               <strong>{item.name}</strong>
                               <small>
-                                {item.itemCode} · {formatFineness(item.fineness)} ·{' '}
+                                {item.itemCode} ·{' '}
+                                {formatFineness(item.fineness)} ·{' '}
                                 <WeightValue
                                   grams={item.netWeightGrams}
                                   gramsPerTola={item.gramsPerTola}

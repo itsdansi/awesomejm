@@ -37,7 +37,11 @@
     "recorded": "{count} अभिलेखित {unit}",
     "entry": "प्रविष्टि",
     "entries": "प्रविष्टि",
-    "reviseQuote": "{metal} {purity} संशोधन गर्नुहोस्"
+    "reviseQuote": "{metal} {purity} संशोधन गर्नुहोस्",
+    "fetchLatestRates": "पछिल्लो दर ल्याउनुहोस्",
+    "fetchingLatestRates": "पछिल्लो दर ल्याइँदै…",
+    "latestRatesUpdated": "आजको फेनेगोसिडा दर अद्यावधिक भयो: सुन रु. {gold} / तोला, चाँदी रु. {silver} / तोला।",
+    "latestRatesAlreadyUpToDate": "आजको फेनेगोसिडा दर पहिल्यै अद्यावधिक छ (सुन रु. {gold} / तोला, चाँदी रु. {silver} / तोला)।"
   },
   "rateForm": {
     "buyingGram": "खरिद / ग्राम ≈",

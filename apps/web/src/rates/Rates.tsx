@@ -9,9 +9,11 @@ import {
   nepalToday,
   rateBookSchema,
   rateHistorySchema,
+  syncLatestRatesResultSchema,
   type MetalRate,
   type RateBook,
   type RateHistory,
+  type SyncLatestRatesResult,
 } from '@awesomejm/contracts';
 import { errorMessage, request } from '../shared/api';
 import { Icon } from '../shared/ui';
@@ -22,6 +24,10 @@ const npr = (value: string) =>
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(Number(value));
+
+type RateNotice =
+  { kind: 'saved' } | { kind: 'synced'; result: SyncLatestRatesResult } | null;
+
 export function Rates() {
   useLanguage();
 
@@ -32,7 +38,9 @@ export function Rates() {
   const [page, setPage] = useState(1);
   const [revision, setRevision] = useState(0);
   const [form, setForm] = useState<{ rate?: MetalRate } | null>(null);
-  const [notice, setNotice] = useState('');
+  const [notice, setNotice] = useState<RateNotice>(null);
+  const [fetchingLatest, setFetchingLatest] = useState(false);
+  const [fetchError, setFetchError] = useState('');
   const [bookResult, setBookResult] = useState<{
     key: string;
     data: RateBook | null;
@@ -101,6 +109,47 @@ export function Rates() {
   function refresh() {
     setRevision((value) => value + 1);
   }
+  async function fetchLatest() {
+    setFetchingLatest(true);
+    setFetchError('');
+    setNotice(null);
+    try {
+      const result = await request(
+        '/rates/fetch-latest',
+        syncLatestRatesResultSchema,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: '{}',
+        },
+      );
+      setDate(result.rateDate);
+      setPage(1);
+      refresh();
+      setNotice({ kind: 'synced', result });
+    } catch (error) {
+      setFetchError(errorMessage(error));
+    } finally {
+      setFetchingLatest(false);
+    }
+  }
+  function noticeText(value: Exclude<RateNotice, null>) {
+    if (value.kind === 'saved') {
+      return t('rates.book.rateSavedTheRateBookAndHistoryAre');
+    }
+    const { result } = value;
+    const unchanged =
+      result.goldAction === 'unchanged' && result.silverAction === 'unchanged';
+    return t(
+      unchanged
+        ? 'rates.book.latestRatesAlreadyUpToDate'
+        : 'rates.book.latestRatesUpdated',
+      {
+        gold: npr(result.gold.sellRatePerTola),
+        silver: npr(result.silver.sellRatePerTola),
+      },
+    );
+  }
   return (
     <>
       <div className="page-heading">
@@ -108,27 +157,56 @@ export function Rates() {
           <h1>{t('rates.labels.goldSilverRates')}</h1>
         </div>
         <Permission name="rates.write">
-          <button
-            className="button primary"
-            disabled={!date || date > today}
-            onClick={() => {
-              setForm({});
-              setNotice('');
-            }}
-          >
-            <Icon name="plus" size={18} />
-            {t('rates.book.setARate')}
-          </button>
+          <div className="order-heading-actions">
+            <button
+              type="button"
+              className="button secondary"
+              disabled={fetchingLatest}
+              onClick={() => void fetchLatest()}
+            >
+              <Icon name="refresh" size={18} />
+              {fetchingLatest
+                ? t('rates.book.fetchingLatestRates')
+                : t('rates.book.fetchLatestRates')}
+            </button>
+            <button
+              type="button"
+              className="button primary"
+              disabled={!date || date > today || fetchingLatest}
+              onClick={() => {
+                setForm({});
+                setNotice(null);
+                setFetchError('');
+              }}
+            >
+              <Icon name="plus" size={18} />
+              {t('rates.book.setARate')}
+            </button>
+          </div>
         </Permission>
       </div>
 
-      {notice && (
-        <div className="success" role="status">
-          {message(notice)}
+      {fetchError && (
+        <div className="error-banner rate-fetch-error" role="alert">
+          <span>{message(fetchError)}</span>
           <button
+            type="button"
             className="icon-button"
             aria-label={t('common.labels.dismissMessage')}
-            onClick={() => setNotice('')}
+            onClick={() => setFetchError('')}
+          >
+            <Icon name="close" size={16} />
+          </button>
+        </div>
+      )}
+      {notice && (
+        <div className="success" role="status">
+          {noticeText(notice)}
+          <button
+            type="button"
+            className="icon-button"
+            aria-label={t('common.labels.dismissMessage')}
+            onClick={() => setNotice(null)}
           >
             <Icon name="close" size={16} />
           </button>
@@ -259,7 +337,8 @@ export function Rates() {
                           })}
                           onClick={() => {
                             setForm({ rate });
-                            setNotice('');
+                            setNotice(null);
+                            setFetchError('');
                           }}
                         >
                           {t('rates.book.revise')}
@@ -439,7 +518,7 @@ export function Rates() {
             setForm(null);
             refresh();
             setPage(1);
-            setNotice('Rate saved. The rate book and history are up to date.');
+            setNotice({ kind: 'saved' });
           }}
         />
       )}

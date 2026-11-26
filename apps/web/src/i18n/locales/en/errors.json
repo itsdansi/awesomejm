@@ -147,5 +147,8 @@
   },
   "requests": {
     "idempotencyConflict": "This request was already saved with different customer details. Refresh before creating another customer."
+  },
+  "rates": {
+    "fetchFailed": "Could not fetch latest rates from FENEGOSIDA. Please try again or set rates manually."
   }
 }

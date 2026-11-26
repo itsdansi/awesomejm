@@ -4,6 +4,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
+import { createServer } from 'node:http';
 import pg from 'pg';
 import { NestFactory } from '@nestjs/core';
 import { nepalToday } from '@awesomejm/contracts';
@@ -243,6 +244,118 @@ test('rate book preserves exact quotes and revision history', async (t) => {
         2,
       );
     });
+
+    await t.test(
+      'fetches latest FENEGOSIDA gold and silver rates and updates existing today rates',
+      async () => {
+        let mode = 'initial';
+        const server = createServer((_req, res) => {
+          if (mode === 'error') {
+            res.writeHead(503, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'unavailable' }));
+            return;
+          }
+          const gold = mode === 'initial' ? 241400 : 242500;
+          const silver = mode === 'initial' ? 3040 : 3100;
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(
+            JSON.stringify([
+              {
+                id: 1,
+                todayDate: '2026-11-25T04:57:44.7+00:00',
+                rateType: 'छापावाल सुन (१० ग्राम)',
+                todayBaseRatePerGram: 206960,
+              },
+              {
+                id: 2,
+                todayDate: '2026-11-25T04:57:44.7+00:00',
+                rateType: 'छापावाल सुन (१ तोला)',
+                todayBaseRatePerGram: gold,
+              },
+              {
+                id: 3,
+                todayDate: '2026-11-25T04:57:44.7+00:00',
+                rateType: 'असली चाँदी दर (१० ग्राम)',
+                todayBaseRatePerGram: 2606.5,
+              },
+              {
+                id: 4,
+                todayDate: '2026-11-25T04:57:44.7+00:00',
+                rateType: 'असली चाँदी दर (१ तोला)',
+                todayBaseRatePerGram: silver,
+              },
+            ]),
+          );
+        });
+        await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+        const address = server.address();
+        const previousUrl = process.env.FENEGOSIDA_RATES_URL;
+        process.env.FENEGOSIDA_RATES_URL = `http://127.0.0.1:${address.port}/today`;
+        try {
+          const today = nepalToday();
+          const first = await api('/fetch-latest', {});
+          assert.equal(first.status, 201);
+          assert.equal(first.body.rateDate, today);
+          assert.equal(first.body.sourceDate, '2026-11-25');
+          assert.equal(first.body.source, 'FENEGOSIDA (2026-11-25)');
+          assert.equal(first.body.goldAction, 'created');
+          assert.equal(first.body.silverAction, 'created');
+          assert.equal(first.body.gold.fineness, '999.000');
+          assert.equal(first.body.gold.buyRatePerTola, '241400.00');
+          assert.equal(first.body.gold.sellRatePerTola, '241400.00');
+          assert.equal(first.body.gold.revision, 1);
+          assert.equal(first.body.silver.fineness, '999.000');
+          assert.equal(first.body.silver.buyRatePerTola, '3040.00');
+          assert.equal(first.body.silver.sellRatePerTola, '3040.00');
+          assert.equal(first.body.silver.revision, 1);
+
+          // Re-fetching identical prices does not append redundant revisions.
+          const same = await api('/fetch-latest', {});
+          assert.equal(same.status, 201);
+          assert.equal(same.body.goldAction, 'unchanged');
+          assert.equal(same.body.silverAction, 'unchanged');
+          assert.equal(same.body.gold.revision, 1);
+          assert.equal(same.body.silver.revision, 1);
+
+          // Updated market prices append revision 2 for today's existing rates.
+          mode = 'updated';
+          const updated = await api('/fetch-latest', {});
+          assert.equal(updated.status, 201);
+          assert.equal(updated.body.goldAction, 'updated');
+          assert.equal(updated.body.silverAction, 'updated');
+          assert.equal(updated.body.gold.buyRatePerTola, '242500.00');
+          assert.equal(updated.body.gold.sellRatePerTola, '242500.00');
+          assert.equal(updated.body.gold.revision, 2);
+          assert.equal(updated.body.silver.buyRatePerTola, '3100.00');
+          assert.equal(updated.body.silver.sellRatePerTola, '3100.00');
+          assert.equal(updated.body.silver.revision, 2);
+
+          const todayBook = (await api(`?date=${today}`)).body.rates;
+          assert.equal(
+            todayBook.find(
+              (r) => r.metal === 'GOLD' && r.fineness === '999.000',
+            ).revision,
+            2,
+          );
+          assert.equal(
+            todayBook.find(
+              (r) => r.metal === 'SILVER' && r.fineness === '999.000',
+            ).revision,
+            2,
+          );
+
+          // Upstream errors fail with 502 and keep existing rates intact.
+          mode = 'error';
+          const failed = await api('/fetch-latest', {});
+          assert.equal(failed.status, 502);
+        } finally {
+          if (previousUrl === undefined)
+            delete process.env.FENEGOSIDA_RATES_URL;
+          else process.env.FENEGOSIDA_RATES_URL = previousUrl;
+          await new Promise((resolve) => server.close(resolve));
+        }
+      },
+    );
   } finally {
     await app?.close();
     await db.end();

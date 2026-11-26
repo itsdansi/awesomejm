@@ -91,7 +91,7 @@
     "orderedPiecesCheckTheirDesignAndSizeAgainst": "ordered pieces. Check their design and size against the order. Final prices use actual stock weights and the sale date’s rates. Recorded advances are already in the customer account.",
     "selectAll": "· Select all",
     "stonesNpr": "· stones NPR",
-    "size": "‰ · Size:",
+    "size": "· Size:",
     "reviewDescription": "Check the pieces, charges and settlement before posting.",
     "orderDeliveryHelp": "Choose the finished pieces, then review delivery pricing and settlement."
   },

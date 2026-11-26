@@ -37,7 +37,11 @@
     "recorded": "{count} recorded {unit}",
     "entry": "entry",
     "entries": "entries",
-    "reviseQuote": "Revise {metal} {purity}"
+    "reviseQuote": "Revise {metal} {purity}",
+    "fetchLatestRates": "Fetch latest rates",
+    "fetchingLatestRates": "Fetching latest rates…",
+    "latestRatesUpdated": "Fetched FENEGOSIDA rates for today: Gold NPR {gold} / tola, Silver NPR {silver} / tola.",
+    "latestRatesAlreadyUpToDate": "FENEGOSIDA rates are already up to date for today (Gold NPR {gold} / tola, Silver NPR {silver} / tola)."
   },
   "rateForm": {
     "buyingGram": "Buying / gram ≈",

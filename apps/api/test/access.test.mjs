@@ -312,6 +312,11 @@ test('staff authentication, permissions, attribution and revocation protect all 
           (await api('/auth/audit', undefined, manager)).status,
           403,
         );
+        for (const session of [cashier, viewer])
+          assert.equal(
+            (await api('/rates/fetch-latest', {}, session)).status,
+            403,
+          );
         assert.equal(
           (
             await api(
