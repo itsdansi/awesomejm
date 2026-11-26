@@ -27,6 +27,12 @@ const FETCH_TIMEOUT_MS = 10_000;
 const FETCH_ERROR_MESSAGE =
   'Could not fetch latest rates from FENEGOSIDA. Please try again or set rates manually.';
 
+type JsonFetchResponse = {
+  ok: boolean;
+  status: number;
+  json(): Promise<unknown>;
+};
+
 @Injectable()
 export class RatesService {
   constructor(private readonly database: DatabaseService) {}
@@ -102,10 +108,10 @@ export class RatesService {
     const endpoint = process.env.FENEGOSIDA_RATES_URL || DEFAULT_FENEGOSIDA_URL;
     let parsedRates: ReturnType<typeof parseFenegosidaRates>;
     try {
-      const response = await fetch(endpoint, {
+      const response = (await fetch(endpoint, {
         headers: { Accept: 'application/json' },
         signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-      });
+      })) as unknown as JsonFetchResponse;
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
